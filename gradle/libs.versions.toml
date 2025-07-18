@@ -26,7 +26,7 @@ accompanistPager = "0.36.0" # Needs migration to official Compose Pager
 accompanistPermissions = "0.37.3" # Needs migration to official permissions handling
 accompanistSystemuicontroller = "0.36.0" # Needs migration (e.g., enableEdgeToEdge)
 # AndroidX Core
-coreKtx = "1.12.0"
+coreKtx = "1.16.0"
 appcompat = "1.6.1"
 activityCompose = "1.8.2"
 material = "1.11.0"
