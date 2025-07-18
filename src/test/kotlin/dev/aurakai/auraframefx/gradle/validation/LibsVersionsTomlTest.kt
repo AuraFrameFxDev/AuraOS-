@@ -6,8 +6,6 @@ import org.junit.Before
 import org.junit.After
 import java.io.File
 import java.io.FileWriter
-import java.nio.file.Files
-import java.nio.file.Paths
 
 /**
  * Comprehensive unit tests for LibsVersionsToml validation functionality.
@@ -642,12 +640,12 @@ class LibsVersionsTomlTest {
             writer.write(content)
         }
     }
-}
+
     // ============================================================================
     // Additional Comprehensive Test Coverage
     // Testing framework: JUnit 4 (maintaining consistency with existing tests)
     // ============================================================================
-    
+
     // Constructor and Initialization Tests
     @Test
     fun testValidatorInitializationWithValidFile() {
@@ -1108,6 +1106,7 @@ class LibsVersionsTomlTest {
         val whitespaceToml = """
             
             
+
             [versions]
             
             agp    =    "8.11.1"
@@ -1122,6 +1121,7 @@ class LibsVersionsTomlTest {
             [plugins]
             
             android = {  id = "com.android.application" , version.ref = "agp"  }
+            
             
             
         """.trimIndent()
