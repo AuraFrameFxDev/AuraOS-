@@ -5,7 +5,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.After
 import java.io.File
-import java.io.FileWriter
 
 /**
  * Comprehensive unit tests for LibsVersionsToml validation functionality.
@@ -636,9 +635,7 @@ class LibsVersionsTomlTest {
 
     // Helper Methods
     private fun writeTomlFile(content: String) {
-        FileWriter(tempTomlFile).use { writer ->
-            writer.write(content)
-        }
+        tempTomlFile.writeText(content)
     }
 
     // ============================================================================
@@ -1106,7 +1103,6 @@ class LibsVersionsTomlTest {
         val whitespaceToml = """
             
             
-
             [versions]
             
             agp    =    "8.11.1"
@@ -1121,6 +1117,7 @@ class LibsVersionsTomlTest {
             [plugins]
             
             android = {  id = "com.android.application" , version.ref = "agp"  }
+            
             
             
             
