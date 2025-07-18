@@ -56,7 +56,7 @@ securityCrypto = "1.1.0-alpha06"
 firebaseBomVersion = "32.7.2"
 
 # Kotlin
-kotlinxCoroutines = "1.7.3"
+kotlinxCoroutines = "1.10.2"
 kotlinxSerializationJson = "1.6.0"
 kotlinxDatetime = "0.4.1"
 
