@@ -49,7 +49,7 @@ class LibsVersionsTomlTest {
 
     @Test
     fun `test version format follows semantic versioning pattern`() {
-        val versionPattern = Pattern.compile("""(\w+)\s*=\s*"([^"]+)"""")
+        val versionPattern = Pattern.compile("(\\w+)\\s*=\\s*\"([^\"]+)\"")
         val lines = tomlLines.filter { it.contains(" = \"") && !it.trim().startsWith("#") }
 
         lines.forEach { line ->
@@ -60,7 +60,7 @@ class LibsVersionsTomlTest {
 
                 // Check version format (semantic versioning or date-based for BOM)
                 val isValidVersion = versionValue.matches(Regex("""^\d+\.\d+(\.\d+)?(-\w+(\.\d+)?)?$""")) ||
-                                       versionValue.matches(Regex("""^\d{4}\.\d{2}\.\d{2}$""")) // Date format for BOM
+                                   versionValue.matches(Regex("""^\d{4}\.\d{2}\.\d{2}$""")) // Date format for BOM
 
                 assertTrue(
                     "Version '$versionName' should follow semantic versioning: $versionValue",
@@ -229,13 +229,11 @@ class LibsVersionsTomlTest {
                              previousLine.contains("Needs migration") || line.contains("Needs migration")
 
             // Documentation test - Accompanist libraries should ideally have migration notes
-            if (line.contains("accompanist")) {
-                println("Accompanist library found: $line")
-                if (hasComment) {
-                    println("  ✓ Has migration context")
-                } else {
-                    println("  ⚠ Could benefit from migration documentation")
-                }
+            println("Accompanist library found: $line")
+            if (hasComment) {
+                println("  ✓ Has migration context")
+            } else {
+                println("  ⚠ Could benefit from migration documentation")
             }
         }
     }
@@ -297,7 +295,7 @@ class LibsVersionsTomlTest {
         assertTrue("Should contain [bundles] section", tomlContent.contains("[bundles]"))
 
         // Test that bundles reference valid library names
-        val bundlePattern = Pattern.compile("""(\w+)\s*=\s*\[([^\]]+)\]""")
+        val bundlePattern = Pattern.compile("(\\w+)\\s*=\\s*\\[([^\\]]+)\\]")
         val bundleLines = tomlLines.filter { it.contains(" = [") && !it.trim().startsWith("#") }
 
         bundleLines.forEach { line ->
@@ -354,7 +352,7 @@ class LibsVersionsTomlTest {
             )
 
             // Version should be reasonable (0.30+)
-            val versionPattern = Pattern.compile("""version = "([^"]+)"""")
+            val versionPattern = Pattern.compile("version = \"([^\"]+)\"")
             val matcher = versionPattern.matcher(line)
             if (matcher.find()) {
                 val version = matcher.group(1)
@@ -648,7 +646,7 @@ class LibsVersionsTomlTest {
 
     @Test
     fun `test version references use consistent quoting`() {
-        val versionRefPattern = Pattern.compile("""version\.ref = "([^"]+)"""")
+        val versionRefPattern = Pattern.compile("version\\.ref = \"([^\"]+)\"")
         val inconsistentQuotes = mutableListOf<String>()
 
         tomlLines.forEach { line ->
@@ -713,7 +711,7 @@ class LibsVersionsTomlTest {
 
     @Test
     fun `test version patterns are valid for all entries`() {
-        val versionPattern = Pattern.compile("""(\w+)\s*=\s*"([^"]+)"""")
+        val versionPattern = Pattern.compile("(\\w+)\\s*=\\s*\"([^\"]+)\"")
         val invalidVersions = mutableListOf<String>()
 
         extractSection("[versions]").forEach { line ->
