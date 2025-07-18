@@ -62,7 +62,7 @@ kotlinxDatetime = "0.4.1"
 
 # Networking
 retrofit = "2.9.0"
-okhttp = "5.0.0-alpha.12"
+okhttp = "5.1.0"
 
 converterGson = "3.0.0" # Align with Retrofit
 retrofitKotlinxSerializationConverter = "1.0.0"
