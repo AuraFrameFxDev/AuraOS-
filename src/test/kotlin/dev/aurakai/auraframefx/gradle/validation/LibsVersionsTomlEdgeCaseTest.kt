@@ -630,7 +630,7 @@ class LibsVersionsTomlEdgeCaseTest {
         // Memory increase should stay reasonable (less than 50MB)
         assertTrue("Memory usage should stay reasonable", memoryIncrease < 50 * 1024 * 1024)
     }
-}
+
     @Test
     fun nestedTableStructures_areHandledCorrectly() {
         val toml = """
@@ -1075,22 +1075,25 @@ class LibsVersionsTomlEdgeCaseTest {
             testLib = { module = "com.example:lib", version.ref = "agp" }
         """.trimIndent()
         write(toml1)
-        
+
         val validator = LibsVersionsTomlValidator(tempToml)
         val result1 = validator.validate()
         assertTrue("First validation should be valid", result1.isValid)
-        
+
         // Change file content
         val toml2 = """
             [versions]
             # Missing libraries section
         """.trimIndent()
         write(toml2)
-        
+
         val result2 = validator.validate()
         assertFalse("Second validation should be invalid", result2.isValid)
-        
+
         // Validator should handle file changes correctly
-        assertTrue("Validator should adapt to file changes", 
-            result1.isValid != result2.isValid)
+        assertTrue(
+            "Validator should adapt to file changes",
+            result1.isValid != result2.isValid
+        )
     }
+}
