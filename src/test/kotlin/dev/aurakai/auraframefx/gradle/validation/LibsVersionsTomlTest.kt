@@ -1,11 +1,11 @@
 package dev.aurakai.auraframefx.gradle.validation
 
-import org.junit.Test
-import org.junit.Assert.*
-import org.junit.Before
 import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import java.io.File
-import java.io.FileWriter
 
 /**
  * Comprehensive unit tests for LibsVersionsToml validation functionality.
@@ -22,6 +22,7 @@ class LibsVersionsTomlTest {
     @Before
     fun setUp() {
         tempTomlFile = File.createTempFile("libs.versions", ".toml")
+        tempTomlFile.deleteOnExit()
         validTomlContent = """
             [versions]
             agp = "8.11.1"
@@ -124,8 +125,6 @@ class LibsVersionsTomlTest {
 
     // Helper Methods
     private fun writeTomlFile(content: String) {
-        FileWriter(tempTomlFile).use { writer ->
-            writer.write(content)
-        }
+        tempTomlFile.writeText(content, Charsets.UTF_8)
     }
 }
