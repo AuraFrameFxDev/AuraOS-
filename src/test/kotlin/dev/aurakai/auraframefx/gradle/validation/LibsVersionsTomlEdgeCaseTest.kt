@@ -506,9 +506,9 @@ class LibsVersionsTomlEdgeCaseTest {
             noModule = { version.ref = "agp" }
         """.trimIndent()
         write(toml)
-        LibsVersionsTomlValidator(tempToml).validate()
+        val result = LibsVersionsTomlValidator(tempToml).validate()
         // Library without module property - validation should complete
-        assertTrue("Validation should complete without throwing exceptions", true)
+        assertNotNull("Validation result should not be null", result)
     }
 
     @Test
@@ -749,7 +749,7 @@ class LibsVersionsTomlEdgeCaseTest {
         """.trimIndent()
         write(toml)
         val result = LibsVersionsTomlValidator(tempToml).validate()
-        assertTrue("Case-sensitive version references should work", result.isValid)
+        assertTrue("Case-insensitive version references should work", result.isValid)
     }
 
     @Test
