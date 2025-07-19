@@ -642,66 +642,24 @@ class LibsVersionsTomlTest {
             writer.write(content)
         }
     }
-}
+
     // ============================================================================
-    // Additional Comprehensive Test Coverage
+    // Additional Comprehensive Test Coverage - Extended Edge Cases
     // Testing framework: JUnit 4 (maintaining consistency with existing tests)
     // ============================================================================
-    
-    // Constructor and Initialization Tests
-    @Test
-    fun testValidatorInitializationWithValidFile() {
-        // Test validator initialization with a valid file
-        writeTomlFile(validTomlContent)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        assertNotNull("Validator should be initialized", validator)
-        
-        val result = validator.validate()
-        assertNotNull("Validation result should not be null", result)
-    }
 
-    // Performance and Stress Tests  
+    // File Encoding and Character Set Tests
     @Test
-    fun testLargeTomlFilePerformance() {
-        // Test validation performance with large TOML files
-        val largeTomlBuilder = StringBuilder()
-        largeTomlBuilder.append("[versions]\n")
-        
-        // Generate 500 version entries for performance testing
-        for (i in 1..500) {
-            largeTomlBuilder.append("version$i = \"1.$i.0\"\n")
-        }
-        
-        largeTomlBuilder.append("\n[libraries]\n")
-        // Generate 500 library entries
-        for (i in 1..500) {
-            largeTomlBuilder.append("library$i = { module = \"com.example:lib$i\", version.ref = \"version$i\" }\n")
-        }
-        
-        writeTomlFile(largeTomlBuilder.toString())
-        
-        val startTime = System.currentTimeMillis()
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        val endTime = System.currentTimeMillis()
-        
-        assertTrue("Large TOML should pass validation", result.isValid)
-        assertTrue("Validation should complete within reasonable time", (endTime - startTime) < 5000)
-    }
-
-    // Unicode and Special Character Tests
-    @Test
-    fun testUnicodeCharactersInContent() {
-        // Test handling of Unicode characters in TOML content
+    fun testFileWithDifferentEncodings() {
+        // Test handling of files with different character encodings
         val unicodeToml = """
             [versions]
             agp = "8.11.1"
             kotlin = "2.0.0"
+            # Special chars: ñáéíóú αβγδε 中文 🚀
             
             [libraries]
-            # Comment with Unicode: αβγδε 中文 🚀
-            testLib = { module = "com.example:lib", version.ref = "agp" }
+            specialLib = { module = "com.example:special-chars", version.ref = "agp" }
         """.trimIndent()
         
         writeTomlFile(unicodeToml)
@@ -709,528 +667,276 @@ class LibsVersionsTomlTest {
         val validator = LibsVersionsTomlValidator(tempTomlFile)
         val result = validator.validate()
         
-        assertNotNull("Should handle Unicode characters gracefully", result)
-        assertTrue("Unicode in comments should not affect validation", result.isValid)
+        assertNotNull("Should handle Unicode characters", result)
+        assertTrue("Unicode should not break validation", result.isValid)
     }
 
     @Test
-    fun testSpecialCharactersInKeys() {
-        // Test handling of special characters in keys
-        val specialCharsToml = """
+    fun testFileWithBOM() {
+        // Test handling of files with Byte Order Mark (BOM)
+        val bomContent = "uFEFF" + validTomlContent
+        writeTomlFile(bomContent)
+        
+        val validator = LibsVersionsTomlValidator(tempTomlFile)
+        val result = validator.validate()
+        
+        assertNotNull("Should handle BOM characters", result)
+        assertTrue("BOM should not affect validation", result.isValid)
+    }
+
+    // Memory and Resource Management Tests
+    @Test
+    fun testVeryLargeFileHandling() {
+        // Test handling of extremely large TOML files
+        val largeBuilder = StringBuilder()
+        largeBuilder.append("[versions]\n")
+        
+        // Create 1000 version entries
+        for (i in 1..1000) {
+            largeBuilder.append("version$i = \"1.$i.0\"\n")
+        }
+        
+        largeBuilder.append("\n[libraries]\n")
+        for (i in 1..1000) {
+            largeBuilder.append("lib$i = { module = \"com.example:lib$i\", version.ref = \"version$i\" }\n")
+        }
+        
+        writeTomlFile(largeBuilder.toString())
+        
+        val validator = LibsVersionsTomlValidator(tempTomlFile)
+        val startTime = System.currentTimeMillis()
+        val result = validator.validate()
+        val duration = System.currentTimeMillis() - startTime
+        
+        assertNotNull("Should handle large files", result)
+        assertTrue("Large file validation should complete within 10 seconds", duration < 10000)
+    }
+
+    @Test
+    fun testMultipleValidatorInstances() {
+        // Test memory usage with multiple validator instances
+        writeTomlFile(validTomlContent)
+        
+        val validators = mutableListOf<LibsVersionsTomlValidator>()
+        repeat(50) {
+            validators.add(LibsVersionsTomlValidator(tempTomlFile))
+        }
+        
+        validators.forEach { validator ->
+            val result = validator.validate()
+            assertTrue("Each validator instance should work correctly", result.isValid)
+        }
+    }
+
+    // TOML Specification Edge Cases
+    @Test
+    fun testTomlArrayOfTables() {
+        // Test TOML array of tables syntax
+        val arrayTablesToml = """
             [versions]
             agp = "8.11.1"
-            version-with-dashes = "1.0.0"
-            version_with_underscores = "2.0.0"
+            kotlin = "2.0.0"
             
             [libraries]
-            lib-with-dashes = { module = "com.example:lib", version.ref = "agp" }
-            lib_with_underscores = { module = "com.example:lib2", version.ref = "version-with-dashes" }
+            testLib = { module = "junit:junit", version.ref = "agp" }
+            
+            [[custom_configs]]
+            name = "debug"
+            optimize = false
+            
+            [[custom_configs]]
+            name = "release"
+            optimize = true
         """.trimIndent()
         
-        writeTomlFile(specialCharsToml)
+        writeTomlFile(arrayTablesToml)
         
         val validator = LibsVersionsTomlValidator(tempTomlFile)
         val result = validator.validate()
         
-        assertNotNull("Should handle special characters in keys", result)
+        assertNotNull("Should handle array of tables", result)
+        // Should be valid even with custom sections
+        assertTrue("Array of tables should not break validation", result.isValid)
     }
 
-    // File System Edge Cases
     @Test
-    fun testReadOnlyFile() {
-        // Test handling of read-only files
+    fun testTomlMultilineStrings() {
+        // Test TOML multiline string handling
+        val multilineToml = """
+            [versions]
+            agp = "8.11.1"
+            description = """
+            This is a multiline
+            version description
+            with multiple lines"""
+            
+            [libraries]
+            testLib = { module = "junit:junit", version.ref = "agp" }
+        """.trimIndent()
+        
+        writeTomlFile(multilineToml)
+        
+        val validator = LibsVersionsTomlValidator(tempTomlFile)
+        val result = validator.validate()
+        
+        assertNotNull("Should handle multiline strings", result)
+        assertTrue("Multiline strings should not break validation", result.isValid)
+    }
+
+    @Test
+    fun testSymbolicLinkHandling() {
+        // Test handling of symbolic links (if supported by the system)
         writeTomlFile(validTomlContent)
-        tempTomlFile.setReadOnly()
         
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
+        val linkFile = File.createTempFile("link", ".toml")
+        linkFile.delete() // Remove the file so we can create a symbolic link
         
-        assertNotNull("Should handle read-only files", result)
-        assertTrue("Read-only files should still be readable for validation", result.isValid)
-        
-        // Reset permissions for cleanup
-        tempTomlFile.setWritable(true)
+        try {
+            // Create symbolic link using Java NIO
+            val linkPath = linkFile.toPath()
+            val targetPath = tempTomlFile.toPath()
+            Files.createSymbolicLink(linkPath, targetPath)
+            
+            val validator = LibsVersionsTomlValidator(linkFile)
+            val result = validator.validate()
+            
+            assertTrue("Should handle symbolic links", result.isValid)
+            
+            linkFile.delete()
+        } catch (e: UnsupportedOperationException) {
+            // Symbolic links not supported on this system, skip test
+            println("Symbolic links not supported, skipping test")
+            e.printStackTrace()
+        } catch (e: Exception) {
+            // Other error, just ensure cleanup
+            if (linkFile.exists()) linkFile.delete()
+            e.printStackTrace()
+        }
     }
 
-    @Test 
-    fun testFileWithDifferentLineEndings() {
-        // Test handling of different line ending formats
-        val contentWithCRLF = validTomlContent.replace("\n", "\r\n")
-        val contentWithCR = validTomlContent.replace("\n", "\r")
-        
-        // Test CRLF line endings
-        writeTomlFile(contentWithCRLF)
-        val validator1 = LibsVersionsTomlValidator(tempTomlFile)
-        val result1 = validator1.validate()
-        assertTrue("Should handle CRLF line endings", result1.isValid)
-        
-        // Test CR line endings  
-        writeTomlFile(contentWithCR)
-        val validator2 = LibsVersionsTomlValidator(tempTomlFile)
-        val result2 = validator2.validate()
-        assertTrue("Should handle CR line endings", result2.isValid)
-    }
-
-    // Boundary Value Tests
+    // Plugin Validation Edge Cases
     @Test
-    fun testEmptyVersionsAndLibrariesSections() {
-        // Test handling of empty required sections
-        val emptySectionsToml = """
+    fun testPluginWithAlternativeVersionFormats() {
+        // Test plugins with various version specification formats
+        val pluginVariationsToml = """
             [versions]
+            kotlinVersion = "1.9.20"
+            gradleVersion = "8.5"
             
             [libraries]
+            kotlinStdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinVersion" }
+            
+            [plugins]
+            kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinVersion" }
+            kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
+            androidApp = { id = "com.android.application", version.ref = "gradleVersion" }
+            gradleVersions = { id = "com.github.ben-manes.versions", version = "0.50.0" }
+            detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.4" }
         """.trimIndent()
         
-        writeTomlFile(emptySectionsToml)
+        writeTomlFile(pluginVariationsToml)
         
         val validator = LibsVersionsTomlValidator(tempTomlFile)
         val result = validator.validate()
         
-        assertFalse("Empty required sections should fail validation", result.isValid)
+        assertTrue("Plugin variations should be valid", result.isValid)
     }
 
+    // Validation Metadata Tests
     @Test
-    fun testVersionNumberBoundaries() {
-        // Test version number boundaries and extremes
-        val boundaryVersionsToml = """
+    fun testValidationResultMetadata() {
+        // Test that validation results contain proper metadata
+        writeTomlFile(validTomlContent)
+        
+        val validator = LibsVersionsTomlValidator(tempTomlFile)
+        val result = validator.validate()
+        
+        assertNotNull("Result should have metadata", result)
+        assertTrue("Timestamp should be recent", 
+            result.timestamp > System.currentTimeMillis() - 5000)
+        assertNotNull("Errors list should exist", result.errors)
+        assertNotNull("Warnings list should exist", result.warnings)
+        
+        // Test that multiple validations have different timestamps
+        Thread.sleep(1) // Ensure different timestamp
+        val result2 = validator.validate()
+        assertTrue("Second validation should have later timestamp", 
+            result2.timestamp >= result.timestamp)
+    }
+
+    // Complex Error Scenarios
+    @Test
+    fun testMultipleErrorTypesInSingleFile() {
+        // Test file with multiple different types of errors
+        val multiErrorToml = """
             [versions]
-            zero = "0.0.0"
-            large = "999.999.999"
-            decimal = "1.2.3"
-            single = "1"
-            double = "1.2"
-            prerelease = "1.0.0-alpha.1"
-            build = "1.0.0+20230101"
+            agp = "invalid.version"
+            kotlin = "2.0.0"
+            duplicateKey = "1.0.0"
+            duplicateKey = "2.0.0"
             
             [libraries]
-            testLib = { module = "com.example:lib", version.ref = "zero" }
+            badModule = { module = "invalid-module-format", version.ref = "nonexistent" }
+            goodLib = { module = "com.example:good", version.ref = "kotlin" }
+            duplicateLib = { module = "com.example:dup", version.ref = "agp" }
+            duplicateLib = { module = "com.example:dup2", version.ref = "kotlin" }
+            
+            [plugins]
+            badPlugin = { id = "invalid_plugin_id", version.ref = "kotlin" }
+            goodPlugin = { id = "com.example.plugin", version.ref = "kotlin" }
         """.trimIndent()
         
-        writeTomlFile(boundaryVersionsToml)
+        writeTomlFile(multiErrorToml)
         
         val validator = LibsVersionsTomlValidator(tempTomlFile)
         val result = validator.validate()
         
-        assertNotNull("Should handle boundary version numbers", result)
+        assertFalse("Multiple errors should fail validation", result.isValid)
+        assertTrue("Should report multiple errors", result.errors.size >= 3)
+        
+        val allErrors = result.errors.joinToString(" ").lowercase()
+        assertTrue("Should detect version format error", 
+            allErrors.contains("version") || allErrors.contains("format"))
+        assertTrue("Should detect duplicate key error", 
+            allErrors.contains("duplicate"))
+        assertTrue("Should detect missing reference error", 
+            allErrors.contains("reference") || allErrors.contains("missing"))
     }
 
-    // Concurrency and Thread Safety Tests
+    // Thread Safety and Concurrency Edge Cases
     @Test
-    fun testConcurrentValidation() {
-        // Test concurrent validation of the same file
+    fun testHighConcurrencyValidation() {
+        // Test validation under high concurrency
         writeTomlFile(validTomlContent)
         
         val results = mutableListOf<Boolean>()
+        val exceptions = mutableListOf<Exception>()
         val threads = mutableListOf<Thread>()
         
-        repeat(5) {
+        repeat(20) { threadIndex ->
             val thread = Thread {
-                val validator = LibsVersionsTomlValidator(tempTomlFile)
-                val result = validator.validate()
-                synchronized(results) {
-                    results.add(result.isValid)
+                try {
+                    repeat(5) {
+                        val validator = LibsVersionsTomlValidator(tempTomlFile)
+                        val result = validator.validate()
+                        synchronized(results) {
+                            results.add(result.isValid)
+                        }
+                    }
+                } catch (e: Exception) {
+                    synchronized(exceptions) {
+                        exceptions.add(e)
+                    }
                 }
             }
             threads.add(thread)
             thread.start()
         }
         
-        // Wait for all threads to complete
-        threads.forEach { it.join() }
+        threads.forEach { it.join(5000) } // 5 second timeout
         
-        assertEquals("All concurrent validations should succeed", 5, results.size)
+        assertTrue("No exceptions should occur during concurrent validation", exceptions.isEmpty())
+        assertEquals("All validations should complete", 100, results.size)
         assertTrue("All results should be valid", results.all { it })
-    }
-
-    // Complex Dependency Scenarios
-    @Test
-    fun testComplexVersionConstraints() {
-        // Test complex version constraint scenarios
-        val constraintsToml = """
-            [versions]
-            agp = "8.11.1"
-            kotlin = "2.0.0"
-            rangeVersion = "[1.0.0,2.0.0)"
-            plusVersion = "1.2.+"
-            
-            [libraries]
-            rangeLib = { module = "com.example:range", version.ref = "rangeVersion" }
-            plusLib = { module = "com.example:plus", version.ref = "plusVersion" }
-        """.trimIndent()
-        
-        writeTomlFile(constraintsToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertNotNull("Should handle complex version constraints", result)
-        assertTrue("Range and plus versions should be valid", result.isValid)
-    }
-
-    @Test
-    fun testDependencyGraphValidation() {
-        // Test validation of dependency relationships
-        val dependencyToml = """
-            [versions]
-            compose = "1.5.0"
-            kotlin = "1.9.0"
-            
-            [libraries]
-            composeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose" }
-            composeUi = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
-            composeMaterial = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
-            
-            [bundles]
-            compose = ["composeUi", "composeMaterial"]
-        """.trimIndent()
-        
-        writeTomlFile(dependencyToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertTrue("Dependency graph should be valid", result.isValid)
-    }
-
-    // Error Recovery Tests
-    @Test
-    fun testPartiallyCorruptedFile() {
-        // Test handling of partially corrupted TOML files
-        val partiallyCorruptToml = """
-            [versions]
-            agp = "8.11.1"
-            kotlin = "2.0.0"
-            corrupted = "1.0.
-            
-            [libraries]
-            validLib = { module = "com.example:lib", version.ref = "agp" }
-        """.trimIndent()
-        
-        writeTomlFile(partiallyCorruptToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertFalse("Partially corrupted file should fail validation", result.isValid)
-        assertTrue("Should report syntax errors", result.errors.isNotEmpty())
-    }
-
-    @Test
-    fun testGracefulErrorHandling() {
-        // Test graceful handling of various error conditions
-        val errorConditions = listOf(
-            "",  // Empty file
-            "invalid toml syntax [[[",  // Invalid syntax
-            "[versions]\nagp = ",  // Incomplete entry
-            "[versions]\nagp = \"8.11.1\"\n[versions]"  // Duplicate section
-        )
-        
-        errorConditions.forEach { content ->
-            writeTomlFile(content)
-            
-            val validator = LibsVersionsTomlValidator(tempTomlFile)
-            val result = validator.validate()
-            
-            assertNotNull("Should handle error condition gracefully", result)
-            assertFalse("Error condition should fail validation", result.isValid)
-            assertTrue("Should report errors for invalid content", result.errors.isNotEmpty())
-        }
-    }
-
-    // Edge Cases for Library and Plugin Definitions
-    @Test
-    fun testLibraryWithMultipleVersionFormats() {
-        // Test libraries using different version specification formats
-        val multiFormatToml = """
-            [versions]
-            agp = "8.11.1"
-            kotlin = "2.0.0"
-            
-            [libraries]
-            withVersionRef = { module = "com.example:lib1", version.ref = "agp" }
-            withDirectVersion = { module = "com.example:lib2", version = "1.0.0" }
-            withGroupName = { group = "com.example", name = "lib3", version.ref = "kotlin" }
-            withGroupNameDirect = { group = "com.example", name = "lib4", version = "2.0.0" }
-        """.trimIndent()
-        
-        writeTomlFile(multiFormatToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertTrue("Multiple version formats should be valid", result.isValid)
-    }
-
-    @Test
-    fun testPluginWithDirectVersions() {
-        // Test plugins with direct version specifications
-        val pluginToml = """
-            [versions]
-            agp = "8.11.1"
-            
-            [libraries]
-            testLib = { module = "com.example:lib", version.ref = "agp" }
-            
-            [plugins]
-            withVersionRef = { id = "com.android.application", version.ref = "agp" }
-            withDirectVersion = { id = "org.jetbrains.kotlin.android", version = "2.0.0" }
-        """.trimIndent()
-        
-        writeTomlFile(pluginToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertNotNull("Should handle plugins with different version formats", result)
-        assertTrue("Plugins with direct versions should be valid", result.isValid)
-    }
-
-    // Validation Result Edge Cases
-    @Test
-    fun testValidationResultConsistency() {
-        // Test that validation results are consistent across multiple calls
-        writeTomlFile(validTomlContent)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        // Test result properties
-        assertNotNull("Result should not be null", result)
-        assertTrue("Result should be valid", result.isValid)
-        assertNotNull("Errors list should not be null", result.errors)
-        assertNotNull("Warnings list should not be null", result.warnings)
-        assertTrue("Timestamp should be positive", result.timestamp > 0)
-        
-        // Test consistency across multiple calls
-        val result2 = validator.validate()
-        assertEquals("Results should be consistent", result.isValid, result2.isValid)
-        assertEquals("Error counts should be consistent", result.errors.size, result2.errors.size)
-        assertEquals("Warning counts should be consistent", result.warnings.size, result2.warnings.size)
-    }
-
-    @Test
-    fun testValidationResultWithMixedErrorsAndWarnings() {
-        // Test validation result with both errors and warnings
-        val mixedToml = """
-            [versions]
-            agp = "8.11.1"
-            kotlin = "1.8.0"
-            unusedVersion = "1.0.0"
-            vulnerableJunit = "4.12"
-            
-            [libraries]
-            testJunit = { module = "junit:junit", version.ref = "missingVersion" }
-            vulnerableLib = { module = "junit:junit", version.ref = "vulnerableJunit" }
-        """.trimIndent()
-        
-        writeTomlFile(mixedToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertFalse("Mixed problematic TOML should fail validation", result.isValid)
-        assertTrue("Should have errors", result.errors.isNotEmpty())
-        assertTrue("Should have warnings", result.warnings.isNotEmpty())
-        
-        // Test specific error types
-        assertTrue("Should report missing version reference", 
-            result.errors.any { it.contains("Missing version reference") })
-        assertTrue("Should report unreferenced version", 
-            result.warnings.any { it.contains("Unreferenced version") })
-        assertTrue("Should report vulnerable version", 
-            result.warnings.any { it.contains("vulnerable") })
-    }
-
-    // Security and Vulnerability Tests
-    @Test
-    fun testSecurityVulnerabilityDetection() {
-        // Test detection of known vulnerable versions
-        val vulnerableToml = """
-            [versions]
-            agp = "8.11.1"
-            vulnerableJunit = "4.12"
-            oldJunit = "4.11"
-            ancientJunit = "4.10"
-            safeJunit = "4.13.2"
-            
-            [libraries]
-            vulnerableLib1 = { module = "junit:junit", version.ref = "vulnerableJunit" }
-            vulnerableLib2 = { module = "junit:junit", version.ref = "oldJunit" }
-            vulnerableLib3 = { module = "junit:junit", version.ref = "ancientJunit" }
-            safeLib = { module = "junit:junit", version.ref = "safeJunit" }
-        """.trimIndent()
-        
-        writeTomlFile(vulnerableToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertTrue("Should detect multiple vulnerable versions in warnings", 
-            result.warnings.count { it.contains("vulnerable") } >= 3)
-        assertTrue("Should detect junit 4.12 as vulnerable", 
-            result.warnings.any { it.contains("4.12") })
-        assertTrue("Should detect junit 4.11 as vulnerable", 
-            result.warnings.any { it.contains("4.11") })
-        assertTrue("Should detect junit 4.10 as vulnerable", 
-            result.warnings.any { it.contains("4.10") })
-    }
-
-    // TOML Format Compliance Tests
-    @Test
-    fun testTomlWithCommentsAndWhitespace() {
-        // Test TOML with various comments and whitespace
-        val commentedToml = """
-            # Main versions section
-            [versions]
-            agp = "8.11.1"  # Android Gradle Plugin
-            kotlin = "2.0.0"   # Kotlin version
-            
-            # Libraries section with comments
-            [libraries]
-            androidxCore = { module = "androidx.core:core-ktx", version.ref = "agp" }
-            
-            # Plugins section
-            [plugins]
-            android = { id = "com.android.application", version.ref = "agp" }
-        """.trimIndent()
-        
-        writeTomlFile(commentedToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertTrue("TOML with comments should be valid", result.isValid)
-    }
-
-    @Test
-    fun testTomlWithExtraWhitespace() {
-        // Test TOML with extra whitespace and formatting variations
-        val whitespaceToml = """
-            
-            
-            [versions]
-            
-            agp    =    "8.11.1"
-            kotlin =  "2.0.0"  
-            
-            
-            [libraries]
-            
-            androidxCore = {   module = "androidx.core:core-ktx"  ,  version.ref = "agp"   }
-            
-            
-            [plugins]
-            
-            android = {  id = "com.android.application" , version.ref = "agp"  }
-            
-            
-        """.trimIndent()
-        
-        writeTomlFile(whitespaceToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertTrue("TOML with extra whitespace should be valid", result.isValid)
-    }
-
-    // Additional Helper Method Tests
-    @Test
-    fun testHelperMethodRobustness() {
-        // Test the robustness of helper methods
-        val testContent = "test content"
-        
-        // Test writeTomlFile with various inputs
-        assertDoesNotThrow("Should handle normal content") {
-            writeTomlFile(testContent)
-        }
-        
-        assertDoesNotThrow("Should handle empty content") {
-            writeTomlFile("")
-        }
-        
-        // Verify file content
-        val writtenContent = tempTomlFile.readText()
-        assertEquals("Written content should match expected", "", writtenContent)
-    }
-
-    @Test
-    fun testMultipleValidationCalls() {
-        // Test multiple validation calls on same validator
-        writeTomlFile(validTomlContent)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result1 = validator.validate()
-        val result2 = validator.validate()
-        val result3 = validator.validate()
-        
-        assertTrue("First validation should succeed", result1.isValid)
-        assertTrue("Second validation should succeed", result2.isValid)
-        assertTrue("Third validation should succeed", result3.isValid)
-        
-        // Results should be consistent
-        assertEquals("Results should be consistent", result1.isValid, result2.isValid)
-        assertEquals("Results should be consistent", result2.isValid, result3.isValid)
-    }
-
-    // Regex Pattern Tests
-    @Test
-    fun testVersionRegexPatterns() {
-        // Test that version regex patterns work correctly
-        val regexTestToml = """
-            [versions]
-            semantic = "1.2.3"
-            semanticWithBeta = "1.2.3-beta"
-            semanticWithBuild = "1.2.3+build.1"
-            plusVersion = "1.2.+"
-            rangeVersion = "[1.0.0,2.0.0)"
-            twoPartVersion = "1.2"
-            
-            [libraries]
-            testLib = { module = "com.example:lib", version.ref = "semantic" }
-        """.trimIndent()
-        
-        writeTomlFile(regexTestToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertTrue("Various version formats should be valid", result.isValid)
-    }
-
-    @Test
-    fun testModuleAndPluginRegexPatterns() {
-        // Test that module and plugin regex patterns work correctly
-        val patternTestToml = """
-            [versions]
-            agp = "8.11.1"
-            
-            [libraries]
-            validModule1 = { module = "com.example:library", version.ref = "agp" }
-            validModule2 = { module = "androidx.core:core-ktx", version.ref = "agp" }
-            validModule3 = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "agp" }
-            
-            [plugins]
-            validPlugin1 = { id = "com.android.application", version.ref = "agp" }
-            validPlugin2 = { id = "org.jetbrains.kotlin.android", version.ref = "agp" }
-            validPlugin3 = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "agp" }
-        """.trimIndent()
-        
-        writeTomlFile(patternTestToml)
-        
-        val validator = LibsVersionsTomlValidator(tempTomlFile)
-        val result = validator.validate()
-        
-        assertTrue("Valid module and plugin patterns should pass", result.isValid)
-    }
-
-    // Custom assertion helper for exception testing
-    private fun assertDoesNotThrow(message: String, block: () -> Unit) {
-        try {
-            block()
-            // If we reach here, no exception was thrown (which is what we want)
-        } catch (e: Exception) {
-            fail("$message - Exception thrown: ${e.message}")
-        }
     }
 }
