@@ -57,7 +57,9 @@ class LibsVersionsTomlValidatorTest {
         val result = validator.validate()
 
         assertFalse(result.isValid)
-        assertEquals(listOf("TOML file does not exist"), result.errors)
+        assertEquals(1, result.errors.size)
+        assertTrue(result.errors[0].startsWith("TOML file does not exist:"))
+        assertTrue(result.errors[0].contains(testFile.path))
         assertTrue(result.warnings.isEmpty())
     }
 
@@ -90,8 +92,8 @@ class LibsVersionsTomlValidatorTest {
         val result = validator.validate()
 
         assertFalse(result.isValid)
-        assertTrue(result.errors.contains("The versions section is required"))
-        assertTrue(result.errors.contains("The libraries section is required"))
+        assertTrue(result.errors.contains("Required versions section is missing"))
+        assertTrue(result.errors.contains("Required libraries section is missing"))
     }
 
     @Test
@@ -524,8 +526,8 @@ class LibsVersionsTomlValidatorTest {
         val result = validator.validate()
 
         assertFalse(result.isValid)
-        assertTrue(result.errors.contains("The libraries section is required"))
-        assertFalse(result.errors.contains("The versions section is required"))
+        assertTrue(result.errors.contains("Required libraries section is missing"))
+        assertFalse(result.errors.contains("Required versions section is missing"))
     }
 
     @Test
@@ -540,8 +542,8 @@ class LibsVersionsTomlValidatorTest {
         val result = validator.validate()
 
         assertFalse(result.isValid)
-        assertTrue(result.errors.contains("The versions section is required"))
-        assertFalse(result.errors.contains("The libraries section is required"))
+        assertTrue(result.errors.contains("Required versions section is missing"))
+        assertFalse(result.errors.contains("Required libraries section is missing"))
     }
 
     @Test
@@ -606,7 +608,9 @@ class LibsVersionsTomlValidatorTest {
         val result = pathValidator.validate()
 
         assertFalse(result.isValid)
-        assertEquals(listOf("TOML file does not exist"), result.errors)
+        assertEquals(1, result.errors.size)
+        assertTrue(result.errors[0].startsWith("TOML file does not exist:"))
+        assertTrue(result.errors[0].contains(nonExistentPath.path))
     }
 
     @Test
@@ -675,7 +679,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(numericRefToml)
 
         val result = validator.validate()
-        
+
         // Should handle numeric versions appropriately (may be invalid depending on implementation)
         assertNotNull(result)
         assertTrue(result.timestamp > 0)
@@ -745,12 +749,12 @@ class LibsVersionsTomlValidatorTest {
     fun `validate should handle extremely large TOML files gracefully`() {
         val largeTomlBuilder = StringBuilder()
         largeTomlBuilder.append("[versions]\n")
-        
+
         // Generate 500 version entries (reduced from 1000 for performance)
         repeat(500) { i ->
             largeTomlBuilder.append("version$i = \"1.0.$i\"\n")
         }
-        
+
         largeTomlBuilder.append("\n[libraries]\n")
         repeat(500) { i ->
             largeTomlBuilder.append("lib$i = { module = \"group$i:artifact$i\", version.ref = \"version$i\" }\n")
@@ -759,7 +763,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(largeTomlBuilder.toString())
 
         val result = validator.validate()
-        
+
         assertTrue(result.isValid)
         assertTrue(result.errors.isEmpty())
     }
@@ -779,7 +783,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(unicodeToml)
 
         val result = validator.validate()
-        
+
         // Should handle unicode gracefully
         assertNotNull(result)
         assertTrue(result.timestamp > 0)
@@ -791,7 +795,7 @@ class LibsVersionsTomlValidatorTest {
             # This is a test TOML file
             [versions]
             junit = "5.8.2" # JUnit 5
-            # kotlin = "1.8.0" # Commented out version
+            # kotlin = "1.8.0"
             
             kotlin = "1.9.0"
             
@@ -808,7 +812,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(commentedToml)
 
         val result = validator.validate()
-        
+
         assertTrue(result.isValid)
         assertTrue(result.errors.isEmpty())
     }
@@ -1013,7 +1017,7 @@ class LibsVersionsTomlValidatorTest {
     @Test
     fun `validate should handle file with BOM (Byte Order Mark)`() {
         val tomlWithBOM = "\uFEFF[versions]\njunit = \"5.8.2\"\n\n[libraries]\njunit-core = { module = \"org.junit.jupiter:junit-jupiter\", version.ref = \"junit\" }"
-        
+
         testFile.writeText(tomlWithBOM)
 
         val result = validator.validate()
