@@ -602,7 +602,7 @@ class LibsVersionsTomlValidatorTest {
 
     @Test
     fun `validate should handle file in non-existent directory`() {
-        val nonExistentPath = tempDir.resolve("non-existent-dir").resolve("libs.versions.toml").toFile()
+        val nonExistentPath = tempDir.resolve("non-existent-dir").resolve_("libs.versions.toml").toFile()
         val pathValidator = LibsVersionsTomlValidator(nonExistentPath)
 
         val result = pathValidator.validate()
@@ -796,16 +796,16 @@ class LibsVersionsTomlValidatorTest {
             [versions]
             junit = "5.8.2" # JUnit 5
             # kotlin = "1.8.0"
-            
+
             kotlin = "1.9.0"
-            
+
             [libraries]
             # Testing libraries
             junit-core = { 
                 module = "org.junit.jupiter:junit-jupiter", 
                 version.ref = "junit" 
             }
-            
+
             kotlin-stdlib = {module="org.jetbrains.kotlin:kotlin-stdlib",version.ref="kotlin"}
         """.trimIndent()
 
@@ -828,15 +828,15 @@ class LibsVersionsTomlValidatorTest {
         """.trimIndent()
 
         testFile.writeText(validToml)
-        
+
         // Make file read-only to test permission handling
         testFile.setReadOnly()
-        
+
         val result = validator.validate()
-        
+
         // Should still be able to read the file content
         assertTrue(result.isValid || result.errors.isNotEmpty())
-        
+
         // Restore write permissions for cleanup
         testFile.setWritable(true)
     }
@@ -848,7 +848,7 @@ class LibsVersionsTomlValidatorTest {
         assertTrue(result.errors.isEmpty())
 
         result.addError("Test error")
-        
+
         assertFalse(result.isValid)
         assertEquals(1, result.errors.size)
         assertEquals("Test error", result.errors[0])
@@ -861,7 +861,7 @@ class LibsVersionsTomlValidatorTest {
         assertTrue(result.warnings.isEmpty())
 
         result.addWarning("Test warning")
-        
+
         assertTrue(result.isValid)
         assertEquals(1, result.warnings.size)
         assertEquals("Test warning", result.warnings[0])
@@ -1016,8 +1016,7 @@ class LibsVersionsTomlValidatorTest {
 
     @Test
     fun `validate should handle file with BOM (Byte Order Mark)`() {
-        val tomlWithBOM = "\uFEFF[versions]\njunit = \"5.8.2\"\n\n[libraries]\njunit-core = { module = \"org.junit.jupiter:junit-jupiter\", version.ref = \"junit\" }"
-
+        val tomlWithBOM = "\uFEFF[versions]\njunit = \"5.8.2\"\n\n[libraries]\njunit-core = { module = \"org.junit.jupiter:junit-jupyter\", version.ref = \"junit\" }"
         testFile.writeText(tomlWithBOM)
 
         val result = validator.validate()
@@ -1063,7 +1062,7 @@ class LibsVersionsTomlValidatorTest {
             junit = "5.8.2"
 
             [Libraries]
-            junit-core = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+            junit-core = { module = "org.junit.jupiter:junit-jupyter", version.ref = "junit" }
         """.trimIndent()
 
         testFile.writeText(mixedCaseToml)
@@ -1133,7 +1132,7 @@ class LibsVersionsTomlValidatorTest {
         // Test that lists are mutable (as per implementation)
         result.errors.add("error2")
         result.warnings.add("warning2")
-        
+
         assertEquals(2, result.errors.size)
         assertEquals(2, result.warnings.size)
     }
@@ -1163,7 +1162,7 @@ class LibsVersionsTomlValidatorTest {
     @Test
     fun `ValidationResult mutable lists should allow direct manipulation but not affect isValid`() {
         val result = ValidationResult()
-        
+
         // Direct manipulation of mutable lists (bypassing addError method)
         result.errors.add("Direct error")
         result.warnings.add("Direct warning")
@@ -1216,7 +1215,7 @@ class LibsVersionsTomlValidatorTest {
 
             [libraries]
             lib1 = { module = 'group:artifact1', version.ref = "single" }
-            lib2 = { module = "group:artifact2", version.ref = 'double' }
+            library2 = { module = "group:artifact2", version.ref = 'double' }
             lib3 = { module = "group:artifact3", version.ref = "escaped" }
         """.trimIndent()
 
@@ -1496,11 +1495,11 @@ class LibsVersionsTomlValidatorTest {
     @Test
     fun `validate should handle file content encoding edge cases`() {
         // Test with UTF-8 BOM
-        val utf8BomContent = "\uFEFF[versions]\njunit = \"5.8.2\"\n\n[libraries]\njunit-core = { module = \"org.junit.jupiter:junit-jupiter\", version.ref = \"junit\" }"
+        val utf8BomContent = "\uFEFF[versions]\njunit = \"5.8.2\"\n\n[libraries]\njunit-core = { module = \"org.junit.jupiter:junit-jupyter\", version.ref = \"junit\" }"
         testFile.writeText(utf8BomContent)
 
         val result = validator.validate()
-        
+
         // Should handle BOM gracefully
         assertTrue(result.isValid)
         assertTrue(result.errors.isEmpty())
