@@ -1090,7 +1090,7 @@ class LibsVersionsTomlEdgeCaseTest {
         val result2 = validator.validate()
         assertFalse("Second validation should be invalid", result2.isValid)
 
-        // Validator should handle file changes correctly
+        // Validator should adapt to file changes
         assertTrue(
             "Validator should adapt to file changes",
             result1.isValid != result2.isValid
