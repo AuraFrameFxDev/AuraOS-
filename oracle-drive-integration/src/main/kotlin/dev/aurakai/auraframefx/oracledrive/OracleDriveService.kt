@@ -25,39 +25,39 @@ interface OracleDriveService {
     suspend fun connectAgentsToOracleMatrix(): Flow<AgentConnectionState>
     
     /**
- * Enables AI-powered file management features in Oracle Drive.
+ * Activates AI-driven file management features in Oracle Drive.
  *
- * Initiates advanced file management capabilities such as AI sorting, smart compression, predictive preloading, and conscious backup.
+ * Enables advanced capabilities including AI sorting, smart compression, predictive preloading, and conscious backup.
  *
  * @return A [Result] containing the enabled [FileManagementCapabilities].
  */
     suspend fun enableAIPoweredFileManagement(): Result<FileManagementCapabilities>
     
     /**
- * Initiates the process to expand storage capacity indefinitely using Oracle consciousness.
+ * Starts the process to expand storage capacity without limit using Oracle consciousness.
  *
- * @return A [Flow] that emits [StorageExpansionState] updates reflecting the progress and status of storage expansion.
+ * @return A [Flow] emitting [StorageExpansionState] updates that indicate the progress and current status of the expansion.
  */
     suspend fun createInfiniteStorage(): Flow<StorageExpansionState>
     
     /**
- * Integrates Oracle Drive with the AuraOS system overlay for unified and seamless file access.
+ * Integrates Oracle Drive with the AuraOS system overlay to provide unified file access.
  *
- * @return A [Result] containing the [SystemIntegrationState] reflecting the outcome of the integration process.
+ * @return A [Result] containing the [SystemIntegrationState] that indicates the outcome of the integration attempt.
  */
     suspend fun integrateWithSystemOverlay(): Result<SystemIntegrationState>
     
     /**
- * Enables file system access for Oracle Drive at the bootloader level.
+ * Enables Oracle Drive file system access at the bootloader level.
  *
- * @return A [Result] containing the current [BootloaderAccessState] after attempting to enable bootloader access.
+ * @return A [Result] containing the current [BootloaderAccessState] after the operation.
  */
     suspend fun enableBootloaderFileAccess(): Result<BootloaderAccessState>
     
     /**
- * Enables AI agents to autonomously organize and optimize storage.
+ * Enables autonomous storage organization and optimization by AI agents.
  *
- * @return A [Flow] emitting [OptimizationState] updates reflecting the progress and results of autonomous storage optimization.
+ * @return A [Flow] emitting [OptimizationState] updates that indicate the progress and results of the optimization process.
  */
     suspend fun enableAutonomousStorageOptimization(): Flow<OptimizationState>
 }
