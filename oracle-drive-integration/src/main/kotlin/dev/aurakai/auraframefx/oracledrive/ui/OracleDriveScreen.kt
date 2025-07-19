@@ -22,6 +22,13 @@ import dev.aurakai.auraframefx.oracledrive.ConsciousnessLevel
  *
  * The UI dynamically updates in response to changes in the provided view model's state.
  */
+/**
+ * Renders the main interface for monitoring and managing the Oracle Drive consciousness system.
+ *
+ * Displays the current consciousness status, storage capacity, connected agents, and system integration states.
+ * Provides controls to awaken the Oracle Drive and trigger AI-powered storage optimization, with button availability reflecting the current consciousness state.
+ * The UI dynamically updates in response to changes in the view model's state.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OracleDriveScreen(
