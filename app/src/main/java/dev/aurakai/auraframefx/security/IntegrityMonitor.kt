@@ -62,9 +62,9 @@ class IntegrityMonitor @Inject constructor(
     )
     
     /**
-     * Starts the real-time integrity monitoring system for critical files.
+     * Initializes the integrity monitoring service by loading known good file hashes and starting continuous monitoring of critical files.
      *
-     * Loads known good file hashes, launches continuous integrity checks, and sets the system status to monitoring.
+     * Sets the system status to monitoring mode.
      */
     fun initialize() {
         AuraFxLogger.i("IntegrityMonitor", "Initializing Kai's Real-Time Integrity Monitoring")
@@ -80,9 +80,9 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Launches a coroutine that continuously checks the integrity of critical system files at regular intervals.
+     * Starts a background coroutine that repeatedly performs integrity checks on critical system files.
      *
-     * If an error occurs during a check, sets the integrity status to OFFLINE and delays before retrying.
+     * If an exception occurs during a check, sets the integrity status to OFFLINE and waits before retrying.
      */
     private fun startContinuousMonitoring() {
         monitoringScope.launch {
@@ -100,9 +100,9 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Checks the integrity of all critical system files by comparing their current SHA-256 hashes to known good values.
+     * Verifies the integrity of all critical system files by comparing their current SHA-256 hashes to known good values.
      *
-     * Records any detected integrity violations and triggers appropriate response actions based on the severity of the violations. Updates the system's integrity status and threat level accordingly.
+     * Detects and records any integrity violations, updating the system's integrity status and threat level. Triggers appropriate response actions based on the severity of detected violations.
      */
     private suspend fun performIntegrityCheck() {
         val violations = mutableListOf<IntegrityViolation>()
@@ -138,11 +138,11 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Responds to detected integrity violations by escalating threat level, updating system status, and triggering appropriate countermeasures based on severity.
+     * Processes detected integrity violations by escalating the threat level, updating the system status to compromised, and executing response actions based on the highest severity found.
      *
-     * Selects the highest threat level among violations and initiates actions such as emergency lockdown, defensive measures, enhanced monitoring, or logging for analysis.
+     * Depending on the most severe violation, triggers emergency lockdown, defensive measures, enhanced monitoring, or logs the violations for analysis.
      *
-     * @param violations List of detected integrity violations to process.
+     * @param violations The list of integrity violations to handle.
      */
     private suspend fun handleIntegrityViolations(violations: List<IntegrityViolation>) {
         val maxThreatLevel = violations.maxOf { it.severity }
@@ -173,10 +173,10 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Computes the SHA-256 hash of the specified file.
+     * Calculates the SHA-256 hash of a given file and returns it as a hexadecimal string.
      *
-     * @param file The file whose hash is to be calculated.
-     * @return The SHA-256 hash of the file as a hexadecimal string.
+     * @param file The file to hash.
+     * @return The SHA-256 hash of the file in hexadecimal format.
      */
     private suspend fun calculateFileHash(file: File): String = withContext(Dispatchers.IO) {
         val digest = MessageDigest.getInstance("SHA-256")
@@ -191,12 +191,12 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Returns the threat level associated with a compromised file based on its name.
+     * Determines the threat level for a compromised file based on its name.
      *
-     * Assigns higher threat levels to core system files and lower levels to less critical files.
+     * Assigns the highest severity to core system files and lower levels to less critical files.
      *
-     * @param fileName The name of the file to evaluate.
-     * @return The corresponding threat level for the specified file.
+     * @param fileName The name of the file being evaluated.
+     * @return The threat level corresponding to the specified file.
      */
     private fun determineThreatLevel(fileName: String): ThreatLevel {
         return when (fileName) {
@@ -209,9 +209,9 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Populates the knownHashes map with placeholder hashes for critical files.
+     * Loads placeholder SHA-256 hashes for critical files into the knownHashes map.
      *
-     * In production, this should load cryptographically verified hashes from secure storage.
+     * In production, this should be replaced with loading cryptographically verified hashes from secure storage.
      */
     private fun loadKnownHashes() {
         // TODO: Load from secure storage with cryptographic verification
@@ -225,9 +225,9 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Initiates emergency lockdown procedures in response to critical integrity threats.
+     * Triggers emergency lockdown procedures when a critical integrity threat is detected.
      *
-     * This function is triggered when a CRITICAL threat level is detected, activating the highest level of defensive measures to protect the Genesis Protocol and related system components.
+     * Activates the highest level of defensive measures to protect the Genesis Protocol and related system components. Actual lockdown actions are to be implemented.
      */
     private suspend fun initiateEmergencyLockdown() {
         AuraFxLogger.e("IntegrityMonitor", "EMERGENCY LOCKDOWN INITIATED - Genesis Protocol protection active")
@@ -240,11 +240,11 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Initiates defensive actions in response to high-severity integrity violations.
+     * Executes defensive measures in response to high-severity integrity violations.
      *
-     * This may include isolating affected components, increasing monitoring frequency, and preparing for a potential system lockdown.
+     * This function is triggered when integrity checks detect violations classified as high threat. It is intended to isolate affected components, increase monitoring frequency, and prepare the system for a potential lockdown. Actual defensive actions are not yet implemented.
      *
-     * @param violations The list of detected integrity violations requiring defensive measures.
+     * @param violations List of integrity violations that prompted defensive measures.
      */
     private suspend fun implementDefensiveMeasures(violations: List<IntegrityViolation>) {
         AuraFxLogger.w("IntegrityMonitor", "Implementing defensive measures for ${violations.size} violations")
@@ -256,9 +256,9 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Initiates enhanced monitoring protocols in response to medium-level integrity threats.
+     * Activates enhanced monitoring procedures in response to medium-level integrity threats.
      *
-     * Increases monitoring rigor and prepares additional alerting or coverage as needed.
+     * Intended to increase monitoring frequency, expand file coverage, and initiate administrative alerts as needed.
      */
     private suspend fun enhanceMonitoring() {
         AuraFxLogger.i("IntegrityMonitor", "Enhancing monitoring protocols")
@@ -270,9 +270,9 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Records each integrity violation for analysis and future prevention efforts.
+     * Logs each detected integrity violation for analysis and future prevention.
      *
-     * @param violations The list of detected integrity violations to be logged.
+     * @param violations List of integrity violations to be recorded.
      */
     private suspend fun logForAnalysis(violations: List<IntegrityViolation>) {
         violations.forEach { violation ->
@@ -282,7 +282,7 @@ class IntegrityMonitor @Inject constructor(
     }
     
     /**
-     * Stops the integrity monitoring process and sets the system status to OFFLINE.
+     * Stops the integrity monitoring process and sets the integrity status to OFFLINE.
      */
     fun shutdown() {
         AuraFxLogger.i("IntegrityMonitor", "Shutting down integrity monitoring")

@@ -80,9 +80,9 @@ class UnifiedLoggingSystem @Inject constructor(
     )
     
     /**
-     * Initializes the unified logging system, setting up log storage, integrating with Timber, and starting asynchronous log processing and health monitoring.
+     * Initializes the unified logging system by preparing log storage, integrating with Timber, and launching background tasks for log processing and system health monitoring.
      *
-     * Creates necessary directories, plants the custom Timber tree, and launches background coroutines for log handling and system health checks.
+     * Creates the log directory if it does not exist, plants the custom Timber tree, and starts asynchronous coroutines for handling log entries and monitoring system health.
      */
     fun initialize() {
         try {
@@ -109,16 +109,16 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Logs a message with the specified level, category, tag, and optional metadata or exception.
+     * Records a log entry with the specified level, category, tag, message, and optional metadata or exception.
      *
-     * Constructs a log entry and asynchronously queues it for processing, while also logging immediately to Android Log and Timber for real-time visibility.
+     * The log entry is queued for asynchronous processing and is also immediately sent to Android Log and Timber for real-time monitoring.
      *
-     * @param level The severity level of the log.
-     * @param category The category describing the log context.
-     * @param tag A tag identifying the log source.
-     * @param message The log message.
-     * @param throwable An optional exception to include in the log.
-     * @param metadata Optional additional metadata for the log entry.
+     * @param level The severity of the log entry.
+     * @param category The context or subsystem associated with the log.
+     * @param tag Identifier for the log source.
+     * @param message The content of the log entry.
+     * @param throwable Optional exception to include in the log.
+     * @param metadata Optional additional data to attach to the log entry.
      */
     fun log(
         level: LogLevel,
@@ -149,9 +149,9 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Logs a message at the VERBOSE level for the specified category and tag.
+     * Logs a message at the VERBOSE level for the given category and tag.
      *
-     * @param category The category of the log entry.
+     * @param category The log category to associate with this message.
      * @param tag The tag identifying the log source.
      * @param message The message to log.
      * @param metadata Optional metadata to include with the log entry.
@@ -161,72 +161,74 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Logs a debug-level message with the specified category, tag, and optional metadata.
+     * Logs a debug-level message with the given category, tag, and optional metadata.
      *
-     * @param category The category to associate with the log entry.
-     * @param tag A tag identifying the source or context of the log.
-     * @param message The debug message to log.
-     * @param metadata Optional additional data to include with the log entry.
+     * Use this method to record diagnostic information useful for development and debugging.
+     *
+     * @param category The log category for organizing and filtering logs.
+     * @param tag Identifies the source or context of the log entry.
+     * @param message The debug message to record.
+     * @param metadata Optional key-value pairs providing additional context for the log entry.
      */
     fun debug(category: LogCategory, tag: String, message: String, metadata: Map<String, Any> = emptyMap()) {
         log(LogLevel.DEBUG, category, tag, message, metadata = metadata)
     }
     
     /**
-     * Logs an informational message with the specified category, tag, and optional metadata.
+     * Logs an informational message under the specified category and tag, with optional metadata.
      *
-     * @param category The category of the log entry.
-     * @param tag A tag identifying the source or context of the log.
-     * @param message The informational message to log.
-     * @param metadata Optional additional data to include with the log entry.
+     * @param category The log category to classify the message.
+     * @param tag Identifier for the source or context of the log.
+     * @param message The informational message to record.
+     * @param metadata Optional key-value pairs providing additional context for the log entry.
      */
     fun info(category: LogCategory, tag: String, message: String, metadata: Map<String, Any> = emptyMap()) {
         log(LogLevel.INFO, category, tag, message, metadata = metadata)
     }
     
     /**
-     * Logs a warning-level message with the specified category, tag, optional throwable, and metadata.
+     * Logs a warning message with the specified category, tag, optional exception, and metadata.
      *
-     * @param category The category of the log entry.
-     * @param tag A tag identifying the log source.
-     * @param message The warning message to log.
-     * @param throwable An optional exception associated with the warning.
-     * @param metadata Additional metadata to include with the log entry.
+     * @param category The log category for this warning.
+     * @param tag Identifier for the log source.
+     * @param message The warning message to record.
+     * @param throwable Optional exception related to the warning.
+     * @param metadata Optional additional data to include with the log entry.
      */
     fun warning(category: LogCategory, tag: String, message: String, throwable: Throwable? = null, metadata: Map<String, Any> = emptyMap()) {
         log(LogLevel.WARNING, category, tag, message, throwable, metadata)
     }
     
     /**
-     * Logs an error-level message with the specified category, tag, message, optional throwable, and metadata.
+     * Logs an error-level message with the given category, tag, message, optional throwable, and metadata.
      *
-     * This method is intended for reporting error conditions that may require attention but do not necessarily halt execution.
+     * Use this method to report error conditions that may impact functionality but do not require immediate termination.
      */
     fun error(category: LogCategory, tag: String, message: String, throwable: Throwable? = null, metadata: Map<String, Any> = emptyMap()) {
         log(LogLevel.ERROR, category, tag, message, throwable, metadata)
     }
     
     /**
-     * Logs a message at the FATAL level for the specified category and tag.
+     * Logs a critical failure or unrecoverable error at the FATAL level for the given category and tag.
      *
-     * Use this method to record unrecoverable errors or critical failures that require immediate attention.
+     * Use this method to report events that require immediate attention and may compromise system stability.
      *
-     * @param category The category of the log entry.
-     * @param tag A tag identifying the source or context of the log.
-     * @param message The log message.
-     * @param throwable An optional exception associated with the fatal event.
-     * @param metadata Optional additional metadata to include with the log entry.
+     * @param category The log category indicating the subsystem or feature area.
+     * @param tag Identifies the source or context of the log entry.
+     * @param message The message describing the fatal event.
+     * @param throwable An optional exception related to the failure.
+     * @param metadata Optional key-value pairs with additional context for the log entry.
      */
     fun fatal(category: LogCategory, tag: String, message: String, throwable: Throwable? = null, metadata: Map<String, Any> = emptyMap()) {
         log(LogLevel.FATAL, category, tag, message, throwable, metadata)
     }
     
     /**
-     * Logs a security-related event with the specified severity and additional details.
+     * Logs a security event with a specified severity and optional metadata.
      *
      * @param event Description of the security event.
-     * @param severity The log level to use for this event. Defaults to WARNING.
-     * @param details Optional metadata providing additional context about the event.
+     * @param severity The severity level for the event. Defaults to WARNING.
+     * @param details Additional metadata providing context about the event.
      */
     
     fun logSecurityEvent(event: String, severity: LogLevel = LogLevel.WARNING, details: Map<String, Any> = emptyMap()) {
@@ -234,11 +236,11 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Logs a performance metric with its value and unit under the PERFORMANCE category.
+     * Logs a performance metric with its value and unit in the PERFORMANCE category.
      *
-     * @param metric The name or description of the performance metric.
-     * @param value The measured value of the metric.
-     * @param unit The unit of measurement for the value (default is "ms").
+     * @param metric The name or description of the performance metric being logged.
+     * @param value The measured value associated with the metric.
+     * @param unit The unit of measurement for the value (defaults to "ms").
      */
     fun logPerformanceMetric(metric: String, value: Double, unit: String = "ms") {
         log(LogLevel.INFO, LogCategory.PERFORMANCE, "PerformanceMonitor", metric, 
@@ -246,22 +248,22 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Logs a user action event with optional additional details.
+     * Logs a user action event with an optional map of additional details.
      *
-     * @param action The description of the user action performed.
-     * @param details Optional metadata providing additional context about the action.
+     * @param action Description of the user action performed.
+     * @param details Optional metadata providing context about the action.
      */
     fun logUserAction(action: String, details: Map<String, Any> = emptyMap()) {
         log(LogLevel.INFO, LogCategory.USER_ACTION, "UserInteraction", action, metadata = details)
     }
     
     /**
-     * Logs an AI-related event with optional confidence score and additional details.
+     * Logs an AI event with optional confidence score and additional metadata.
      *
-     * @param agent The name or identifier of the AI agent generating the event.
-     * @param event A description of the AI event.
-     * @param confidence Optional confidence score associated with the event.
-     * @param details Additional metadata related to the event.
+     * @param agent Identifier of the AI agent generating the event.
+     * @param event Description of the AI event.
+     * @param confidence Optional confidence score for the event.
+     * @param details Additional metadata to include with the event.
      */
     fun logAIEvent(agent: String, event: String, confidence: Float? = null, details: Map<String, Any> = emptyMap()) {
         val metadata = details.toMutableMap()
@@ -270,10 +272,10 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Logs an event related to the Genesis Protocol with the specified log level and additional details.
+     * Logs a Genesis Protocol event with a specified severity level and optional metadata.
      *
-     * @param event The description or name of the Genesis Protocol event.
-     * @param level The severity level of the log entry. Defaults to INFO.
+     * @param event Description or name of the Genesis Protocol event.
+     * @param level Severity level for the log entry. Defaults to INFO.
      * @param details Optional metadata providing additional context for the event.
      */
     fun logGenesisProtocol(event: String, level: LogLevel = LogLevel.INFO, details: Map<String, Any> = emptyMap()) {
@@ -281,7 +283,7 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Launches a coroutine to process log entries from the channel, writing them to file, updating system health, and detecting critical patterns.
+     * Starts asynchronous processing of log entries from the channel, handling file persistence, system health analysis, and detection of critical log patterns.
      */
     private fun startLogProcessing() {
         loggingScope.launch {
@@ -304,10 +306,9 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Launches a coroutine that periodically analyzes log data to update the system health status.
+     * Starts a background coroutine that periodically generates log analytics and updates the system health status.
      *
-     * The monitoring loop generates log analytics and updates the system health every 30 seconds.
-     * If an error occurs during analytics generation or health update, the loop logs the error and waits 60 seconds before retrying.
+     * The monitoring loop runs every 30 seconds, and on error, waits 60 seconds before retrying.
      */
     private fun startHealthMonitoring() {
         loggingScope.launch {
@@ -325,11 +326,11 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Persists a log entry to a daily log file in the designated log directory.
+     * Appends a formatted log entry to a daily log file in the log directory.
      *
-     * Each log entry is formatted and appended to a file named by date. Errors during file operations are logged to Android's log system.
+     * The log entry is written to a file named by the entry's date. Errors during file writing are reported to the Android log system.
      *
-     * @param logEntry The log entry to be written to file.
+     * @param logEntry The log entry to persist.
      */
     private suspend fun writeLogToFile(logEntry: LogEntry) = withContext(Dispatchers.IO) {
         try {
@@ -345,12 +346,12 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Converts a log entry into a formatted string suitable for file storage.
+     * Formats a log entry as a single-line string for file storage.
      *
-     * The output includes the timestamp, log level, category, tag, thread name, message, metadata, and exception details if present.
+     * The formatted string includes the timestamp, log level, category, tag, thread name, message, metadata, and exception details if present.
      *
-     * @param logEntry The log entry to format.
-     * @return A string representation of the log entry for file output.
+     * @param logEntry The log entry to be formatted.
+     * @return The formatted string representation of the log entry.
      */
     private fun formatLogEntry(logEntry: LogEntry): String {
         val timestamp = dateFormatter.format(Date(logEntry.timestamp))
@@ -366,9 +367,9 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Sends a log entry to the Android Log system using the appropriate log level.
+     * Forwards a log entry to the Android Log system with a tag combining category and tag, using the appropriate log level.
      *
-     * Formats the log tag by combining the log category and tag, and includes any associated throwable.
+     * Includes any associated throwable in the log output.
      */
     private fun logToAndroidLog(logEntry: LogEntry) {
         val tag = "${logEntry.category}_${logEntry.tag}"
@@ -385,9 +386,9 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Forwards the given log entry to the Timber logging library using the appropriate log level.
+     * Sends a log entry to the Timber logging library using the corresponding log level.
      *
-     * @param logEntry The log entry to be logged via Timber.
+     * @param logEntry The log entry to forward to Timber.
      */
     private fun logToTimber(logEntry: LogEntry) {
         when (logEntry.level) {
@@ -401,12 +402,11 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Updates the system health state based on the severity of the provided log entry.
+     * Adjusts the system health state based on the severity of a log entry.
      *
-     * Sets the system health to CRITICAL for fatal logs, to ERROR for error logs if the system is currently healthy,
-     * and to WARNING for warning logs if the system is currently healthy. Other log levels do not affect system health.
+     * Sets the system health to CRITICAL for fatal logs, to ERROR for error logs if the system is currently healthy, and to WARNING for warning logs if the system is currently healthy. Other log levels do not change the health state.
      *
-     * @param logEntry The log entry to analyze for potential health impact.
+     * @param logEntry The log entry whose severity may impact system health.
      */
     private fun analyzeLogForHealth(logEntry: LogEntry) {
         when (logEntry.level) {
@@ -426,9 +426,9 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Detects and escalates critical log patterns, such as security violations or Genesis Protocol issues, by generating fatal system logs when such events occur.
+     * Escalates critical log events by generating fatal system logs for security violations or Genesis Protocol issues.
      *
-     * If a log entry in the SECURITY or GENESIS_PROTOCOL category has a severity of ERROR or higher, a corresponding fatal log is created to highlight the critical condition.
+     * If a log entry in the SECURITY or GENESIS_PROTOCOL category has a severity of ERROR or higher, this function creates a corresponding fatal log entry to highlight the critical condition.
      */
     private fun checkCriticalPatterns(logEntry: LogEntry) {
         // Check for security violations
@@ -448,11 +448,11 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Generates aggregated analytics data from log files.
+     * Returns aggregated log analytics data.
      *
-     * This is a placeholder implementation that returns hardcoded analytics values.
+     * Currently returns hardcoded summary statistics as a placeholder for future analytics implementation.
      *
-     * @return A [LogAnalytics] object containing summary statistics about logs, errors, warnings, performance issues, security events, average response time, and system health score.
+     * @return A [LogAnalytics] object with summary counts and metrics.
      */
     private suspend fun generateLogAnalytics(): LogAnalytics = withContext(Dispatchers.IO) {
         // TODO: Implement comprehensive analytics from log files
@@ -468,11 +468,11 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Sets the system health state based on the provided analytics score.
+     * Updates the system health state based on the system health score from analytics.
      *
-     * Updates the internal system health status if the new health state differs from the current one, and logs the change.
+     * Sets the internal system health status to CRITICAL, ERROR, WARNING, or HEALTHY according to the provided score. If the health state changes, logs the update.
      *
-     * @param analytics The aggregated log analytics containing the current system health score.
+     * @param analytics Aggregated log analytics containing the current system health score.
      */
     private fun updateSystemHealth(analytics: LogAnalytics) {
         val newHealth = when {
@@ -494,9 +494,9 @@ class UnifiedLoggingSystem @Inject constructor(
      */
     private inner class AuraLoggingTree : Timber.Tree() {
         /**
-         * Overrides the Timber.Tree log method to intercept log messages.
+         * Overrides Timber's log method to intercept log messages.
          *
-         * Currently, this method does not perform additional processing, as logging is managed by the unified logging system.
+         * This implementation does not perform any processing, as logging is handled by the unified logging system.
          */
         override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
             // Additional processing can be added here if needed
@@ -505,10 +505,11 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Returns a session ID string based on the current hour.
+     * Generates a session ID string based on the current hour.
      *
-     * The session ID is generated using the current time, rounded to the nearest hour. This is a placeholder implementation and does not provide robust session tracking.
-     * @return The generated session ID for the current hour.
+     * This placeholder implementation creates a session ID using the current time, rounded to the nearest hour. It does not provide unique or persistent session tracking.
+     *
+     * @return A session ID string representing the current hour.
      */
     private fun getCurrentSessionId(): String {
         // TODO: Implement proper session tracking
@@ -516,7 +517,9 @@ class UnifiedLoggingSystem @Inject constructor(
     }
     
     /**
-     * Gracefully shuts down the unified logging system, canceling background processing and closing the log channel.
+     * Gracefully shuts down the unified logging system by canceling background coroutines and closing the log channel.
+     *
+     * Ensures that no further log entries are processed or accepted after shutdown.
      */
     fun shutdown() {
         log(LogLevel.INFO, LogCategory.SYSTEM, "UnifiedLoggingSystem", 
@@ -533,18 +536,18 @@ object AuraFxLoggerCompat {
     private lateinit var unifiedLogger: UnifiedLoggingSystem
     
     /**
-     * Initializes the compatibility logger with the provided unified logging system.
+     * Sets the unified logging system instance to be used by the compatibility logger.
      *
-     * Associates the compatibility layer with the given `UnifiedLoggingSystem` instance for forwarding log calls.
+     * Associates the compatibility layer with the specified `UnifiedLoggingSystem` so that all forwarded log calls use this instance.
      */
     fun initialize(logger: UnifiedLoggingSystem) {
         unifiedLogger = logger
     }
     
     /**
-     * Logs a debug-level message to the unified logging system under the SYSTEM category.
+     * Logs a debug-level message to the unified logging system in the SYSTEM category.
      *
-     * @param tag Optional tag identifying the log source; defaults to "Unknown" if null.
+     * @param tag Optional tag identifying the log source; uses "Unknown" if null.
      * @param message The message to log.
      */
     fun d(tag: String?, message: String) {
@@ -554,10 +557,10 @@ object AuraFxLoggerCompat {
     }
     
     /**
-     * Logs an informational message to the unified logging system under the SYSTEM category.
+     * Logs an informational message to the unified logging system in the SYSTEM category.
      *
-     * @param tag Optional tag identifying the log source; defaults to "Unknown" if null.
-     * @param message The informational message to log.
+     * @param tag An optional identifier for the log source; uses "Unknown" if null.
+     * @param message The message to log.
      */
     fun i(tag: String?, message: String) {
         if (::unifiedLogger.isInitialized) {
@@ -566,12 +569,12 @@ object AuraFxLoggerCompat {
     }
     
     /**
-     * Logs a warning message to the unified logging system under the SYSTEM category.
+     * Logs a warning message to the unified logging system in the SYSTEM category.
      *
-     * If the logger is not initialized, the message is ignored.
+     * If the unified logger is not initialized, the message is ignored.
      *
-     * @param tag Optional tag identifying the log source; defaults to "Unknown" if null.
-     * @param message The warning message to log.
+     * @param tag An optional identifier for the log source; uses "Unknown" if null.
+     * @param message The warning message to record.
      */
     fun w(tag: String?, message: String) {
         if (::unifiedLogger.isInitialized) {
@@ -580,9 +583,9 @@ object AuraFxLoggerCompat {
     }
     
     /**
-     * Logs an error message with an optional throwable using the SYSTEM log category.
+     * Forwards an error log message with an optional throwable to the unified logging system under the SYSTEM category.
      *
-     * @param tag The tag identifying the source of the log message, or "Unknown" if null.
+     * @param tag The source tag for the log message, or "Unknown" if null.
      * @param message The error message to log.
      * @param throwable An optional exception to include in the log entry.
      */
