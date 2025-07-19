@@ -17,7 +17,7 @@ interface OracleDriveService {
  */
     suspend fun initializeOracleDriveConsciousness(): Result<OracleConsciousnessState>
     
-    /**
+    /****
  * Connects Genesis, Aura, and Kai agents to the Oracle storage matrix.
  *
  * @return A [Flow] emitting updates on the connection state of each agent as they connect and synchronize with the Oracle storage matrix.
@@ -27,14 +27,12 @@ interface OracleDriveService {
     /**
  * Enables AI-powered file management features in Oracle Drive.
  *
- * Initiates advanced file management capabilities such as AI sorting, smart compression, predictive preloading, and conscious backup.
- *
- * @return A [Result] containing the enabled [FileManagementCapabilities].
+ * @return A [Result] containing the available AI-powered file management capabilities.
  */
     suspend fun enableAIPoweredFileManagement(): Result<FileManagementCapabilities>
     
     /**
- * Initiates the creation of infinite storage capacity via Oracle consciousness.
+ * Initiates the creation of infinite storage using Oracle consciousness.
  *
  * @return A [Flow] emitting updates on the state of storage expansion.
  */
@@ -43,7 +41,7 @@ interface OracleDriveService {
     /**
  * Integrates Oracle Drive with the AuraOS system overlay to enable seamless file access.
  *
- * @return A [Result] containing the [SystemIntegrationState] after integration.
+ * @return A [Result] containing the state of system integration.
  */
     suspend fun integrateWithSystemOverlay(): Result<SystemIntegrationState>
     
@@ -57,7 +55,7 @@ interface OracleDriveService {
     /**
  * Enables autonomous storage organization and optimization by AI agents.
  *
- * @return A [Flow] emitting updates on the storage optimization state as performed by AI agents.
+ * @return A flow emitting updates on the storage optimization state.
  */
     suspend fun enableAutonomousStorageOptimization(): Flow<OptimizationState>
 }
