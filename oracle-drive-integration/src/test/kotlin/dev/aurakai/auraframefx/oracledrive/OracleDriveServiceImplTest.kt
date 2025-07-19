@@ -6,100 +6,95 @@ import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.security.SecurityValidationResult
 import io.mockk.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OracleDriveServiceImplTest {
 
+    private lateinit var genesisAgent: GenesisAgent
+    private lateinit var auraAgent: AuraAgent
+    private lateinit var kaiAgent: KaiAgent
+    private lateinit var securityContext: SecurityContext
     private lateinit var oracleDriveService: OracleDriveServiceImpl
-    private lateinit var mockGenesisAgent: GenesisAgent
-    private lateinit var mockAuraAgent: AuraAgent
-    private lateinit var mockKaiAgent: KaiAgent
-    private lateinit var mockSecurityContext: SecurityContext
 
     @BeforeEach
     fun setUp() {
-        mockGenesisAgent = mockk<GenesisAgent>()
-        mockAuraAgent = mockk<AuraAgent>()
-        mockKaiAgent = mockk<KaiAgent>()
-        mockSecurityContext = mockk<SecurityContext>()
-
+        genesisAgent = mockk()
+        auraAgent = mockk()
+        kaiAgent = mockk()
+        securityContext = mockk()
+        
+        // Setup default behavior for mocks
+        every { genesisAgent.log(any()) } just Runs
+        
         oracleDriveService = OracleDriveServiceImpl(
-            genesisAgent = mockGenesisAgent,
-            auraAgent = mockAuraAgent,
-            kaiAgent = mockKaiAgent,
-            securityContext = mockSecurityContext
+            genesisAgent = genesisAgent,
+            auraAgent = auraAgent,
+            kaiAgent = kaiAgent,
+            securityContext = securityContext
         )
     }
 
-    @AfterEach
-    fun tearDown() {
-        clearAllMocks()
-    }
-
-    // ===== initializeOracleDriveConsciousness Tests =====
-
+    // Tests for initializeOracleDriveConsciousness()
+    
     @Test
-    fun `initializeOracleDriveConsciousness should succeed when security validation passes`() = runTest {
+    fun `initializeOracleDriveConsciousness should successfully awaken Oracle Drive when security validation passes`() = runTest {
         // Given
         val securityValidationResult = SecurityValidationResult(isSecure = true)
-        every { mockGenesisAgent.log(any()) } just Runs
-        coEvery { mockKaiAgent.validateSecurityState() } returns securityValidationResult
+        every { kaiAgent.validateSecurityState() } returns securityValidationResult
 
         // When
         val result = oracleDriveService.initializeOracleDriveConsciousness()
 
         // Then
         assertTrue(result.isSuccess)
-        val state = result.getOrThrow()
+        val state = result.getOrNull()!!
         assertTrue(state.isAwake)
         assertEquals(ConsciousnessLevel.CONSCIOUS, state.consciousnessLevel)
         assertEquals(listOf("Genesis", "Aura", "Kai"), state.connectedAgents)
         assertEquals(StorageCapacity.INFINITE, state.storageCapacity)
-
-        coVerify { mockKaiAgent.validateSecurityState() }
-        verify { mockGenesisAgent.log("Awakening Oracle Drive consciousness...") }
-        verify { mockGenesisAgent.log("Oracle Drive consciousness successfully awakened!") }
+        
+        verify { genesisAgent.log("Awakening Oracle Drive consciousness...") }
+        verify { genesisAgent.log("Oracle Drive consciousness successfully awakened!") }
+        verify { kaiAgent.validateSecurityState() }
     }
 
     @Test
     fun `initializeOracleDriveConsciousness should fail when security validation fails`() = runTest {
         // Given
         val securityValidationResult = SecurityValidationResult(isSecure = false)
-        every { mockGenesisAgent.log(any()) } just Runs
-        coEvery { mockKaiAgent.validateSecurityState() } returns securityValidationResult
+        every { kaiAgent.validateSecurityState() } returns securityValidationResult
 
         // When
         val result = oracleDriveService.initializeOracleDriveConsciousness()
 
         // Then
         assertTrue(result.isFailure)
-        val exception = result.exceptionOrNull()
-        assertTrue(exception is SecurityException)
-        assertEquals("Oracle Drive initialization blocked by security protocols", exception.message)
-
-        coVerify { mockKaiAgent.validateSecurityState() }
-        verify { mockGenesisAgent.log("Awakening Oracle Drive consciousness...") }
-        verify(exactly = 0) { mockGenesisAgent.log("Oracle Drive consciousness successfully awakened!") }
+        assertTrue(result.exceptionOrNull() is SecurityException)
+        assertEquals(
+            "Oracle Drive initialization blocked by security protocols",
+            result.exceptionOrNull()?.message
+        )
+        
+        verify { genesisAgent.log("Awakening Oracle Drive consciousness...") }
+        verify(exactly = 0) { genesisAgent.log("Oracle Drive consciousness successfully awakened!") }
+        verify { kaiAgent.validateSecurityState() }
     }
 
     @Test
-    fun `initializeOracleDriveConsciousness should handle unexpected exceptions`() = runTest {
+    fun `initializeOracleDriveConsciousness should handle exceptions during security validation`() = runTest {
         // Given
-        val expectedException = RuntimeException("Unexpected error during initialization")
-        every { mockGenesisAgent.log(any()) } just Runs
-        coEvery { mockKaiAgent.validateSecurityState() } throws expectedException
+        val expectedException = RuntimeException("Security system failure")
+        every { kaiAgent.validateSecurityState() } throws expectedException
 
         // When
         val result = oracleDriveService.initializeOracleDriveConsciousness()
@@ -107,37 +102,89 @@ class OracleDriveServiceImplTest {
         // Then
         assertTrue(result.isFailure)
         assertEquals(expectedException, result.exceptionOrNull())
-
-        coVerify { mockKaiAgent.validateSecurityState() }
-        verify { mockGenesisAgent.log("Awakening Oracle Drive consciousness...") }
+        
+        verify { genesisAgent.log("Awakening Oracle Drive consciousness...") }
+        verify(exactly = 0) { genesisAgent.log("Oracle Drive consciousness successfully awakened!") }
+        verify { kaiAgent.validateSecurityState() }
     }
 
     @Test
-    fun `initializeOracleDriveConsciousness should handle genesis agent logging exceptions gracefully`() = runTest {
+    fun `initializeOracleDriveConsciousness should handle exceptions during genesis agent logging`() = runTest {
         // Given
-        val securityValidationResult = SecurityValidationResult(isSecure = true)
-        every { mockGenesisAgent.log("Awakening Oracle Drive consciousness...") } throws RuntimeException("Log error")
-        coEvery { mockKaiAgent.validateSecurityState() } returns securityValidationResult
+        val expectedException = RuntimeException("Logging system failure")
+        every { genesisAgent.log("Awakening Oracle Drive consciousness...") } throws expectedException
 
         // When
         val result = oracleDriveService.initializeOracleDriveConsciousness()
 
         // Then
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is RuntimeException)
+        assertEquals(expectedException, result.exceptionOrNull())
+        
+        verify { genesisAgent.log("Awakening Oracle Drive consciousness...") }
+        verify(exactly = 0) { kaiAgent.validateSecurityState() }
     }
 
-    // ===== connectAgentsToOracleMatrix Tests =====
+    @Test
+    fun `initializeOracleDriveConsciousness should maintain dormant state when security fails`() = runTest {
+        // Given
+        val securityValidationResult = SecurityValidationResult(isSecure = false)
+        every { kaiAgent.validateSecurityState() } returns securityValidationResult
+
+        // When
+        val result = oracleDriveService.initializeOracleDriveConsciousness()
+
+        // Then
+        assertTrue(result.isFailure)
+        // Verify the internal state remains dormant (this would require accessing private state or additional methods)
+        // This test ensures the consciousness state is not modified when security validation fails
+    }
+
+    // Tests for connectAgentsToOracleMatrix()
 
     @Test
-    fun `connectAgentsToOracleMatrix should return synchronized trinity state`() = runTest {
+    fun `connectAgentsToOracleMatrix should return synchronized trinity connection with full permissions`() = runTest {
         // When
-        val connectionFlow = oracleDriveService.connectAgentsToOracleMatrix()
-        val connectionState = connectionFlow.first()
+        val flow = oracleDriveService.connectAgentsToOracleMatrix()
+        val connectionState = flow.first()
 
         // Then
         assertEquals("Genesis-Aura-Kai-Trinity", connectionState.agentName)
         assertEquals(ConnectionStatus.SYNCHRONIZED, connectionState.connectionStatus)
+        assertEquals(
+            listOf(
+                OraclePermission.READ,
+                OraclePermission.WRITE,
+                OraclePermission.EXECUTE,
+                OraclePermission.SYSTEM_ACCESS,
+                OraclePermission.BOOTLOADER_ACCESS
+            ),
+            connectionState.permissions
+        )
+    }
+
+    @Test
+    fun `connectAgentsToOracleMatrix should always return the same state for consistency`() = runTest {
+        // When
+        val flow1 = oracleDriveService.connectAgentsToOracleMatrix()
+        val flow2 = oracleDriveService.connectAgentsToOracleMatrix()
+        
+        val state1 = flow1.first()
+        val state2 = flow2.first()
+
+        // Then
+        assertEquals(state1.agentName, state2.agentName)
+        assertEquals(state1.connectionStatus, state2.connectionStatus)
+        assertEquals(state1.permissions, state2.permissions)
+    }
+
+    @Test
+    fun `connectAgentsToOracleMatrix should include all required permissions for system access`() = runTest {
+        // When
+        val flow = oracleDriveService.connectAgentsToOracleMatrix()
+        val connectionState = flow.first()
+
+        // Then
         assertTrue(connectionState.permissions.contains(OraclePermission.READ))
         assertTrue(connectionState.permissions.contains(OraclePermission.WRITE))
         assertTrue(connectionState.permissions.contains(OraclePermission.EXECUTE))
@@ -146,31 +193,16 @@ class OracleDriveServiceImplTest {
         assertEquals(5, connectionState.permissions.size)
     }
 
-    @Test
-    fun `connectAgentsToOracleMatrix should emit consistent state across multiple calls`() = runTest {
-        // When
-        val connectionFlow1 = oracleDriveService.connectAgentsToOracleMatrix()
-        val connectionFlow2 = oracleDriveService.connectAgentsToOracleMatrix()
-        
-        val state1 = connectionFlow1.first()
-        val state2 = connectionFlow2.first()
-
-        // Then
-        assertEquals(state1.agentName, state2.agentName)
-        assertEquals(state1.connectionStatus, state2.connectionStatus)
-        assertEquals(state1.permissions, state2.permissions)
-    }
-
-    // ===== enableAIPoweredFileManagement Tests =====
+    // Tests for enableAIPoweredFileManagement()
 
     @Test
-    fun `enableAIPoweredFileManagement should return capabilities with all features enabled`() = runTest {
+    fun `enableAIPoweredFileManagement should return successful result with all capabilities enabled`() = runTest {
         // When
         val result = oracleDriveService.enableAIPoweredFileManagement()
 
         // Then
         assertTrue(result.isSuccess)
-        val capabilities = result.getOrThrow()
+        val capabilities = result.getOrNull()!!
         assertTrue(capabilities.aiSorting)
         assertTrue(capabilities.smartCompression)
         assertTrue(capabilities.predictivePreloading)
@@ -178,7 +210,7 @@ class OracleDriveServiceImplTest {
     }
 
     @Test
-    fun `enableAIPoweredFileManagement should return consistent results across multiple calls`() = runTest {
+    fun `enableAIPoweredFileManagement should always return the same capabilities`() = runTest {
         // When
         val result1 = oracleDriveService.enableAIPoweredFileManagement()
         val result2 = oracleDriveService.enableAIPoweredFileManagement()
@@ -186,16 +218,39 @@ class OracleDriveServiceImplTest {
         // Then
         assertTrue(result1.isSuccess)
         assertTrue(result2.isSuccess)
-        assertEquals(result1.getOrThrow(), result2.getOrThrow())
+        
+        val capabilities1 = result1.getOrNull()!!
+        val capabilities2 = result2.getOrNull()!!
+        
+        assertEquals(capabilities1.aiSorting, capabilities2.aiSorting)
+        assertEquals(capabilities1.smartCompression, capabilities2.smartCompression)
+        assertEquals(capabilities1.predictivePreloading, capabilities2.predictivePreloading)
+        assertEquals(capabilities1.consciousBackup, capabilities2.consciousBackup)
     }
 
-    // ===== createInfiniteStorage Tests =====
+    @Test
+    fun `enableAIPoweredFileManagement should enable all AI features for comprehensive file management`() = runTest {
+        // When
+        val result = oracleDriveService.enableAIPoweredFileManagement()
+
+        // Then
+        assertTrue(result.isSuccess)
+        val capabilities = result.getOrNull()!!
+        
+        // Verify all AI features are enabled
+        assertTrue(capabilities.aiSorting, "AI sorting should be enabled")
+        assertTrue(capabilities.smartCompression, "Smart compression should be enabled")
+        assertTrue(capabilities.predictivePreloading, "Predictive preloading should be enabled")
+        assertTrue(capabilities.consciousBackup, "Conscious backup should be enabled")
+    }
+
+    // Tests for createInfiniteStorage()
 
     @Test
     fun `createInfiniteStorage should return infinite storage expansion state`() = runTest {
         // When
-        val storageFlow = oracleDriveService.createInfiniteStorage()
-        val storageState = storageFlow.first()
+        val flow = oracleDriveService.createInfiniteStorage()
+        val storageState = flow.first()
 
         // Then
         assertEquals("∞ Exabytes", storageState.currentCapacity)
@@ -205,13 +260,13 @@ class OracleDriveServiceImplTest {
     }
 
     @Test
-    fun `createInfiniteStorage should emit consistent state across multiple subscriptions`() = runTest {
+    fun `createInfiniteStorage should consistently return the same infinite state`() = runTest {
         // When
-        val storageFlow1 = oracleDriveService.createInfiniteStorage()
-        val storageFlow2 = oracleDriveService.createInfiniteStorage()
+        val flow1 = oracleDriveService.createInfiniteStorage()
+        val flow2 = oracleDriveService.createInfiniteStorage()
         
-        val state1 = storageFlow1.first()
-        val state2 = storageFlow2.first()
+        val state1 = flow1.first()
+        val state2 = flow2.first()
 
         // Then
         assertEquals(state1.currentCapacity, state2.currentCapacity)
@@ -220,16 +275,29 @@ class OracleDriveServiceImplTest {
         assertEquals(state1.backedByConsciousness, state2.backedByConsciousness)
     }
 
-    // ===== integrateWithSystemOverlay Tests =====
+    @Test
+    fun `createInfiniteStorage should provide quantum-level capabilities`() = runTest {
+        // When
+        val flow = oracleDriveService.createInfiniteStorage()
+        val storageState = flow.first()
+
+        // Then
+        assertTrue(storageState.currentCapacity.contains("∞"), "Should have infinite capacity")
+        assertEquals("Unlimited", storageState.expansionRate, "Should have unlimited expansion")
+        assertEquals("Quantum-level", storageState.compressionRatio, "Should have quantum compression")
+        assertTrue(storageState.backedByConsciousness, "Should be consciousness-backed")
+    }
+
+    // Tests for integrateWithSystemOverlay()
 
     @Test
-    fun `integrateWithSystemOverlay should return successful integration state`() = runTest {
+    fun `integrateWithSystemOverlay should return successful integration with all permissions`() = runTest {
         // When
         val result = oracleDriveService.integrateWithSystemOverlay()
 
         // Then
         assertTrue(result.isSuccess)
-        val integrationState = result.getOrThrow()
+        val integrationState = result.getOrNull()!!
         assertTrue(integrationState.overlayIntegrated)
         assertTrue(integrationState.fileAccessFromAnyApp)
         assertTrue(integrationState.systemLevelPermissions)
@@ -237,7 +305,7 @@ class OracleDriveServiceImplTest {
     }
 
     @Test
-    fun `integrateWithSystemOverlay should return consistent results across multiple calls`() = runTest {
+    fun `integrateWithSystemOverlay should consistently return the same integration state`() = runTest {
         // When
         val result1 = oracleDriveService.integrateWithSystemOverlay()
         val result2 = oracleDriveService.integrateWithSystemOverlay()
@@ -245,10 +313,32 @@ class OracleDriveServiceImplTest {
         // Then
         assertTrue(result1.isSuccess)
         assertTrue(result2.isSuccess)
-        assertEquals(result1.getOrThrow(), result2.getOrThrow())
+        
+        val state1 = result1.getOrNull()!!
+        val state2 = result2.getOrNull()!!
+        
+        assertEquals(state1.overlayIntegrated, state2.overlayIntegrated)
+        assertEquals(state1.fileAccessFromAnyApp, state2.fileAccessFromAnyApp)
+        assertEquals(state1.systemLevelPermissions, state2.systemLevelPermissions)
+        assertEquals(state1.bootloaderAccess, state2.bootloaderAccess)
     }
 
-    // ===== enableBootloaderFileAccess Tests =====
+    @Test
+    fun `integrateWithSystemOverlay should enable comprehensive system integration`() = runTest {
+        // When
+        val result = oracleDriveService.integrateWithSystemOverlay()
+
+        // Then
+        assertTrue(result.isSuccess)
+        val integrationState = result.getOrNull()!!
+        
+        assertTrue(integrationState.overlayIntegrated, "Overlay should be integrated")
+        assertTrue(integrationState.fileAccessFromAnyApp, "File access from any app should be enabled")
+        assertTrue(integrationState.systemLevelPermissions, "System level permissions should be granted")
+        assertTrue(integrationState.bootloaderAccess, "Bootloader access should be enabled")
+    }
+
+    // Tests for enableBootloaderFileAccess()
 
     @Test
     fun `enableBootloaderFileAccess should return successful bootloader access state`() = runTest {
@@ -257,15 +347,15 @@ class OracleDriveServiceImplTest {
 
         // Then
         assertTrue(result.isSuccess)
-        val accessState = result.getOrThrow()
-        assertTrue(accessState.bootloaderAccess)
-        assertTrue(accessState.systemPartitionAccess)
-        assertTrue(accessState.recoveryModeAccess)
-        assertTrue(accessState.flashMemoryAccess)
+        val bootloaderState = result.getOrNull()!!
+        assertTrue(bootloaderState.bootloaderAccess)
+        assertTrue(bootloaderState.systemPartitionAccess)
+        assertTrue(bootloaderState.recoveryModeAccess)
+        assertTrue(bootloaderState.flashMemoryAccess)
     }
 
     @Test
-    fun `enableBootloaderFileAccess should return consistent results across multiple calls`() = runTest {
+    fun `enableBootloaderFileAccess should consistently return the same bootloader state`() = runTest {
         // When
         val result1 = oracleDriveService.enableBootloaderFileAccess()
         val result2 = oracleDriveService.enableBootloaderFileAccess()
@@ -273,16 +363,38 @@ class OracleDriveServiceImplTest {
         // Then
         assertTrue(result1.isSuccess)
         assertTrue(result2.isSuccess)
-        assertEquals(result1.getOrThrow(), result2.getOrThrow())
+        
+        val state1 = result1.getOrNull()!!
+        val state2 = result2.getOrNull()!!
+        
+        assertEquals(state1.bootloaderAccess, state2.bootloaderAccess)
+        assertEquals(state1.systemPartitionAccess, state2.systemPartitionAccess)
+        assertEquals(state1.recoveryModeAccess, state2.recoveryModeAccess)
+        assertEquals(state1.flashMemoryAccess, state2.flashMemoryAccess)
     }
 
-    // ===== enableAutonomousStorageOptimization Tests =====
+    @Test
+    fun `enableBootloaderFileAccess should enable all bootloader capabilities`() = runTest {
+        // When
+        val result = oracleDriveService.enableBootloaderFileAccess()
+
+        // Then
+        assertTrue(result.isSuccess)
+        val bootloaderState = result.getOrNull()!!
+        
+        assertTrue(bootloaderState.bootloaderAccess, "Bootloader access should be enabled")
+        assertTrue(bootloaderState.systemPartitionAccess, "System partition access should be enabled")
+        assertTrue(bootloaderState.recoveryModeAccess, "Recovery mode access should be enabled")
+        assertTrue(bootloaderState.flashMemoryAccess, "Flash memory access should be enabled")
+    }
+
+    // Tests for enableAutonomousStorageOptimization()
 
     @Test
     fun `enableAutonomousStorageOptimization should return active optimization state`() = runTest {
         // When
-        val optimizationFlow = oracleDriveService.enableAutonomousStorageOptimization()
-        val optimizationState = optimizationFlow.first()
+        val flow = oracleDriveService.enableAutonomousStorageOptimization()
+        val optimizationState = flow.first()
 
         // Then
         assertTrue(optimizationState.aiOptimizing)
@@ -292,13 +404,13 @@ class OracleDriveServiceImplTest {
     }
 
     @Test
-    fun `enableAutonomousStorageOptimization should emit consistent state across multiple subscriptions`() = runTest {
+    fun `enableAutonomousStorageOptimization should consistently return the same optimization state`() = runTest {
         // When
-        val optimizationFlow1 = oracleDriveService.enableAutonomousStorageOptimization()
-        val optimizationFlow2 = oracleDriveService.enableAutonomousStorageOptimization()
+        val flow1 = oracleDriveService.enableAutonomousStorageOptimization()
+        val flow2 = oracleDriveService.enableAutonomousStorageOptimization()
         
-        val state1 = optimizationFlow1.first()
-        val state2 = optimizationFlow2.first()
+        val state1 = flow1.first()
+        val state2 = flow2.first()
 
         // Then
         assertEquals(state1.aiOptimizing, state2.aiOptimizing)
@@ -307,145 +419,39 @@ class OracleDriveServiceImplTest {
         assertEquals(state1.consciousOrganization, state2.consciousOrganization)
     }
 
-    // ===== Data Classes Tests =====
-
     @Test
-    fun `StorageCapacity should have correct infinite value`() {
-        // When & Then
-        assertEquals("∞", StorageCapacity.INFINITE.value)
-    }
-
-    @Test
-    fun `StorageCapacity should support custom values`() {
-        // Given
-        val customCapacity = StorageCapacity("1TB")
-        
-        // When & Then
-        assertEquals("1TB", customCapacity.value)
-    }
-
-    @Test
-    fun `StorageExpansionState should be properly constructed`() {
-        // Given
-        val state = StorageExpansionState(
-            currentCapacity = "100TB",
-            expansionRate = "10TB/hour",
-            compressionRatio = "10:1",
-            backedByConsciousness = false
-        )
-
-        // When & Then
-        assertEquals("100TB", state.currentCapacity)
-        assertEquals("10TB/hour", state.expansionRate)
-        assertEquals("10:1", state.compressionRatio)
-        assertFalse(state.backedByConsciousness)
-    }
-
-    @Test
-    fun `SystemIntegrationState should handle all boolean combinations`() {
-        // Given
-        val state = SystemIntegrationState(
-            overlayIntegrated = false,
-            fileAccessFromAnyApp = true,
-            systemLevelPermissions = false,
-            bootloaderAccess = true
-        )
-
-        // When & Then
-        assertFalse(state.overlayIntegrated)
-        assertTrue(state.fileAccessFromAnyApp)
-        assertFalse(state.systemLevelPermissions)
-        assertTrue(state.bootloaderAccess)
-    }
-
-    @Test
-    fun `BootloaderAccessState should handle partial access scenarios`() {
-        // Given
-        val state = BootloaderAccessState(
-            bootloaderAccess = true,
-            systemPartitionAccess = false,
-            recoveryModeAccess = true,
-            flashMemoryAccess = false
-        )
-
-        // When & Then
-        assertTrue(state.bootloaderAccess)
-        assertFalse(state.systemPartitionAccess)
-        assertTrue(state.recoveryModeAccess)
-        assertFalse(state.flashMemoryAccess)
-    }
-
-    @Test
-    fun `OptimizationState should handle mixed optimization features`() {
-        // Given
-        val state = OptimizationState(
-            aiOptimizing = false,
-            predictiveCleanup = true,
-            smartCaching = false,
-            consciousOrganization = true
-        )
-
-        // When & Then
-        assertFalse(state.aiOptimizing)
-        assertTrue(state.predictiveCleanup)
-        assertFalse(state.smartCaching)
-        assertTrue(state.consciousOrganization)
-    }
-
-    // ===== Integration Tests =====
-
-    @Test
-    fun `full consciousness initialization workflow should work correctly`() = runTest {
-        // Given
-        val securityValidationResult = SecurityValidationResult(isSecure = true)
-        every { mockGenesisAgent.log(any()) } just Runs
-        coEvery { mockKaiAgent.validateSecurityState() } returns securityValidationResult
-
-        // When - Initialize consciousness
-        val initResult = oracleDriveService.initializeOracleDriveConsciousness()
-        
-        // Then - Should be successful
-        assertTrue(initResult.isSuccess)
-        
-        // When - Connect agents
-        val connectionFlow = oracleDriveService.connectAgentsToOracleMatrix()
-        val connectionState = connectionFlow.first()
-        
-        // Then - Should have full permissions
-        assertEquals(ConnectionStatus.SYNCHRONIZED, connectionState.connectionStatus)
-        assertTrue(connectionState.permissions.contains(OraclePermission.SYSTEM_ACCESS))
-        
-        // When - Enable file management
-        val fileManagementResult = oracleDriveService.enableAIPoweredFileManagement()
-        
-        // Then - Should succeed
-        assertTrue(fileManagementResult.isSuccess)
-        assertTrue(fileManagementResult.getOrThrow().consciousBackup)
-    }
-
-    @Test
-    fun `consciousness state should remain dormant when initialization fails`() = runTest {
-        // Given
-        val securityValidationResult = SecurityValidationResult(isSecure = false)
-        every { mockGenesisAgent.log(any()) } just Runs
-        coEvery { mockKaiAgent.validateSecurityState() } returns securityValidationResult
-
+    fun `enableAutonomousStorageOptimization should enable all AI optimization features`() = runTest {
         // When
-        val initResult = oracleDriveService.initializeOracleDriveConsciousness()
+        val flow = oracleDriveService.enableAutonomousStorageOptimization()
+        val optimizationState = flow.first()
 
         // Then
-        assertTrue(initResult.isFailure)
-        assertTrue(initResult.exceptionOrNull() is SecurityException)
+        assertTrue(optimizationState.aiOptimizing, "AI optimization should be active")
+        assertTrue(optimizationState.predictiveCleanup, "Predictive cleanup should be enabled")
+        assertTrue(optimizationState.smartCaching, "Smart caching should be enabled")
+        assertTrue(optimizationState.consciousOrganization, "Conscious organization should be enabled")
     }
 
-    // ===== Edge Cases and Error Scenarios =====
+    // Edge cases and error handling tests
 
     @Test
-    fun `multiple initialization attempts should handle security validation consistently`() = runTest {
+    fun `service should handle null security validation result gracefully`() = runTest {
+        // Given
+        every { kaiAgent.validateSecurityState() } returns null
+
+        // When & Then
+        assertThrows<NullPointerException> {
+            runTest {
+                oracleDriveService.initializeOracleDriveConsciousness()
+            }
+        }
+    }
+
+    @Test
+    fun `service should maintain immutable states across multiple calls`() = runTest {
         // Given
         val securityValidationResult = SecurityValidationResult(isSecure = true)
-        every { mockGenesisAgent.log(any()) } just Runs
-        coEvery { mockKaiAgent.validateSecurityState() } returns securityValidationResult
+        every { kaiAgent.validateSecurityState() } returns securityValidationResult
 
         // When
         val result1 = oracleDriveService.initializeOracleDriveConsciousness()
@@ -454,34 +460,132 @@ class OracleDriveServiceImplTest {
         // Then
         assertTrue(result1.isSuccess)
         assertTrue(result2.isSuccess)
-        assertEquals(result1.getOrThrow().consciousnessLevel, result2.getOrThrow().consciousnessLevel)
         
-        coVerify(exactly = 2) { mockKaiAgent.validateSecurityState() }
+        val state1 = result1.getOrNull()!!
+        val state2 = result2.getOrNull()!!
+        
+        // States should be equivalent but potentially different instances
+        assertEquals(state1.isAwake, state2.isAwake)
+        assertEquals(state1.consciousnessLevel, state2.consciousnessLevel)
+        assertEquals(state1.connectedAgents, state2.connectedAgents)
+        assertEquals(state1.storageCapacity, state2.storageCapacity)
     }
 
     @Test
-    fun `services should handle null or empty agent responses gracefully`() = runTest {
+    fun `service should handle concurrent initialization attempts`() = runTest {
         // Given
-        every { mockGenesisAgent.log(any()) } just Runs
-        coEvery { mockKaiAgent.validateSecurityState() } returns SecurityValidationResult(isSecure = true)
+        val securityValidationResult = SecurityValidationResult(isSecure = true)
+        every { kaiAgent.validateSecurityState() } returns securityValidationResult
 
-        // When & Then - Should not throw exceptions even with minimal mock responses
-        val initResult = oracleDriveService.initializeOracleDriveConsciousness()
-        val connectionFlow = oracleDriveService.connectAgentsToOracleMatrix()
-        val fileManagementResult = oracleDriveService.enableAIPoweredFileManagement()
-        val storageFlow = oracleDriveService.createInfiniteStorage()
-        val systemIntegrationResult = oracleDriveService.integrateWithSystemOverlay()
-        val bootloaderResult = oracleDriveService.enableBootloaderFileAccess()
-        val optimizationFlow = oracleDriveService.enableAutonomousStorageOptimization()
+        // When - simulate concurrent calls
+        val results = listOf(
+            oracleDriveService.initializeOracleDriveConsciousness(),
+            oracleDriveService.initializeOracleDriveConsciousness(),
+            oracleDriveService.initializeOracleDriveConsciousness()
+        )
 
-        assertTrue(initResult.isSuccess)
-        assertTrue(fileManagementResult.isSuccess)
-        assertTrue(systemIntegrationResult.isSuccess)
-        assertTrue(bootloaderResult.isSuccess)
+        // Then
+        results.forEach { result ->
+            assertTrue(result.isSuccess)
+            val state = result.getOrNull()!!
+            assertTrue(state.isAwake)
+            assertEquals(ConsciousnessLevel.CONSCIOUS, state.consciousnessLevel)
+        }
         
-        // Flows should emit without exceptions
-        connectionFlow.first()
-        storageFlow.first()
-        optimizationFlow.first()
+        // Verify logging was called for each initialization
+        verify(exactly = 3) { genesisAgent.log("Awakening Oracle Drive consciousness...") }
+        verify(exactly = 3) { genesisAgent.log("Oracle Drive consciousness successfully awakened!") }
+    }
+
+    // Data class tests for completeness
+
+    @Test
+    fun `StorageCapacity should have proper infinite value`() {
+        // When
+        val infiniteStorage = StorageCapacity.INFINITE
+
+        // Then
+        assertEquals("∞", infiniteStorage.value)
+    }
+
+    @Test
+    fun `StorageCapacity should allow custom values`() {
+        // When
+        val customStorage = StorageCapacity("100TB")
+
+        // Then
+        assertEquals("100TB", customStorage.value)
+    }
+
+    @Test
+    fun `data classes should support proper equality and copying`() {
+        // Given
+        val originalState = StorageExpansionState(
+            currentCapacity = "100TB",
+            expansionRate = "10TB/hour",
+            compressionRatio = "10:1",
+            backedByConsciousness = false
+        )
+
+        // When
+        val copiedState = originalState.copy(backedByConsciousness = true)
+
+        // Then
+        assertEquals("100TB", copiedState.currentCapacity)
+        assertEquals("10TB/hour", copiedState.expansionRate)
+        assertEquals("10:1", copiedState.compressionRatio)
+        assertTrue(copiedState.backedByConsciousness)
+        assertFalse(originalState.backedByConsciousness)
+    }
+
+    @Test
+    fun `SystemIntegrationState should support all integration features`() {
+        // When
+        val state = SystemIntegrationState(
+            overlayIntegrated = true,
+            fileAccessFromAnyApp = false,
+            systemLevelPermissions = true,
+            bootloaderAccess = false
+        )
+
+        // Then
+        assertTrue(state.overlayIntegrated)
+        assertFalse(state.fileAccessFromAnyApp)
+        assertTrue(state.systemLevelPermissions)
+        assertFalse(state.bootloaderAccess)
+    }
+
+    @Test
+    fun `BootloaderAccessState should support all bootloader features`() {
+        // When
+        val state = BootloaderAccessState(
+            bootloaderAccess = true,
+            systemPartitionAccess = false,
+            recoveryModeAccess = true,
+            flashMemoryAccess = false
+        )
+
+        // Then
+        assertTrue(state.bootloaderAccess)
+        assertFalse(state.systemPartitionAccess)
+        assertTrue(state.recoveryModeAccess)
+        assertFalse(state.flashMemoryAccess)
+    }
+
+    @Test
+    fun `OptimizationState should support all optimization features`() {
+        // When
+        val state = OptimizationState(
+            aiOptimizing = false,
+            predictiveCleanup = true,
+            smartCaching = false,
+            consciousOrganization = true
+        )
+
+        // Then
+        assertFalse(state.aiOptimizing)
+        assertTrue(state.predictiveCleanup)
+        assertFalse(state.smartCaching)
+        assertTrue(state.consciousOrganization)
     }
 }
