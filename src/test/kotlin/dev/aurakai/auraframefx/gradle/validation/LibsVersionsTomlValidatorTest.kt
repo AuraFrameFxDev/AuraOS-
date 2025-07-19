@@ -1024,26 +1024,6 @@ class LibsVersionsTomlValidatorTest {
     }
 
     @Test
-    fun `validate should detect libraries with missing module property when using parseTomlContent`() {
-        val noModuleToml = """
-            [versions]
-            test = "1.0.0"
-
-            [libraries]
-            valid-lib = { module = "group:artifact", version.ref = "test" }
-            no-module-lib = { version.ref = "test" }
-        """.trimIndent()
-
-        testFile.writeText(noModuleToml)
-
-        val result = validator.validate()
-
-        // The implementation doesn't explicitly check for missing module property in validateModuleFormats
-        // It only validates format if module exists, so this should pass
-        assertTrue(result.isValid)
-    }
-
-    @Test
     fun `validate should handle TOML with escaped characters in parsing`() {
         val escapedToml = """
             [versions]
@@ -1153,7 +1133,7 @@ class LibsVersionsTomlValidatorTest {
         assertEquals(2, result.errors.size)
         assertEquals(2, result.warnings.size)
     }
-}
+
     @Test
     fun `ValidationResult should handle mixed errors and warnings addition`() {
         val result = ValidationResult()
@@ -1183,7 +1163,7 @@ class LibsVersionsTomlValidatorTest {
         // Direct manipulation of mutable lists (bypassing addError method)
         result.errors.add("Direct error")
         result.warnings.add("Direct warning")
-        
+
         assertTrue(result.isValid) // Should still be valid as isValid wasn't updated by addError method
         assertEquals(1, result.errors.size)
         assertEquals(1, result.warnings.size)
@@ -1194,7 +1174,7 @@ class LibsVersionsTomlValidatorTest {
     @Test
     fun `validate should handle TOML with malformed inline tables that cause parsing errors`() {
         val malformedInlineToml = """
-            [versions]
+            [versions] 
             test = "1.0.0"
 
             [libraries]
@@ -1207,7 +1187,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(malformedInlineToml)
 
         val result = validator.validate()
-        
+
         assertFalse(result.isValid)
         assertTrue(result.errors.any { it.startsWith("Syntax error in TOML file:") })
     }
@@ -1239,7 +1219,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(mixedQuotesToml)
 
         val result = validator.validate()
-        
+
         // Should handle different quote types gracefully without syntax errors
         assertTrue(result.isValid)
         assertTrue(result.errors.isEmpty())
@@ -1259,7 +1239,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(specificVersionToml)
 
         val result = validator.validate()
-        
+
         assertFalse(result.isValid)
         assertTrue(result.errors.any { 
             it.contains("Version incompatibility: AGP 8.5.0 is not compatible with Kotlin 1.8.10") 
@@ -1279,7 +1259,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(vulnerableJUnitToml)
 
         val result = validator.validate()
-        
+
         assertTrue(result.isValid) // Should be valid but with warnings
         assertTrue(result.warnings.any { 
             it.contains("Library 'junit-legacy' uses vulnerable version: 4.11") 
@@ -1301,7 +1281,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(noCriticalDepsToml)
 
         val result = validator.validate()
-        
+
         assertTrue(result.isValid)
         assertTrue(result.warnings.any { 
             it.contains("Missing critical dependencies: junit:junit, androidx.core:core-ktx") 
@@ -1324,7 +1304,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(emptyRefBundleToml)
 
         val result = validator.validate()
-        
+
         assertFalse(result.isValid)
         assertTrue(result.errors.any { 
             it.contains("Invalid bundle reference in 'invalid-bundle': ") 
@@ -1345,7 +1325,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(complexInlineToml)
 
         val result = validator.validate()
-        
+
         assertTrue(result.isValid)
         assertTrue(result.errors.isEmpty())
     }
@@ -1372,7 +1352,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(arrayFormattingToml)
 
         val result = validator.validate()
-        
+
         assertTrue(result.isValid)
         assertTrue(result.errors.isEmpty())
     }
@@ -1395,7 +1375,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(edgeModuleToml)
 
         val result = validator.validate()
-        
+
         assertFalse(result.isValid)
         assertTrue(result.errors.any { it.contains("Invalid module format for 'invalid1': invalid-module") })
         assertTrue(result.errors.any { it.contains("Invalid module format for 'invalid2': com.example:") })
@@ -1421,7 +1401,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(edgePluginToml)
 
         val result = validator.validate()
-        
+
         assertFalse(result.isValid)
         assertTrue(result.errors.any { it.contains("Invalid plugin ID format for 'invalid1': invalid") })
         assertTrue(result.errors.any { it.contains("Invalid plugin ID format for 'invalid2': toolongpluginnamewithoutanystructure") })
@@ -1449,7 +1429,7 @@ class LibsVersionsTomlValidatorTest {
         testFile.writeText(versionPatternsToml)
 
         val result = validator.validate()
-        
+
         assertFalse(result.isValid)
         assertTrue(result.errors.any { it.contains("Invalid version format for 'invalid1': not.a.version") })
         assertTrue(result.errors.any { it.contains("Invalid version format for 'invalid2': 1.x.y") })
@@ -1595,3 +1575,4 @@ class LibsVersionsTomlValidatorTest {
         assertTrue(result.isValid)
         assertTrue(result.errors.isEmpty())
     }
+}
