@@ -27,8 +27,12 @@ import kotlin.math.*
 object KineticIdentityLibrary {
     
     /**
-     * Breathing animation for lock screen and ambient elements.
-     * Creates a gentle, organic pulsing effect that feels alive.
+     * Displays a gentle, organic pulsing animation that simulates a breathing effect.
+     *
+     * The animation adapts its pulse duration and amplitude based on the provided emotional state, creating a subtle sense of life and presence. A central circle and three concentric rings pulse smoothly in scale and alpha, making this suitable for ambient UI elements such as lock screens.
+     *
+     * @param intensity Controls the strength of the pulsing effect.
+     * @param emotionalState Determines the animation's speed and amplitude to reflect different moods.
      */
     @Composable
     fun BreathingAnimation(
@@ -98,8 +102,13 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Responsive glow effect that reacts to user touch and interaction.
-     * Creates an intelligent, organic response to user input.
+     * Displays a glow effect that animates in response to user interaction, such as touch input.
+     *
+     * The glow appears at the specified touch position and smoothly animates its radius and alpha based on the active state and intensity. Ripple effects are layered to create an organic, responsive visual tied to the theme's accent color.
+     *
+     * @param isActive Whether the glow effect is currently active.
+     * @param touchPosition The position where the glow should be centered, or null to hide the effect.
+     * @param intensity Controls the strength of the glow effect.
      */
     @Composable
     fun ResponsiveGlow(
@@ -161,8 +170,15 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Particle system for dynamic, flowing animations.
-     * Creates organic movement patterns that respond to theme and context.
+     * Displays a flowing particle animation with organic movement patterns.
+     *
+     * Animates a system of particles that move and fade according to the specified theme, flow direction, and intensity. Particle behavior adapts to the current animation style, creating dynamic visual effects suitable for ambient UI backgrounds or accent elements.
+     *
+     * @param modifier Modifier to apply to the animation container.
+     * @param theme The theme providing animation style and accent color.
+     * @param particleCount Number of particles in the system.
+     * @param flowDirection Direction in which particles flow.
+     * @param intensity Controls the speed and visibility of the particles.
      */
     @Composable
     fun ParticleFlow(
@@ -191,8 +207,13 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Keyboard glow effect that responds to typing.
-     * Makes keys glow with soft light as user types.
+     * Displays a glowing effect over the keyboard area that pulses and intensifies in response to typing activity.
+     *
+     * The glow animates smoothly, increasing in brightness and pulsing when typing is active, and fading when idle. The effect is rendered as a rounded rectangle at the bottom portion of the canvas, with color and intensity derived from the provided theme and intensity parameter.
+     *
+     * @param isTyping Whether typing activity is currently detected, controlling the glow's intensity.
+     * @param theme The theme providing accent color for the glow effect.
+     * @param intensity Multiplier for the overall glow strength.
      */
     @Composable
     fun KeyboardGlow(
@@ -265,7 +286,12 @@ object KineticIdentityLibrary {
         val size: Float
     )
     
-    // Helper functions
+    /**
+     * Generates a list of particles with randomized positions, velocities, lifespans, and sizes.
+     *
+     * @param count The number of particles to generate.
+     * @return A list of particles initialized with random properties.
+     */
     
     private fun generateParticles(count: Int): List<Particle> {
         return (0 until count).map {
@@ -285,6 +311,18 @@ object KineticIdentityLibrary {
         }
     }
     
+    /**
+     * Updates the state of a particle based on animation style, flow direction, and intensity.
+     *
+     * Adjusts the particle's velocity and position according to the specified flow direction and animation style.
+     * Decreases the particle's life over time. If the particle's life expires or it moves off-screen, it is respawned at a new position with randomized velocity.
+     *
+     * @param particle The particle to update.
+     * @param animationStyle The animation style influencing particle speed.
+     * @param flowDirection The direction in which the particle flows.
+     * @param intensity The intensity multiplier for particle movement.
+     * @return The updated particle with new position, velocity, and life, or a respawned particle if expired.
+     */
     private fun updateParticle(
         particle: Particle,
         animationStyle: AuraTheme.AnimationStyle,
@@ -338,6 +376,13 @@ object KineticIdentityLibrary {
         }
     }
     
+    /**
+     * Draws a single particle as a circle with alpha based on its remaining life and the specified intensity.
+     *
+     * @param particle The particle to draw.
+     * @param color The base color of the particle.
+     * @param intensity The intensity multiplier for the particle's alpha.
+     */
     private fun DrawScope.drawParticle(
         particle: Particle,
         color: Color,
