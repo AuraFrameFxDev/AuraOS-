@@ -45,18 +45,6 @@ import kotlin.test.assertNotNull
  * - Data class integrity
  */
 @RunWith(AndroidJUnit4::class)
- * Testing Framework: JUnit 4 with Compose Test Rules and JUnit 5 for pure functions
- * Mocking Library: MockK
- * 
- * Tests cover:
- * - Breathing animation behavior across emotional states
- * - Responsive glow activation and deactivation
- * - Particle flow generation and movement
- * - Keyboard glow typing interactions
- * - Edge cases and error conditions
- * - Performance considerations
- * - Pure function validation (generateParticles, updateParticle)
- */
 class KineticIdentityLibraryTest {
 
     @get:Rule
