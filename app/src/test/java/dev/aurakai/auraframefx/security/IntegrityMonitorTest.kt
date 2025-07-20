@@ -250,11 +250,6 @@ class IntegrityMonitorTest {
         assertEquals(64, hash.length)
         assertTrue(hash.matches(Regex("[0-9a-f]+")))
         // Verify it's different from empty file hash
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
     }
 
     @Test
