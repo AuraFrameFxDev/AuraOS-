@@ -445,7 +445,7 @@ class OracleDriveServiceTest {
             coEvery { oracleDriveService.enableAutonomousStorageOptimization() } returns emptyFlow()
 
             // When
-            val emittedStates = mutableList<OptimizationState>()
+            val emittedStates = mutableListOf<OptimizationState>()
             oracleDriveService.enableAutonomousStorageOptimization().collect { emittedStates.add(it) }
 
             // Then
