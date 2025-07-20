@@ -44,7 +44,10 @@ import kotlin.test.assertNotNull
  * - Helper function validation
  * - Data class integrity
  */
-@RunWith(AndroidJUnit4::class)
+import org.junit.After
+import org.junit.runner.RunWith
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlin.test.assertEquals
 class KineticIdentityLibraryTest {
 
     @get:Rule
