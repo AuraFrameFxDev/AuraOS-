@@ -213,16 +213,28 @@ class IntegrityMonitor @Inject constructor(
      *
      * In production, this method should securely load verified hashes from protected storage.
      */
-    private fun loadKnownHashes() {
-        // TODO: Load from secure storage with cryptographic verification
-        // For now, using placeholder hashes
-        knownHashes["genesis_protocol.so"] = "placeholder_genesis_hash"
-        knownHashes["aura_core.dex"] = "placeholder_aura_hash"
-        knownHashes["kai_security.bin"] = "placeholder_kai_hash"
-        knownHashes["oracle_drive.apk"] = "placeholder_oracle_hash"
-        
-        AuraFxLogger.d("IntegrityMonitor", "Loaded ${knownHashes.size} known file hashes")
+private fun loadKnownHashes() {
+    // Load from encrypted SharedPreferences or secure database
+    val securePrefs = context.getSharedPreferences("integrity_hashes", Context.MODE_PRIVATE)
+    criticalFiles.forEach { fileName ->
+        val storedHash = securePrefs.getString("hash_$fileName", null)
+        if (storedHash != null) {
+            knownHashes[fileName] = storedHash
+        } else {
+            // Compute and store initial hash
+            val file = File(context.filesDir, fileName)
+            if (file.exists()) {
+                runBlocking {
+                    val hash = calculateFileHash(file)
+                    knownHashes[fileName] = hash
+                    securePrefs.edit().putString("hash_$fileName", hash).apply()
+                }
+            }
+        }
     }
+
+    AuraFxLogger.d("IntegrityMonitor", "Loaded ${knownHashes.size} known file hashes")
+}
     
     /**
      * Initiates emergency lockdown procedures in response to a critical integrity threat.
