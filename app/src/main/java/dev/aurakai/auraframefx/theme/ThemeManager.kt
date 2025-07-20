@@ -45,12 +45,12 @@ class ThemeManager @Inject constructor(
     }
 
     /**
-     * Applies a system-wide theme based on a user's natural language description.
+     * Applies a system-wide theme based on a user's natural language query.
      *
-     * Uses AI to interpret the user's query, maps recognized intents to predefined themes, and applies the selected theme. Returns a [ThemeResult] indicating success, failure to understand the query, or an error.
+     * Interprets the user's description using AI, maps recognized intents to predefined themes, and applies the selected theme. Returns a [ThemeResult] indicating whether the theme was applied successfully, the query was not understood, or an error occurred.
      *
      * @param query The user's natural language description of the desired theme.
-     * @return The result of the theme application attempt.
+     * @return The outcome of the theme application attempt.
      */
     suspend fun applyThemeFromNaturalLanguage(query: String): ThemeResult {
         return try {
@@ -86,11 +86,11 @@ class ThemeManager @Inject constructor(
     }
 
     /**
-     * Applies the specified theme to system-level UI components.
+     * Applies the given theme to system-level UI components.
      *
-     * This function is intended to update system UI elements, notifications, keyboard themes, and related components to reflect the selected theme. Implementation is pending.
+     * Intended to update system UI elements, notifications, keyboard themes, and related components to match the selected theme. Implementation is pending.
      *
-     * @param theme The theme to apply to system-level interfaces.
+     * @param theme The theme to apply.
      */
     private suspend fun applySystemTheme(theme: AuraTheme) {
         // TODO: Implement system-level theme application via OracleDrive
@@ -99,9 +99,9 @@ class ThemeManager @Inject constructor(
     }
 
     /**
-     * Suggests a list of visual themes based on time of day, user activity, and optional emotional context.
+     * Returns a list of recommended visual themes based on the provided time of day, user activity, and optional emotional context.
      *
-     * Uses AI analysis to interpret the provided context and returns matching themes. Returns an empty list if no suitable themes are found or if an error occurs.
+     * Uses AI-driven analysis to interpret the context and suggest matching themes. Returns an empty list if no suitable themes are found or if an error occurs.
      *
      * @param timeOfDay The current time of day (e.g., "morning", "evening").
      * @param userActivity The user's current activity (e.g., "working", "relaxing").
