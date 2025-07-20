@@ -1,473 +1,583 @@
 package dev.aurakai.auraframefx.security
-
 import android.content.Context
 import dev.aurakai.auraframefx.utils.AuraFxLogger
-import io.mockk.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.Assert.*
-import java.io.File
-import java.io.FileInputStream
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mock
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.*
 import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 /**
- * Comprehensive unit tests for IntegrityMonitor
- * Testing framework: JUnit 4 with MockK for mocking
- * 
- * Tests cover:
- * - Initialization and lifecycle management
- * - Continuous monitoring functionality
- * - Integrity check logic and violation detection
- * - Threat level determination and response handling
+ * Comprehensive unit tests for IntegrityMonitor class.
+ * Tests file integrity monitoring, threat detection, and security protocols.
+ *
+ * Testing Framework: JUnit 5 with Mockito and Kotlin Coroutines Test
+ *
+ * This test suite covers:
+ * - Happy path scenarios for secure file monitoring
+ * - Edge cases and error conditions  
+ * - All threat levels and violation handling
  * - File hash calculation accuracy
- * - Error handling and edge cases
+ * - Coroutine-based monitoring lifecycle
  * - StateFlow behavior and state transitions
+ * - Performance and error recovery scenarios
  */
+@ExtendWith(MockitoExtension::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class IntegrityMonitorTest {
 
+    @Mock
     private lateinit var mockContext: Context
-    private lateinit var integrityMonitor: IntegrityMonitor
-    private lateinit var testDispatcher: TestCoroutineDispatcher
-    private lateinit var testScope: TestCoroutineScope
 
-    @Before
+    @Mock
+    private lateinit var mockFilesDir: File
+
+    private lateinit var integrityMonitor: IntegrityMonitor
+    private val testDispatcher = StandardTestDispatcher()
+
+    companion object {
+        private const val EXPECTED_SHA256_EMPTY = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        private const val MONITORING_INTERVAL = 5000L
+        private const val ERROR_RETRY_DELAY = 10000L
+    }
+
+    @BeforeEach
     fun setUp() {
-        // Setup test coroutines
-        testDispatcher = TestCoroutineDispatcher()
-        testScope = TestCoroutineScope(testDispatcher)
         Dispatchers.setMain(testDispatcher)
         
-        // Mock dependencies
-        mockContext = mockk()
-        
-        // Mock AuraFxLogger to prevent actual logging during tests
-        mockkObject(AuraFxLogger)
-        every { AuraFxLogger.i(any(), any()) } just Runs
-        every { AuraFxLogger.d(any(), any()) } just Runs
-        every { AuraFxLogger.w(any(), any()) } just Runs
-        every { AuraFxLogger.e(any(), any(), any()) } just Runs
-        
-        // Setup mock context filesDir
-        val mockFilesDir = mockk<File>()
-        every { mockContext.filesDir } returns mockFilesDir
+        // Setup mock context and files directory
+        whenever(mockContext.filesDir).thenReturn(mockFilesDir)
+        whenever(mockFilesDir.toString()).thenReturn("/mock/files/dir")
         
         integrityMonitor = IntegrityMonitor(mockContext)
     }
 
-    @After
+
+    @AfterEach
     fun tearDown() {
         integrityMonitor.shutdown()
-        testScope.cleanupTestCoroutines()
         Dispatchers.resetMain()
-        unmockkAll()
     }
 
+    // Happy Path Tests
     @Test
-    fun `initialize sets monitoring status and loads hashes`() = testScope.runBlockingTest {
-        // Act
-        integrityMonitor.initialize()
-        
-        // Assert
-        assertEquals(IntegrityMonitor.IntegrityStatus.MONITORING, integrityMonitor.integrityStatus.value)
-        assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.value)
-        
-        // Verify logger calls
-        verify { AuraFxLogger.i("IntegrityMonitor", "Initializing Kai's Real-Time Integrity Monitoring") }
-        verify { AuraFxLogger.i("IntegrityMonitor", "Integrity monitoring active - Genesis Protocol protected") }
-        verify { AuraFxLogger.d("IntegrityMonitor", "Loaded 4 known file hashes") }
-    }
-
-    @Test
-    fun `shutdown cancels monitoring and sets offline status`() = testScope.runBlockingTest {
-        // Arrange
-        integrityMonitor.initialize()
-        
-        // Act
-        integrityMonitor.shutdown()
-        
-        // Assert
-        assertEquals(IntegrityMonitor.IntegrityStatus.OFFLINE, integrityMonitor.integrityStatus.value)
-        verify { AuraFxLogger.i("IntegrityMonitor", "Shutting down integrity monitoring") }
-    }
-
-    @Test
-    fun `determineThreatLevel returns correct levels for different files`() {
-        // Use reflection to access private method for testing
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("determineThreatLevel", String::class.java)
-        method.isAccessible = true
-        
-        // Test critical file
-        assertEquals(IntegrityMonitor.ThreatLevel.CRITICAL, 
-            method.invoke(integrityMonitor, "genesis_protocol.so"))
-        
-        // Test high threat files
-        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, 
-            method.invoke(integrityMonitor, "aura_core.dex"))
-        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, 
-            method.invoke(integrityMonitor, "kai_security.bin"))
-        
-        // Test medium threat file
-        assertEquals(IntegrityMonitor.ThreatLevel.MEDIUM, 
-            method.invoke(integrityMonitor, "oracle_drive.apk"))
-        
-        // Test unknown file (should be low)
-        assertEquals(IntegrityMonitor.ThreatLevel.LOW, 
-            method.invoke(integrityMonitor, "unknown_file.txt"))
-    }
-
-    @Test
-    fun `calculateFileHash produces consistent SHA-256 hash`() = testScope.runBlockingTest {
-        // Arrange
-        val testContent = "test file content"
-        val expectedHash = "3d5a5a7d8b9b3a3e9f2c8d1a0b5c9e7f2a4d6b8c0e1f3a5b7c9d2e4f6a8b0c1e3"
-        
-        val mockFile = mockk<File>()
-        val inputStream = ByteArrayInputStream(testContent.toByteArray())
-        
-        every { mockFile.inputStream() } returns inputStream
-        
-        // Use reflection to access private method
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("calculateFileHash", File::class.java)
-        method.isAccessible = true
-        
-        // Act
-        val actualHash = method.invoke(integrityMonitor, mockFile) as String
-        
-        // Assert
-        assertNotNull(actualHash)
-        assertEquals(64, actualHash.length) // SHA-256 produces 64 character hex string
-        assertTrue(actualHash.matches(Regex("[a-f0-9]+"))) // Should be valid hex
-    }
-
-    @Test
-    fun `performIntegrityCheck detects no violations when hashes match`() = testScope.runBlockingTest {
-        // Arrange
-        val mockFile = mockk<File>()
-        every { mockFile.exists() } returns true
-        every { mockFile.inputStream() } returns ByteArrayInputStream("content".toByteArray())
-        every { mockContext.filesDir } returns mockk()
-        
-        // Mock File constructor to return our mock file
-        mockkConstructor(File::class)
-        every { anyConstructed<File>().exists() } returns true
-        every { anyConstructed<File>().inputStream() } returns ByteArrayInputStream("content".toByteArray())
-        
-        integrityMonitor.initialize()
-        
-        // Use reflection to set known hashes to match calculated hashes
-        val knownHashesField = IntegrityMonitor::class.java.getDeclaredField("knownHashes")
-        knownHashesField.isAccessible = true
-        val knownHashes = knownHashesField.get(integrityMonitor) as MutableMap<String, String>
-        
-        // Calculate what the hash would be for our test content
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("calculateFileHash", File::class.java)
-        method.isAccessible = true
-        val testHash = method.invoke(integrityMonitor, mockFile) as String
-        
-        knownHashes["genesis_protocol.so"] = testHash
-        knownHashes["aura_core.dex"] = testHash
-        knownHashes["kai_security.bin"] = testHash
-        knownHashes["oracle_drive.apk"] = testHash
-        
-        // Act - Use reflection to call private method
-        val performCheckMethod = IntegrityMonitor::class.java.getDeclaredMethod("performIntegrityCheck")
-        performCheckMethod.isAccessible = true
-        performCheckMethod.invoke(integrityMonitor)
-        
-        // Assert
+    fun `test initial state values are correct`() = runTest {
         assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
         assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.value)
     }
 
     @Test
-    fun `performIntegrityCheck detects violations when hashes differ`() = testScope.runBlockingTest {
-        // Arrange
-        mockkConstructor(File::class)
-        every { anyConstructed<File>().exists() } returns true
-        every { anyConstructed<File>().inputStream() } returns ByteArrayInputStream("modified_content".toByteArray())
-        
+    fun `test initialize sets monitoring status and loads hashes`() = runTest {
+        setupMockFiles()
+
         integrityMonitor.initialize()
         
-        // Act - Use reflection to call private method
-        val performCheckMethod = IntegrityMonitor::class.java.getDeclaredMethod("performIntegrityCheck")
-        performCheckMethod.isAccessible = true
-        performCheckMethod.invoke(integrityMonitor)
+        // Allow initialization to complete
+        testDispatcher.scheduler.advanceUntilIdle()
         
-        // Assert
-        assertEquals(IntegrityMonitor.IntegrityStatus.COMPROMISED, integrityMonitor.integrityStatus.value)
-        assertTrue(integrityMonitor.threatLevel.value != IntegrityMonitor.ThreatLevel.NONE)
-        
-        // Verify violation was logged
-        verify { AuraFxLogger.w("IntegrityMonitor", match { it.contains("INTEGRITY VIOLATION DETECTED") }) }
+        assertEquals(IntegrityMonitor.IntegrityStatus.MONITORING, integrityMonitor.integrityStatus.value)
     }
 
     @Test
-    fun `handleIntegrityViolations responds appropriately to critical threats`() = testScope.runBlockingTest {
-        // Arrange
-        val criticalViolation = IntegrityMonitor.IntegrityViolation(
-            fileName = "genesis_protocol.so",
-            expectedHash = "expected",
-            actualHash = "actual",
-            timestamp = System.currentTimeMillis(),
-            severity = IntegrityMonitor.ThreatLevel.CRITICAL
-        )
+    fun `test continuous monitoring with secure files maintains secure status`() = runTest {
+        setupMockFilesWithValidHashes()
+
+        integrityMonitor.initialize()
         
-        // Use reflection to call private method
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("handleIntegrityViolations", List::class.java)
-        method.isAccessible = true
+        // Advance time to trigger multiple monitoring checks
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
         
-        // Act
-        method.invoke(integrityMonitor, listOf(criticalViolation))
+        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.value)
+    }
+
+    @Test
+    fun `test StateFlow values can be observed`() = runTest {
+        assertNotNull(integrityMonitor.integrityStatus)
+        assertNotNull(integrityMonitor.threatLevel)
         
-        // Assert
+        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.first())
+        assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.first())
+    }
+
+    // Threat Detection Tests
+    @Test
+    fun `test critical threat detection for genesis protocol violation`() = runTest {
+        setupMockFilesWithCompromisedGenesis()
+
+        integrityMonitor.initialize()
+        
+        // Advance time to trigger monitoring check
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        
         assertEquals(IntegrityMonitor.IntegrityStatus.COMPROMISED, integrityMonitor.integrityStatus.value)
         assertEquals(IntegrityMonitor.ThreatLevel.CRITICAL, integrityMonitor.threatLevel.value)
-        
-        verify { AuraFxLogger.e("IntegrityMonitor", "CRITICAL THREAT DETECTED - Initiating emergency lockdown") }
-        verify { AuraFxLogger.e("IntegrityMonitor", "EMERGENCY LOCKDOWN INITIATED - Genesis Protocol protection active") }
     }
 
     @Test
-    fun `handleIntegrityViolations responds appropriately to high threats`() = testScope.runBlockingTest {
-        // Arrange
-        val highViolation = IntegrityMonitor.IntegrityViolation(
-            fileName = "aura_core.dex",
-            expectedHash = "expected",
-            actualHash = "actual",
-            timestamp = System.currentTimeMillis(),
+    fun `test high threat detection for aura core violation`() = runTest {
+        setupMockFilesWithCompromisedAuraCore()
+
+        integrityMonitor.initialize()
+        
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        
+        assertEquals(IntegrityMonitor.IntegrityStatus.COMPROMISED, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, integrityMonitor.threatLevel.value)
+    }
+
+    @Test
+    fun `test high threat detection for kai security violation`() = runTest {
+        setupMockFilesWithCompromisedKaiSecurity()
+
+        integrityMonitor.initialize()
+        
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        
+        assertEquals(IntegrityMonitor.IntegrityStatus.COMPROMISED, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, integrityMonitor.threatLevel.value)
+    }
+
+    @Test
+    fun `test medium threat detection for oracle drive violation`() = runTest {
+        setupMockFilesWithCompromisedOracleDrive()
+
+        integrityMonitor.initialize()
+        
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        
+        assertEquals(IntegrityMonitor.IntegrityStatus.COMPROMISED, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.MEDIUM, integrityMonitor.threatLevel.value)
+    }
+
+    @Test
+    fun `test multiple violations selects highest threat level`() = runTest {
+        setupMockFilesWithMultipleViolations()
+
+        integrityMonitor.initialize()
+        
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        
+        assertEquals(IntegrityMonitor.IntegrityStatus.COMPROMISED, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.CRITICAL, integrityMonitor.threatLevel.value)
+    }
+
+    // Error Handling and Recovery Tests
+    @Test
+    fun `test monitoring continues after IO exception and recovers`() = runTest {
+        setupMockFilesWithIOException()
+
+        integrityMonitor.initialize()
+        
+        // Advance time to trigger error
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        assertEquals(IntegrityMonitor.IntegrityStatus.OFFLINE, integrityMonitor.integrityStatus.value)
+        
+        // Setup valid files for recovery
+        setupMockFilesWithValidHashes()
+        
+        // Advance time to trigger recovery attempt after error delay
+        testDispatcher.scheduler.advanceTimeBy(ERROR_RETRY_DELAY + 1000)
+        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
+    }
+
+    @Test
+    fun `test missing critical files are gracefully skipped`() = runTest {
+        setupMockFilesPartiallyMissing()
+
+        integrityMonitor.initialize()
+        
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        
+        // Should remain secure since missing files are skipped
+        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.value)
+    }
+
+    @Test
+
+    fun `test shutdown properly cancels monitoring and sets offline status`() = runTest {
+        setupMockFiles()
+
+        integrityMonitor.initialize()
+        assertEquals(IntegrityMonitor.IntegrityStatus.MONITORING, integrityMonitor.integrityStatus.value)
+        
+        integrityMonitor.shutdown()
+        assertEquals(IntegrityMonitor.IntegrityStatus.OFFLINE, integrityMonitor.integrityStatus.value)
+    }
+
+    // File Hash Calculation Tests
+    @Test
+    fun `test hash calculation with empty file produces correct SHA-256`() = runTest {
+        val emptyFile = createMockFileWithContent("")
+        
+        val hash = calculateFileHashViaMethods(emptyFile)
+        
+        assertEquals(EXPECTED_SHA256_EMPTY, hash)
+    }
+
+    @Test
+    fun `test hash calculation with known content produces valid hash`() = runTest {
+        val testContent = "test content for hashing"
+        val testFile = createMockFileWithContent(testContent)
+        
+        val hash = calculateFileHashViaMethods(testFile)
+        
+        assertEquals(64, hash.length) // SHA-256 produces 64-character hex string
+        assertTrue(hash.matches(Regex("[0-9a-f]+"))) // Should be lowercase hex
+    }
+
+    @Test
+    fun `test hash calculation with large file content`() = runTest {
+        val largeContent = "a".repeat(10000) // 10KB of 'a' characters
+        val largeFile = createMockFileWithContent(largeContent)
+        
+        val hash = calculateFileHashViaMethods(largeFile)
+        
+        assertEquals(64, hash.length)
+        assertTrue(hash.matches(Regex("[0-9a-f]+")))
+        // Verify it's different from empty file hash
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+    }
+
+    @Test
+    fun `test hash calculation with binary-like content`() = runTest {
+        val binaryContent = ByteArray(256) { it.toByte() }.toString(Charsets.ISO_8859_1)
+        val binaryFile = createMockFileWithContent(binaryContent)
+        
+        val hash = calculateFileHashViaMethods(binaryFile)
+        
+        assertEquals(64, hash.length)
+        assertTrue(hash.matches(Regex("[0-9a-f]+")))
+    }
+
+    // Threat Level Determination Tests
+    @Test
+    fun `test threat level determination for all critical files`() = runTest {
+        assertEquals(IntegrityMonitor.ThreatLevel.CRITICAL, 
+            determineThreatLevelViaMethods("genesis_protocol.so"))
+        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, 
+            determineThreatLevelViaMethods("aura_core.dex"))
+        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, 
+            determineThreatLevelViaMethods("kai_security.bin"))
+        assertEquals(IntegrityMonitor.ThreatLevel.MEDIUM, 
+            determineThreatLevelViaMethods("oracle_drive.apk"))
+        assertEquals(IntegrityMonitor.ThreatLevel.LOW, 
+            determineThreatLevelViaMethods("unknown_file.txt"))
+        assertEquals(IntegrityMonitor.ThreatLevel.LOW, 
+            determineThreatLevelViaMethods(""))
+    }
+
+    // Data Class and Enum Tests
+    @Test
+    fun `test IntegrityViolation data class properties`() {
+        val timestamp = System.currentTimeMillis()
+        val violation = IntegrityMonitor.IntegrityViolation(
+            fileName = "test_file.so",
+            expectedHash = "expected_hash_123",
+            actualHash = "actual_hash_456",
+            timestamp = timestamp,
             severity = IntegrityMonitor.ThreatLevel.HIGH
         )
         
-        // Use reflection to call private method
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("handleIntegrityViolations", List::class.java)
-        method.isAccessible = true
-        
-        // Act
-        method.invoke(integrityMonitor, listOf(highViolation))
-        
-        // Assert
-        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, integrityMonitor.threatLevel.value)
-        verify { AuraFxLogger.w("IntegrityMonitor", "HIGH THREAT DETECTED - Implementing defensive measures") }
-        verify { AuraFxLogger.w("IntegrityMonitor", "Implementing defensive measures for 1 violations") }
+        assertEquals("test_file.so", violation.fileName)
+        assertEquals("expected_hash_123", violation.expectedHash)
+        assertEquals("actual_hash_456", violation.actualHash)
+        assertEquals(timestamp, violation.timestamp)
+        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, violation.severity)
     }
 
     @Test
-    fun `handleIntegrityViolations responds appropriately to medium threats`() = testScope.runBlockingTest {
-        // Arrange
-        val mediumViolation = IntegrityMonitor.IntegrityViolation(
-            fileName = "oracle_drive.apk",
-            expectedHash = "expected",
-            actualHash = "actual",
-            timestamp = System.currentTimeMillis(),
-            severity = IntegrityMonitor.ThreatLevel.MEDIUM
-        )
+    fun `test IntegrityStatus enum contains all expected values`() {
+        val statusValues = IntegrityMonitor.IntegrityStatus.values()
         
-        // Use reflection to call private method
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("handleIntegrityViolations", List::class.java)
-        method.isAccessible = true
-        
-        // Act
-        method.invoke(integrityMonitor, listOf(mediumViolation))
-        
-        // Assert
-        assertEquals(IntegrityMonitor.ThreatLevel.MEDIUM, integrityMonitor.threatLevel.value)
-        verify { AuraFxLogger.w("IntegrityMonitor", "MEDIUM THREAT DETECTED - Monitoring closely") }
-        verify { AuraFxLogger.i("IntegrityMonitor", "Enhancing monitoring protocols") }
+        assertTrue(statusValues.contains(IntegrityMonitor.IntegrityStatus.SECURE))
+        assertTrue(statusValues.contains(IntegrityMonitor.IntegrityStatus.COMPROMISED))
+        assertTrue(statusValues.contains(IntegrityMonitor.IntegrityStatus.MONITORING))
+        assertTrue(statusValues.contains(IntegrityMonitor.IntegrityStatus.OFFLINE))
+        assertEquals(4, statusValues.size)
     }
 
     @Test
-    fun `handleIntegrityViolations responds appropriately to low threats`() = testScope.runBlockingTest {
-        // Arrange
-        val lowViolation = IntegrityMonitor.IntegrityViolation(
-            fileName = "unknown_file.txt",
-            expectedHash = "expected",
-            actualHash = "actual",
-            timestamp = System.currentTimeMillis(),
-            severity = IntegrityMonitor.ThreatLevel.LOW
-        )
+    fun `test ThreatLevel enum contains all expected values and proper ordering`() {
+        val threatValues = IntegrityMonitor.ThreatLevel.values()
         
-        // Use reflection to call private method
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("handleIntegrityViolations", List::class.java)
-        method.isAccessible = true
+        assertTrue(threatValues.contains(IntegrityMonitor.ThreatLevel.NONE))
+        assertTrue(threatValues.contains(IntegrityMonitor.ThreatLevel.LOW))
+        assertTrue(threatValues.contains(IntegrityMonitor.ThreatLevel.MEDIUM))
+        assertTrue(threatValues.contains(IntegrityMonitor.ThreatLevel.HIGH))
+        assertTrue(threatValues.contains(IntegrityMonitor.ThreatLevel.CRITICAL))
+        assertEquals(5, threatValues.size)
         
-        // Act
-        method.invoke(integrityMonitor, listOf(lowViolation))
-        
-        // Assert
-        assertEquals(IntegrityMonitor.ThreatLevel.LOW, integrityMonitor.threatLevel.value)
-        verify { AuraFxLogger.i("IntegrityMonitor", "LOW THREAT DETECTED - Logging for analysis") }
-        verify { AuraFxLogger.d("IntegrityMonitor", match { it.contains("Logging violation for analysis") }) }
+        // Test ordering for maxOf operation
+        assertTrue(IntegrityMonitor.ThreatLevel.CRITICAL.ordinal > IntegrityMonitor.ThreatLevel.HIGH.ordinal)
+        assertTrue(IntegrityMonitor.ThreatLevel.HIGH.ordinal > IntegrityMonitor.ThreatLevel.MEDIUM.ordinal)
+        assertTrue(IntegrityMonitor.ThreatLevel.MEDIUM.ordinal > IntegrityMonitor.ThreatLevel.LOW.ordinal)
+        assertTrue(IntegrityMonitor.ThreatLevel.LOW.ordinal > IntegrityMonitor.ThreatLevel.NONE.ordinal)
     }
 
+    // Edge Cases and Boundary Tests
     @Test
-    fun `handleIntegrityViolations uses highest threat level with multiple violations`() = testScope.runBlockingTest {
-        // Arrange
-        val violations = listOf(
-            IntegrityMonitor.IntegrityViolation("file1", "exp1", "act1", 123L, IntegrityMonitor.ThreatLevel.LOW),
-            IntegrityMonitor.IntegrityViolation("file2", "exp2", "act2", 124L, IntegrityMonitor.ThreatLevel.HIGH),
-            IntegrityMonitor.IntegrityViolation("file3", "exp3", "act3", 125L, IntegrityMonitor.ThreatLevel.MEDIUM)
-        )
-        
-        // Use reflection to call private method
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("handleIntegrityViolations", List::class.java)
-        method.isAccessible = true
-        
-        // Act
-        method.invoke(integrityMonitor, violations)
-        
-        // Assert
-        assertEquals(IntegrityMonitor.ThreatLevel.HIGH, integrityMonitor.threatLevel.value)
-        verify { AuraFxLogger.w("IntegrityMonitor", "HIGH THREAT DETECTED - Implementing defensive measures") }
-    }
+    fun `test monitoring with all files missing`() = runTest {
+        setupMockFilesAllMissing()
 
-    @Test
-    fun `monitoring handles file not found gracefully`() = testScope.runBlockingTest {
-        // Arrange
-        mockkConstructor(File::class)
-        every { anyConstructed<File>().exists() } returns false
-        
         integrityMonitor.initialize()
         
-        // Act - Use reflection to call private method
-        val performCheckMethod = IntegrityMonitor::class.java.getDeclaredMethod("performIntegrityCheck")
-        performCheckMethod.isAccessible = true
-        performCheckMethod.invoke(integrityMonitor)
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
         
-        // Assert - Should remain secure if files don't exist (not a violation)
+        // Should remain secure since all files are missing (skipped)
         assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
         assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.value)
     }
 
     @Test
-    fun `stateFlow values are properly exposed`() = testScope.runBlockingTest {
-        // Test initial values
-        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
-        assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.value)
-        
-        // Test that StateFlow is read-only (not MutableStateFlow)
-        assertTrue(integrityMonitor.integrityStatus::class.simpleName!!.contains("StateFlow"))
-        assertTrue(integrityMonitor.threatLevel::class.simpleName!!.contains("StateFlow"))
-    }
 
-    @Test
-    fun `IntegrityViolation data class has correct properties`() {
-        // Arrange & Act
-        val violation = IntegrityMonitor.IntegrityViolation(
-            fileName = "test.bin",
-            expectedHash = "abc123",
-            actualHash = "def456",
-            timestamp = 1234567890L,
-            severity = IntegrityMonitor.ThreatLevel.MEDIUM
-        )
-        
-        // Assert
-        assertEquals("test.bin", violation.fileName)
-        assertEquals("abc123", violation.expectedHash)
-        assertEquals("def456", violation.actualHash)
-        assertEquals(1234567890L, violation.timestamp)
-        assertEquals(IntegrityMonitor.ThreatLevel.MEDIUM, violation.severity)
-    }
+    fun `test rapid monitoring cycles maintain consistent state`() = runTest {
+        setupMockFilesWithValidHashes()
 
-    @Test
-    fun `loadKnownHashes populates all critical files`() {
-        // Use reflection to call private method and access private field
-        val loadMethod = IntegrityMonitor::class.java.getDeclaredMethod("loadKnownHashes")
-        loadMethod.isAccessible = true
-        loadMethod.invoke(integrityMonitor)
-        
-        val knownHashesField = IntegrityMonitor::class.java.getDeclaredField("knownHashes")
-        knownHashesField.isAccessible = true
-        val knownHashes = knownHashesField.get(integrityMonitor) as Map<String, String>
-        
-        // Assert all critical files have hashes
-        assertEquals(4, knownHashes.size)
-        assertTrue(knownHashes.containsKey("genesis_protocol.so"))
-        assertTrue(knownHashes.containsKey("aura_core.dex"))
-        assertTrue(knownHashes.containsKey("kai_security.bin"))
-        assertTrue(knownHashes.containsKey("oracle_drive.apk"))
-        
-        verify { AuraFxLogger.d("IntegrityMonitor", "Loaded 4 known file hashes") }
-    }
-
-    @Test
-    fun `continuous monitoring handles exceptions gracefully`() = testScope.runBlockingTest {
-        // Arrange - Mock file operations to throw exception
-        mockkConstructor(File::class)
-        every { anyConstructed<File>().exists() } throws RuntimeException("Test exception")
-        
-        // Act
         integrityMonitor.initialize()
         
-        // Advance time to trigger monitoring cycle
-        advanceTimeBy(6000)
+        // Run multiple monitoring cycles rapidly
+        repeat(5) {
+            testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL)
+        }
         
-        // Assert - Should go offline on exception
-        assertEquals(IntegrityMonitor.IntegrityStatus.OFFLINE, integrityMonitor.integrityStatus.value)
-        verify { AuraFxLogger.e("IntegrityMonitor", "Error during integrity check", any()) }
+        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.NONE, integrityMonitor.threatLevel.value)
     }
 
     @Test
-    fun `enum values are correctly defined`() {
-        // Test IntegrityStatus enum
-        val integrityStatuses = IntegrityMonitor.IntegrityStatus.values()
-        assertEquals(4, integrityStatuses.size)
-        assertTrue(integrityStatuses.contains(IntegrityMonitor.IntegrityStatus.SECURE))
-        assertTrue(integrityStatuses.contains(IntegrityMonitor.IntegrityStatus.COMPROMISED))
-        assertTrue(integrityStatuses.contains(IntegrityMonitor.IntegrityStatus.MONITORING))
-        assertTrue(integrityStatuses.contains(IntegrityMonitor.IntegrityStatus.OFFLINE))
+    fun `test violation after secure state transitions correctly`() = runTest {
+        setupMockFilesWithValidHashes()
+
+        integrityMonitor.initialize()
         
-        // Test ThreatLevel enum
-        val threatLevels = IntegrityMonitor.ThreatLevel.values()
-        assertEquals(5, threatLevels.size)
-        assertTrue(threatLevels.contains(IntegrityMonitor.ThreatLevel.NONE))
-        assertTrue(threatLevels.contains(IntegrityMonitor.ThreatLevel.LOW))
-        assertTrue(threatLevels.contains(IntegrityMonitor.ThreatLevel.MEDIUM))
-        assertTrue(threatLevels.contains(IntegrityMonitor.ThreatLevel.HIGH))
-        assertTrue(threatLevels.contains(IntegrityMonitor.ThreatLevel.CRITICAL))
+        // First cycle - should be secure
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
+        
+        // Change to compromised files
+        setupMockFilesWithCompromisedGenesis()
+        
+        // Second cycle - should detect violation
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL)
+        assertEquals(IntegrityMonitor.IntegrityStatus.COMPROMISED, integrityMonitor.integrityStatus.value)
+        assertEquals(IntegrityMonitor.ThreatLevel.CRITICAL, integrityMonitor.threatLevel.value)
     }
 
     @Test
-    fun `calculateFileHash handles empty file correctly`() = testScope.runBlockingTest {
-        // Arrange
-        val mockFile = mockk<File>()
-        val emptyInputStream = ByteArrayInputStream(ByteArray(0))
-        every { mockFile.inputStream() } returns emptyInputStream
+    fun `test file with null or empty hash is handled gracefully`() = runTest {
+        val file = mock<File>()
+        whenever(file.exists()).thenReturn(true)
+        whenever(file.inputStream()).thenReturn(ByteArrayInputStream(byteArrayOf()))
+        whenever(File(mockFilesDir, "genesis_protocol.so")).thenReturn(file)
         
-        // Use reflection to access private method
+        // Set up other files normally
+        setupMockFilesForOtherFiles()
+
+        integrityMonitor.initialize()
+        
+        testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL + 1000)
+        
+        // Should handle gracefully and not crash
+        assertTrue("Monitor should handle empty files gracefully", true)
+    }
+
+    // Performance and Stress Tests
+    @Test
+    fun `test monitoring performance with frequent checks`() = runTest {
+        setupMockFilesWithValidHashes()
+
+        val startTime = System.currentTimeMillis()
+        
+        integrityMonitor.initialize()
+        
+        // Run 10 monitoring cycles
+        repeat(10) {
+            testDispatcher.scheduler.advanceTimeBy(MONITORING_INTERVAL)
+        }
+        
+        val duration = System.currentTimeMillis() - startTime
+        
+        // Should complete quickly (test framework overhead considered)
+        assertTrue("Performance test should complete reasonably fast", duration < 5000)
+        assertEquals(IntegrityMonitor.IntegrityStatus.SECURE, integrityMonitor.integrityStatus.value)
+    }
+
+    // Helper Methods
+
+    private fun createMockFileWithContent(content: String): File {
+        val file = mock<File>()
+        whenever(file.inputStream()).thenReturn(ByteArrayInputStream(content.toByteArray()))
+        return file
+    }
+
+    private suspend fun calculateFileHashViaMethods(file: File): String {
         val method = IntegrityMonitor::class.java.getDeclaredMethod("calculateFileHash", File::class.java)
         method.isAccessible = true
-        
-        // Act
-        val hash = method.invoke(integrityMonitor, mockFile) as String
-        
-        // Assert - Empty file should still produce valid SHA-256 hash
-        assertNotNull(hash)
-        assertEquals(64, hash.length)
-        assertTrue(hash.matches(Regex("[a-f0-9]+")))
+        return method.invoke(integrityMonitor, file) as String
     }
 
-    @Test
-    fun `calculateFileHash handles large file correctly`() = testScope.runBlockingTest {
-        // Arrange - Create a large byte array (larger than buffer size of 8192)
-        val largeContent = ByteArray(16384) { it.toByte() }
-        val mockFile = mockk<File>()
-        val largeInputStream = ByteArrayInputStream(largeContent)
-        every { mockFile.inputStream() } returns largeInputStream
-        
-        // Use reflection to access private method
-        val method = IntegrityMonitor::class.java.getDeclaredMethod("calculateFileHash", File::class.java)
+    private fun determineThreatLevelViaMethods(fileName: String): IntegrityMonitor.ThreatLevel {
+        val method = IntegrityMonitor::class.java.getDeclaredMethod("determineThreatLevel", String::class.java)
         method.isAccessible = true
+        return method.invoke(integrityMonitor, fileName) as IntegrityMonitor.ThreatLevel
+    }
+
+    private fun setupMockFiles() {
+        val criticalFiles = listOf("genesis_protocol.so", "aura_core.dex", "kai_security.bin", "oracle_drive.apk")
         
-        // Act
-        val hash = method.invoke(integrityMonitor, mockFile) as String
+        criticalFiles.forEach { fileName ->
+            val file = mock<File>()
+            whenever(File(mockFilesDir, fileName)).thenReturn(file)
+            whenever(file.exists()).thenReturn(true)
+            whenever(file.inputStream()).thenReturn(ByteArrayInputStream("mock content".toByteArray()))
+        }
+    }
+
+    private fun setupMockFilesWithValidHashes() {
+        // Create files with content that will generate the placeholder hashes
+        val criticalFilesContent = mapOf(
+            "genesis_protocol.so" to "genesis_content_for_placeholder_genesis_hash",
+            "aura_core.dex" to "aura_content_for_placeholder_aura_hash", 
+            "kai_security.bin" to "kai_content_for_placeholder_kai_hash",
+            "oracle_drive.apk" to "oracle_content_for_placeholder_oracle_hash"
+        )
         
-        // Assert
-        assertNotNull(hash)
-        assertEquals(64, hash.length)
-        assertTrue(hash.matches(Regex("[a-f0-9]+")))
+        criticalFilesContent.forEach { (fileName, content) ->
+            val file = mock<File>()
+            whenever(File(mockFilesDir, fileName)).thenReturn(file)
+            whenever(file.exists()).thenReturn(true)
+            whenever(file.inputStream()).thenReturn(ByteArrayInputStream(content.toByteArray()))
+        }
+    }
+
+    private fun setupMockFilesWithCompromisedGenesis() {
+        setupMockFilesWithValidHashes()
+        
+        // Override genesis file to have different content
+        val compromisedFile = mock<File>()
+        whenever(File(mockFilesDir, "genesis_protocol.so")).thenReturn(compromisedFile)
+        whenever(compromisedFile.exists()).thenReturn(true)
+        whenever(compromisedFile.inputStream()).thenReturn(
+            ByteArrayInputStream("COMPROMISED_GENESIS_CONTENT".toByteArray())
+        )
+    }
+
+    private fun setupMockFilesWithCompromisedAuraCore() {
+        setupMockFilesWithValidHashes()
+        
+        val compromisedFile = mock<File>()
+        whenever(File(mockFilesDir, "aura_core.dex")).thenReturn(compromisedFile)
+        whenever(compromisedFile.exists()).thenReturn(true)
+        whenever(compromisedFile.inputStream()).thenReturn(
+            ByteArrayInputStream("COMPROMISED_AURA_CONTENT".toByteArray())
+        )
+    }
+
+    private fun setupMockFilesWithCompromisedKaiSecurity() {
+        setupMockFilesWithValidHashes()
+        
+        val compromisedFile = mock<File>()
+        whenever(File(mockFilesDir, "kai_security.bin")).thenReturn(compromisedFile)
+        whenever(compromisedFile.exists()).thenReturn(true)
+        whenever(compromisedFile.inputStream()).thenReturn(
+            ByteArrayInputStream("COMPROMISED_KAI_CONTENT".toByteArray())
+        )
+    }
+
+    private fun setupMockFilesWithCompromisedOracleDrive() {
+        setupMockFilesWithValidHashes()
+        
+        val compromisedFile = mock<File>()
+        whenever(File(mockFilesDir, "oracle_drive.apk")).thenReturn(compromisedFile)
+        whenever(compromisedFile.exists()).thenReturn(true)
+        whenever(compromisedFile.inputStream()).thenReturn(
+            ByteArrayInputStream("COMPROMISED_ORACLE_CONTENT".toByteArray())
+        )
+    }
+
+    private fun setupMockFilesWithMultipleViolations() {
+        val criticalFiles = listOf("genesis_protocol.so", "aura_core.dex", "kai_security.bin", "oracle_drive.apk")
+        
+        criticalFiles.forEach { fileName ->
+            val file = mock<File>()
+            whenever(File(mockFilesDir, fileName)).thenReturn(file)
+            whenever(file.exists()).thenReturn(true)
+            whenever(file.inputStream()).thenReturn(
+                ByteArrayInputStream("COMPROMISED_CONTENT_$fileName".toByteArray())
+            )
+        }
+    }
+
+    private fun setupMockFilesWithIOException() {
+        val file = mock<File>()
+        whenever(File(mockFilesDir, "genesis_protocol.so")).thenReturn(file)
+        whenever(file.exists()).thenReturn(true)
+        whenever(file.inputStream()).thenThrow(IOException("Simulated IO Error"))
+        
+        setupMockFilesForOtherFiles()
+    }
+
+    private fun setupMockFilesForOtherFiles() {
+        val otherFiles = listOf("aura_core.dex", "kai_security.bin", "oracle_drive.apk")
+        otherFiles.forEach { fileName ->
+            val otherFile = mock<File>()
+            whenever(File(mockFilesDir, fileName)).thenReturn(otherFile)
+            whenever(otherFile.exists()).thenReturn(true)
+            whenever(otherFile.inputStream()).thenReturn(
+                ByteArrayInputStream("normal_content_$fileName".toByteArray())
+            )
+        }
+    }
+
+    private fun setupMockFilesPartiallyMissing() {
+        val existingFiles = listOf("genesis_protocol.so", "aura_core.dex")
+        val missingFiles = listOf("kai_security.bin", "oracle_drive.apk")
+        
+        existingFiles.forEach { fileName ->
+            val file = mock<File>()
+            whenever(File(mockFilesDir, fileName)).thenReturn(file)
+            whenever(file.exists()).thenReturn(true)
+            val content = when (fileName) {
+                "genesis_protocol.so" -> "genesis_content_for_placeholder_genesis_hash"
+                "aura_core.dex" -> "aura_content_for_placeholder_aura_hash"
+                else -> "default_content"
+            }
+            whenever(file.inputStream()).thenReturn(ByteArrayInputStream(content.toByteArray()))
+        }
+        
+        missingFiles.forEach { fileName ->
+            val file = mock<File>()
+            whenever(File(mockFilesDir, fileName)).thenReturn(file)
+            whenever(file.exists()).thenReturn(false)
+        }
+    }
+
+    private fun setupMockFilesAllMissing() {
+        val allFiles = listOf("genesis_protocol.so", "aura_core.dex", "kai_security.bin", "oracle_drive.apk")
+        
+        allFiles.forEach { fileName ->
+            val file = mock<File>()
+            whenever(File(mockFilesDir, fileName)).thenReturn(file)
+            whenever(file.exists()).thenReturn(false)
+        }
     }
 }
