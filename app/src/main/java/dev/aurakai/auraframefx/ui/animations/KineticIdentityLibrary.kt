@@ -27,12 +27,12 @@ import kotlin.math.*
 object KineticIdentityLibrary {
     
     /**
-     * Displays a pulsing breathing animation using concentric circles that scale and fade to create an ambient effect.
+     * Renders a pulsing breathing animation with concentric circles that scale and fade to create an ambient visual effect.
      *
-     * The animation's speed and amplitude adapt to the specified emotional state, producing calming or energizing visual rhythms. The intensity parameter adjusts the overall strength of the effect. Suitable for ambient UI backgrounds or lock screens.
+     * The animation's speed and amplitude adapt to the specified emotional state, producing calming or energizing rhythms. The intensity parameter controls the overall strength of the effect. This animation is suitable for ambient UI backgrounds or lock screens.
      *
-     * @param intensity Controls the strength of the breathing animation.
-     * @param emotionalState Sets the animation's speed and amplitude to reflect different moods.
+     * @param intensity Adjusts the strength of the breathing animation.
+     * @param emotionalState Determines the animation's speed and amplitude to reflect different moods.
      */
     @Composable
     fun BreathingAnimation(
@@ -102,7 +102,7 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Displays an animated glow effect centered on a touch position, expanding and fading in response to user interaction.
+     * Shows an animated glow effect centered on a touch position, expanding and fading in response to activation.
      *
      * The glow appears and grows when activated, following the specified touch position, and fades out when deactivated. Ripple circles add visual depth, using the theme's accent color and modulated by the given intensity.
      *
@@ -170,14 +170,14 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Displays an animated flow of particles moving in a specified direction, creating an ambient kinetic effect.
+     * Animates a continuous flow of particles moving in a specified direction, creating an ambient kinetic background effect.
      *
-     * Particle movement and appearance are influenced by the current theme, flow direction, and intensity. The animation continuously updates particle positions and respawns them as needed to maintain a dynamic, organic visual flow.
+     * Particle movement, speed, and appearance adapt to the provided theme, flow direction, and intensity. Particles are automatically respawned to maintain a dynamic, organic animation.
      *
-     * @param modifier Modifier for the animation container.
-     * @param particleCount Number of particles in the flow.
-     * @param flowDirection Direction in which particles move.
-     * @param intensity Controls the strength and visibility of the effect.
+     * @param modifier Modifier applied to the animation container.
+     * @param particleCount The number of particles displayed in the flow.
+     * @param flowDirection The direction in which particles move.
+     * @param intensity The strength and visibility of the particle effect.
      */
     @Composable
     fun ParticleFlow(
@@ -206,12 +206,12 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Displays a pulsing glow effect over the keyboard area that intensifies when typing is detected.
+     * Renders a pulsing glow effect over the keyboard area, intensifying when typing is active.
      *
-     * The glow animates continuously and increases in strength during typing, using the theme's accent color and the specified intensity multiplier.
+     * The glow animates continuously using the theme's accent color, with its strength modulated by typing activity and the provided intensity multiplier.
      *
-     * @param isTyping Whether typing is currently active, which increases the glow's intensity.
-     * @param intensity Multiplier for the overall strength of the glow effect.
+     * @param isTyping If true, increases the glow's intensity to indicate active typing.
+     * @param intensity Scales the overall strength of the glow effect.
      */
     @Composable
     fun KeyboardGlow(
@@ -285,10 +285,10 @@ object KineticIdentityLibrary {
     )
     
     /**
-     * Generates a list of particles with randomized positions, velocities, lifespans, and sizes for particle-based animations.
+     * Creates a list of particles with randomized positions, velocities, lifespans, and sizes for use in particle animations.
      *
-     * @param count The number of particles to generate.
-     * @return A list of particles with unique randomized attributes.
+     * @param count The number of particles to create.
+     * @return A list of particles, each initialized with unique random attributes.
      */
     
     private fun generateParticles(count: Int): List<Particle> {
@@ -310,15 +310,15 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Updates a particle's position, velocity, and remaining life based on the animation style, flow direction, and intensity.
+     * Updates a particle's position, velocity, and remaining life according to the animation style, flow direction, and intensity.
      *
-     * If the particle's life expires or it moves out of bounds, returns a new particle with randomized properties to respawn it; otherwise, returns the updated particle.
+     * If the particle's life expires or it moves out of bounds, returns a new particle with randomized position and velocity to respawn it; otherwise, returns the updated particle.
      *
      * @param particle The particle to update.
-     * @param animationStyle Determines the speed multiplier for particle movement.
+     * @param animationStyle The animation style that determines the speed multiplier.
      * @param flowDirection The direction in which the particle moves.
-     * @param intensity Multiplies the particle's movement speed.
-     * @return The updated particle, or a respawned particle if the original expired or moved out of bounds.
+     * @param intensity The multiplier for particle movement speed.
+     * @return The updated or respawned particle.
      */
     private fun updateParticle(
         particle: Particle,
@@ -374,13 +374,13 @@ object KineticIdentityLibrary {
     }
     
     /**
-     * Renders a particle as a circle with alpha proportional to its remaining life and the specified intensity.
+     * Draws a particle as a circle at its position, with alpha based on remaining life and intensity.
      *
-     * The particle fades out as its life decreases, with the intensity parameter scaling the overall transparency.
+     * The particle's transparency decreases as its life diminishes, and the intensity parameter further scales its alpha.
      *
-     * @param particle The particle to draw.
-     * @param color The color of the particle.
-     * @param intensity The multiplier for the particle's alpha.
+     * @param particle The particle to render.
+     * @param color The color to use for the particle.
+     * @param intensity Scales the particle's alpha for visual emphasis.
      */
     private fun DrawScope.drawParticle(
         particle: Particle,
