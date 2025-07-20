@@ -1,5 +1,4 @@
 package dev.aurakai.auraframefx.security
-
 import android.content.Context
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.*
@@ -65,6 +64,7 @@ class IntegrityMonitorTest {
         
         integrityMonitor = IntegrityMonitor(mockContext)
     }
+
 
     @AfterEach
     fun tearDown() {
@@ -208,6 +208,7 @@ class IntegrityMonitorTest {
     }
 
     @Test
+
     fun `test shutdown properly cancels monitoring and sets offline status`() = runTest {
         setupMockFiles()
 
@@ -347,6 +348,7 @@ import kotlin.test.assertNotEquals
     }
 
     @Test
+
     fun `test rapid monitoring cycles maintain consistent state`() = runTest {
         setupMockFilesWithValidHashes()
 

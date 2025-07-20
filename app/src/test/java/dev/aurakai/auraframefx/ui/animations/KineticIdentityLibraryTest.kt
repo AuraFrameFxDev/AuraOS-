@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.ui.animations
 
 import androidx.compose.animation.core.*
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -8,11 +9,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
 import dev.aurakai.auraframefx.theme.AuraTheme
+
 import dev.aurakai.auraframefx.ui.animations.KineticIdentityLibrary.EmotionalState
 import dev.aurakai.auraframefx.ui.animations.KineticIdentityLibrary.FlowDirection
 import dev.aurakai.auraframefx.ui.animations.KineticIdentityLibrary.Particle
@@ -29,6 +32,19 @@ import kotlin.test.assertNotNull
 /**
  * Comprehensive unit tests for KineticIdentityLibrary
  * 
+ * Testing Framework: JUnit 4 with AndroidX Compose Test and AndroidJUnit4
+ * 
+ * This test suite covers:
+ * - Happy path scenarios for all animation components
+ * - Edge cases and error conditions  
+ * - Emotional state variations
+ * - Theme integration and responsiveness
+ * - Performance considerations
+ * - State persistence across recomposition
+ * - Helper function validation
+ * - Data class integrity
+ */
+@RunWith(AndroidJUnit4::class)
  * Testing Framework: JUnit 4 with Compose Test Rules and JUnit 5 for pure functions
  * Mocking Library: MockK
  * 
@@ -46,6 +62,7 @@ class KineticIdentityLibraryTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    }
     private lateinit var mockTheme: AuraTheme
 
     @Before
