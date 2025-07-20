@@ -15,11 +15,7 @@ dependencyResolutionManagement {
         gradlePluginPortal()
     }
 
-    versionCatalogs {
-        create("libs") {
-            from(files("gradle/libs.versions.toml"))
-        }
-    }
+    // Version catalogs are automatically detected from gradle/libs.versions.toml
 }
 
 

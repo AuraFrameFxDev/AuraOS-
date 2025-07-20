@@ -15,7 +15,7 @@ repositories {
 
 // Use the same Kotlin version as the main project
 val kotlinVersion = "2.2.0"
-val agpVersion = "8.11.1"
+val agpVersion = "8.4.0-alpha13"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")

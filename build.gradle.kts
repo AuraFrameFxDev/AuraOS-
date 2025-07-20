@@ -26,16 +26,16 @@ buildscript {
 }
 
 plugins {
-    id("com.android.application") version "8.11.1" apply false
-    id("com.android.library") version "8.11.1" apply false
-    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.google.services) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.firebase.crashlytics) apply false
-    alias(libs.plugins.firebase.perf) apply false
-    alias(libs.plugins.openapi.generator) apply false
+    alias(libs.plugins.hiltAndroid) apply false
+    alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.kotlinSerialization) apply false
+    alias(libs.plugins.firebaseCrashlytics) apply false
+    alias(libs.plugins.firebasePerf) apply false
+    alias(libs.plugins.openapiGenerator) apply false
 }
 
 allprojects {
