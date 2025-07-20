@@ -53,7 +53,6 @@ class KineticIdentityLibraryTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    }
     private lateinit var mockTheme: AuraTheme
 
     @Before
