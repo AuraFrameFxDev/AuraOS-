@@ -336,6 +336,23 @@ class UnifiedLoggingSystem @Inject constructor(
             val dateString = fileFormatter.format(Date(logEntry.timestamp))
             val logFile = File(logDirectory, "aura_log_$dateString.log")
             
+            // Implement log rotation
+            if (logFile.exists() && logFile.length() > 10 * 1024 * 1024) { // 10MB limit
+                val rotatedFile = File(
+                    logDirectory,
+                    "aura_log_${dateString}_${System.currentTimeMillis()}.log"
+                )
+                logFile.renameTo(rotatedFile)
+            }
+            
+            // Clean up old logs (keep last 7 days)
+            logDirectory.listFiles()
+                ?.filter { file ->
+                    file.name.startsWith("aura_log_") &&
+                    System.currentTimeMillis() - file.lastModified() > 7L * 24 * 60 * 60 * 1000
+                }
+                ?.forEach { it.delete() }
+            
             val formattedEntry = formatLogEntry(logEntry)
             logFile.appendText(formattedEntry + "\n")
             
