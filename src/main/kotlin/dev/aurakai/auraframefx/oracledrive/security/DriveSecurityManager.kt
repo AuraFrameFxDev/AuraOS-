@@ -9,31 +9,35 @@ import dev.aurakai.auraframefx.oracledrive.*
 interface DriveSecurityManager {
     
     /**
-     * Validates access to Oracle Drive system
-     * @return SecurityCheck with validation result
-     */
+ * Performs a security validation to determine if access to the Oracle Drive system is permitted.
+ *
+ * @return A SecurityCheck representing the result of the access validation.
+ */
     fun validateDriveAccess(): SecurityCheck
     
     /**
-     * Validates file upload security with AI threat detection
-     * @param file The drive file to validate
-     * @return SecurityValidation with threat assessment
-     */
+ * Performs AI-based threat detection to validate the security of a file upload.
+ *
+ * @param file The file to be assessed for potential security threats.
+ * @return A SecurityValidation containing the results of the threat assessment.
+ */
     fun validateFileUpload(file: DriveFile): SecurityValidation
     
     /**
-     * Validates file access permissions
-     * @param fileId The file identifier
-     * @param userId The user requesting access
-     * @return AccessCheck with permission result
-     */
+ * Validates whether a user has permission to access a specified file.
+ *
+ * @param fileId The unique identifier of the file to access.
+ * @param userId The unique identifier of the user requesting access.
+ * @return An AccessCheck indicating whether access is permitted.
+ */
     fun validateFileAccess(fileId: String, userId: String): AccessCheck
     
     /**
-     * Validates file deletion authorization
-     * @param fileId The file to delete
-     * @param userId The user requesting deletion
-     * @return DeletionValidation with authorization result
-     */
+ * Validates whether a user is authorized to delete a specified file.
+ *
+ * @param fileId The identifier of the file to be deleted.
+ * @param userId The identifier of the user requesting the deletion.
+ * @return A DeletionValidation object indicating whether the deletion is authorized.
+ */
     fun validateDeletion(fileId: String, userId: String): DeletionValidation
 }

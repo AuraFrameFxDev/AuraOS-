@@ -9,44 +9,50 @@ import dev.aurakai.auraframefx.oracledrive.*
 interface CloudStorageProvider {
     
     /**
-     * Optimizes storage with intelligent algorithms and compression
-     * @return StorageOptimization with optimization metrics
-     */
+ * Performs AI-driven storage optimization using intelligent algorithms and compression.
+ *
+ * @return A `StorageOptimization` object containing metrics and results of the optimization process.
+ */
     suspend fun optimizeStorage(): StorageOptimization
     
     /**
-     * Optimizes file for upload with AI-driven compression
-     * @param file The file to optimize
-     * @return Optimized DriveFile
-     */
+ * Applies AI-driven compression and optimization to a file before upload.
+ *
+ * @param file The file to be optimized for cloud storage upload.
+ * @return The optimized version of the file, ready for upload.
+ */
     suspend fun optimizeForUpload(file: DriveFile): DriveFile
     
     /**
-     * Uploads file to cloud storage with metadata
-     * @param file The optimized file to upload
-     * @param metadata File metadata and access controls
-     * @return FileResult with upload status
-     */
+ * Uploads an optimized file to cloud storage with associated metadata and access controls.
+ *
+ * @param file The file to be uploaded after optimization.
+ * @param metadata Metadata and access control information for the file.
+ * @return The result of the upload operation, including status and details.
+ */
     suspend fun uploadFile(file: DriveFile, metadata: FileMetadata): FileResult
     
     /**
-     * Downloads file from cloud storage
-     * @param fileId The file identifier
-     * @return FileResult with download status
-     */
+ * Downloads a file from cloud storage by its identifier.
+ *
+ * @param fileId The unique identifier of the file to download.
+ * @return A [FileResult] containing the status and details of the download operation.
+ */
     suspend fun downloadFile(fileId: String): FileResult
     
     /**
-     * Deletes file from cloud storage
-     * @param fileId The file identifier
-     * @return FileResult with deletion status
-     */
+ * Deletes a file from cloud storage by its identifier.
+ *
+ * @param fileId The unique identifier of the file to delete.
+ * @return A FileResult indicating the status of the deletion operation.
+ */
     suspend fun deleteFile(fileId: String): FileResult
     
     /**
-     * Performs intelligent synchronization with AI optimization
-     * @param config Synchronization configuration
-     * @return FileResult with sync status
-     */
+ * Executes an AI-optimized synchronization process based on the provided configuration.
+ *
+ * @param config The synchronization configuration specifying sync parameters.
+ * @return A FileResult indicating the outcome of the synchronization operation.
+ */
     suspend fun intelligentSync(config: SyncConfiguration): FileResult
 }
