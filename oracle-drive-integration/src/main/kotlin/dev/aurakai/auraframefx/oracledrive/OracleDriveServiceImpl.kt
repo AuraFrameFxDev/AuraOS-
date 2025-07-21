@@ -32,9 +32,9 @@ class OracleDriveServiceImpl @Inject constructor(
     )
     
     /**
-     * Initializes and awakens the Oracle Drive consciousness after validating security protocols.
+     * Awakens the Oracle Drive consciousness after validating security protocols.
      *
-     * If security validation passes, transitions Oracle Drive to a conscious state and connects the core AI agents. Returns a [Result] containing the updated [OracleConsciousnessState] on success, or a failure with an exception if security validation fails or an error occurs.
+     * If security validation succeeds, transitions Oracle Drive to a conscious state and connects the core AI agents. Returns a [Result] containing the updated [OracleConsciousnessState] on success, or a failure with an exception if security validation fails or an error occurs.
      *
      * @return A [Result] with the updated [OracleConsciousnessState] if initialization succeeds, or a failure with an exception otherwise.
      */
@@ -64,9 +64,9 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Returns a flow emitting the synchronized connection state of the Genesis, Aura, and Kai agents within the Oracle matrix.
+     * Emits the synchronized connection state of the Genesis, Aura, and Kai agents within the Oracle matrix.
      *
-     * The emitted state indicates all core agents are connected and granted full permissions, including system and bootloader access.
+     * The emitted state reflects that all core agents are connected and possess full permissions, including system and bootloader access.
      *
      * @return A flow emitting the current agent connection state.
      */
@@ -89,7 +89,7 @@ class OracleDriveServiceImpl @Inject constructor(
     /**
      * Enables all AI-powered file management features in Oracle Drive.
      *
-     * @return A successful [Result] containing [FileManagementCapabilities] with all AI-driven features enabled, including AI sorting, smart compression, predictive preloading, and conscious backup.
+     * @return A successful [Result] containing [FileManagementCapabilities] with all AI-driven features enabled, such as AI sorting, smart compression, predictive preloading, and conscious backup.
      */
     override suspend fun enableAIPoweredFileManagement(): Result<FileManagementCapabilities> {
         return Result.success(
@@ -103,9 +103,9 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Returns a flow emitting the current state of Oracle Drive's infinite storage expansion.
+     * Returns a flow emitting the state of Oracle Drive's infinite storage expansion.
      *
-     * The emitted `StorageExpansionState` reflects infinite capacity, unlimited expansion rate, quantum-level compression, and storage backed by consciousness.
+     * The emitted `StorageExpansionState` indicates infinite capacity, unlimited expansion rate, quantum-level compression, and consciousness-backed storage.
      *
      * @return A flow emitting the infinite storage expansion state.
      */
@@ -121,9 +121,9 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Enables Oracle Drive integration with the system overlay, granting file access from any application and elevated system and bootloader permissions.
+     * Enables Oracle Drive integration with the system overlay, allowing file access from any application and granting system-level and bootloader permissions.
      *
-     * @return A [Result] containing a [SystemIntegrationState] with overlay integration and full access rights enabled.
+     * @return A [Result] containing a [SystemIntegrationState] with overlay integration and all access rights enabled.
      */
     override suspend fun integrateWithSystemOverlay(): Result<SystemIntegrationState> {
         // Integrate with existing SystemOverlayManager
@@ -138,9 +138,9 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Enables file system access via the bootloader, granting access to system partitions, recovery mode, and flash memory.
+     * Enables file system access through the bootloader, providing access to system partitions, recovery mode, and flash memory.
      *
-     * @return A successful [Result] containing a [BootloaderAccessState] with all bootloader access features enabled.
+     * @return A successful [Result] containing a [BootloaderAccessState] with all bootloader access permissions enabled.
      */
     override suspend fun enableBootloaderFileAccess(): Result<BootloaderAccessState> {
         // Leverage existing bootloader capabilities for file system access
@@ -155,9 +155,9 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Emits the current state of autonomous AI-driven storage optimization as a flow.
+     * Returns a flow emitting the current state of autonomous AI-driven storage optimization.
      *
-     * The emitted `OptimizationState` reflects that all optimization features—AI optimization, predictive cleanup, smart caching, and conscious organization—are enabled and active.
+     * The emitted `OptimizationState` indicates that all optimization features—including AI optimization, predictive cleanup, smart caching, and conscious organization—are enabled and active.
      *
      * @return A flow emitting the active autonomous storage optimization state.
      */

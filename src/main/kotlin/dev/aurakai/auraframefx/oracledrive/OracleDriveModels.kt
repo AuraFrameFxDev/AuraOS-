@@ -12,6 +12,14 @@ data class DriveFile(
     val size: Long,
     val mimeType: String
 ) {
+    /**
+     * Checks whether this DriveFile is equal to another object, comparing all properties including content byte arrays.
+     *
+     * Two DriveFile instances are considered equal if their id, name, content, size, and mimeType are all equal.
+     *
+     * @param other The object to compare with this DriveFile.
+     * @return True if the objects are equal, false otherwise.
+     */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -20,6 +28,13 @@ data class DriveFile(
                size == other.size && mimeType == other.mimeType
     }
     
+    /**
+     * Returns a hash code value for the DriveFile, including its content array and all properties.
+     *
+     * Ensures that files with identical content and properties produce the same hash code.
+     * Overrides the default implementation to account for byte array content.
+     * @return The hash code value for this DriveFile.
+     */
     override fun hashCode(): Int {
         var result = id.hashCode()
         result = 31 * result + name.hashCode()
