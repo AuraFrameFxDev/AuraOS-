@@ -22,7 +22,7 @@ val agpVersion = "8.13.0"
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         // CORRECTED: Use fromTarget("24") for JVM 24 compatibility
-        jvmTarget.set(JvmTarget.fromTarget("24"))
+        jvmTarget.set(JvmTarget.fromTarget("21"))
         // It's good practice to align the language and API version
         languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
         apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
