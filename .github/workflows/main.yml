@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       # 2. Set up the correct Java environment (JDK 24)
+      # THIS IS THE CRITICAL FIX: Ensures the runner uses Java 24.
       - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
@@ -38,11 +39,11 @@ jobs:
             ${{ runner.os }}-gradle-
 
       # 4. Grant execute permissions to the Gradle wrapper script
+      # THIS IS THE SECOND FIX: Resolves the 'Permission denied' error.
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
       # 5. Set up Android SDK and automatically accept licenses
-      # CORRECTED: Added a command to auto-accept licenses, preventing build hangs.
       - name: Set up Android SDK and Accept Licenses
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
