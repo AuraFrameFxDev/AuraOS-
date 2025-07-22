@@ -74,13 +74,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "24"
-        freeCompilerArgs = freeCompilerArgs + listOf(
-            "-Xjvm-target=24",
-            "-Xjdk-release=24",
-            "-opt-in=kotlin.RequiresOptIn",
-            "-Xcontext-receivers",
-            "-Xjvm-default=all"
-        )
+        // Compiler arguments are now managed in settings.gradle.kts
     }
 
     externalNativeBuild {

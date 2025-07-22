@@ -27,22 +27,10 @@ val javaVersion = JavaVersion.VERSION_24
 
 // Configure all projects
 allprojects {
-    // Configure Java toolchain for all projects
-    plugins.withType<org.gradle.api.plugins.JavaBasePlugin> {
-        configure<JavaPluginExtension> {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(javaVersion.majorVersion.toInt()))
-                vendor.set(org.gradle.jvm.toolchain.JvmVendorSpec.ADOPTIUM)
-            }
-        }
-    }
-
-    // Configure Kotlin compilation for all projects
+    // Kotlin compilation settings are now managed in settings.gradle.kts
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
             freeCompilerArgs.addAll(
-                "-Xjvm-target=24",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-Xcontext-receivers",
                 "-Xjvm-default=all",
