@@ -13,7 +13,7 @@ repositories {
 
 // Define the specific versions required for the buildSrc module itself.
 val kotlinVersion = "2.2.0"
-val agpVersion = "8.5.0" 
+val agpVersion = "8.11.1" 
 
 // Configure Kotlin compilation for the buildSrc module
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
