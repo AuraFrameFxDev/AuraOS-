@@ -3,7 +3,7 @@
 
 @Suppress("DSL_SCOPE_VIOLATION") // Suppress false positive warning for 'libs'
 plugins {
-    alias(libs.plugins.android.application) version "8.11.1" apply false
+    alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
 
     alias(libs.plugins.kotlin.android) apply false
