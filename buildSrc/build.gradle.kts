@@ -1,84 +1,52 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+// This file configures the buildSrc module, which contains custom build logic.
+// It has its own isolated classpath and cannot access the root project's version catalog (`libs`).
+// Therefore, its dependencies and versions are defined directly here.
+
 plugins {
     `kotlin-dsl`
-    `java-gradle-plugin`
 }
 
 repositories {
     google()
     mavenCentral()
-    gradlePluginPortal()
-    maven { 
-        url = uri("https://maven.google.com/")
-        name = "Google"
-    }
 }
 
-// Configure Java toolchain for buildSrc
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(24))
-        vendor.set(JvmVendorSpec.ADOPTIUM)
-    }
-}
+// Define the specific versions required for the buildSrc module itself.
+// These are aligned with our main project's toolchain.
+val kotlinVersion = "2.2.0"
+val agpVersion = "8.5.0"
 
-// Configure Kotlin for buildSrc
-kotlin {
-    jvmToolchain(24)
+// Configure Kotlin compilation for the buildSrc module
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
-        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
-        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
-        freeCompilerArgs.addAll(
-            "-opt-in=kotlin.RequiresOptIn",
-            "-Xcontext-receivers",
-            "-Xjvm-default=all",
-            "-Xskip-prerelease-check"
-        )
+        // CORRECTED: Use fromTarget("24") for JVM 24 compatibility
+        jvmTarget.set(JvmTarget.fromTarget("24"))
+        // It's good practice to align the language and API version
+        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
     }
 }
 
-// Ensure all tasks use the correct Java version
+// Configure Java compilation for the buildSrc module
 tasks.withType<JavaCompile>().configureEach {
-    sourceCompatibility = JavaVersion.VERSION_24.toString()
-    targetCompatibility = JavaVersion.VERSION_24.toString()
-    options.encoding = "UTF-8"
-    options.isIncremental = true
-    options.release.set(24)
-}
-
-// Configure test tasks
-tasks.withType<Test> {
-    useJUnitPlatform()
-    jvmArgs("--enable-preview")
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
+    sourceCompatibility = "24"
+    targetCompatibility = "24"
 }
 
 dependencies {
-    // Core Gradle and Kotlin plugins
-    implementation(gradleApi())
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
-    implementation("com.android.tools.build:gradle:${libs.versions.agp.get()}")
-    
-    // Test dependencies
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${libs.versions.kotlin.get()}")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-    
-    // Use the Gradle version that comes with the wrapper
-    val gradleVersion = project.gradle.gradleVersion
-    testImplementation("org.gradle:gradle-tooling-api:$gradleVersion") {
-        version { strictly(gradleVersion) }
-    }
-    testImplementation("org.gradle:gradle-test-kit:$gradleVersion") {
-        version { strictly(gradleVersion) }
-    }
+    // We must declare the dependencies for buildSrc explicitly, without using the `libs` catalog.
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation("com.android.tools.build:gradle:$agpVersion")
+    // Add any other dependencies that buildSrc itself might need here.
+
+    // Test dependencies for buildSrc
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 }
 
-// Additional Kotlin compiler options
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
-        freeCompilerArgs.add("-Xjvm-default=all")
-    }
+// Configure the test runner for buildSrc tests
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
+
