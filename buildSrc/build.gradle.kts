@@ -1,7 +1,3 @@
-// This file configures the buildSrc module.
-// It uses hardcoded versions because it cannot access the main version catalog.
-// This version contains the fix for the JVM target fallback warning.
-
 plugins {
     `kotlin-dsl`
 }
