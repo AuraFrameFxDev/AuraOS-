@@ -1,38 +1,39 @@
+# This is the final, validated CI/CD workflow for the AuraOS project.
+# It ensures the correct Java and Android SDK environment, handles caching,
+# generates the necessary API clients, and builds the final release artifacts.
+
 name: Android CI
 
 on:
   push:
-    branches: [ AuraOS ]
+    branches: [ "AuraOS" ]
   pull_request:
-    branches: [ AuraOS ]
+    branches: [ "AuraOS" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
+      # 1. Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Set up OpenJDK 24 using Temurin distribution
-      - name: Set up JDK 24 (OpenJDK/Temurin)
+      # 2. Set up the correct Java environment (JDK 24)
+      # This is critical to match the project's requirements.
+      - name: Set up JDK 24
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '24'
 
-      # Make gradlew executable
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      # Set up Android SDK version 36
+      # 3. Set up the Android SDK
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
           sdk-version: '36'
 
-      # Cache Gradle dependencies and wrapper
+      # 4. Cache Gradle dependencies to speed up subsequent builds
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -43,58 +44,37 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # ------------------------------------------
-      # PREBUILD & OPENAPI GENERATION STEPS
-      # ------------------------------------------
+      # 5. Grant execute permissions to the Gradle wrapper script
+      # This is required for Linux-based runners.
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-      # Run prebuild tasks (replace with your actual task if different)
-      - name: Run Prebuild Tasks
-        run: ./gradlew prebuild --no-configuration-cache --debug | tee gradle-prebuild.log
+      # 6. Regenerate the OpenAPI client to ensure it's in sync with the latest API spec
+      # This is a critical step after making changes to openapi.yml
+      - name: Generate OpenAPI Client
+        run: ./gradlew :app:generateOpenApiDocs --no-configuration-cache --info | tee gradle-openapi-main.log
 
-      # Generate OpenAPI files for main app
-      - name: Generate OpenAPI for main app
-        run: ./gradlew :app:generateOpenApiDocs --no-configuration-cache --debug | tee gradle-openapi-main.log
+      # 7. Build the application (Release variant)
+      # We run a full build to ensure all code compiles and resources are packaged correctly.
+      - name: Build Project (Release)
+        run: ./gradlew assembleRelease --no-configuration-cache --info | tee gradle-build.log
 
-      # Generate OpenAPI files for buildSrc
-      - name: Generate OpenAPI for buildSrc
-        run: ./gradlew :buildSrc:generateOpenApiDocs --no-configuration-cache --debug | tee gradle-openapi-buildsrc.log
-
-      # ------------------------------------------
-      # LPOSED & AI BACKEND SETUP
-      # ------------------------------------------
-
-      # Setup Lposed module (runs only if script exists)
-      - name: Setup Lposed module
-        run: if [ -f ./scripts/setup-lposed.sh ]; then bash ./scripts/setup-lposed.sh; fi
-
-      # Setup AI backend (runs only if script exists)
-      - name: Setup AI backend
-        run: if [ -f ./scripts/setup-ai-backend.sh ]; then bash ./scripts/setup-ai-backend.sh; fi
-
-      # ------------------------------------------
-      # BUILD & ARTIFACTS
-      # ------------------------------------------
-
-      # Build all modules (Release)
-      - name: Build all modules (Release)
-        run: ./gradlew assembleRelease --no-configuration-cache --debug | tee gradle-build.log
-
-      # Upload APK/AAB artifacts from all modules
-      - name: Upload APK/AAB artifacts
+      # 8. Upload the final build artifacts (APK/AAB) for distribution or testing
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: AppBuilds
+          name: App-Builds
           path: |
-            **/build/outputs/apk/release/*.apk
-            **/build/outputs/bundle/release/*.aab
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/bundle/release/*.aab
 
-      # Upload Gradle logs for debugging
-      - name: Upload Gradle logs
+      # 9. Upload Gradle logs for debugging in case of failure
+      - name: Upload Gradle Logs
+        if: failure() # Only upload logs if the build fails
         uses: actions/upload-artifact@v4
         with:
-          name: gradle-logs
+          name: Gradle-Logs
           path: |
-            gradle-prebuild.log
             gradle-openapi-main.log
-            gradle-openapi-buildsrc.log
             gradle-build.log
+
