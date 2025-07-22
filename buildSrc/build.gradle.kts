@@ -27,7 +27,7 @@ kotlin {
     compilerOptions {
         languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
         apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
         freeCompilerArgs.addAll(
             "-opt-in=kotlin.RequiresOptIn",
             "-Xcontext-receivers",
@@ -58,11 +58,11 @@ tasks.withType<Test> {
 dependencies {
     // Core Gradle and Kotlin plugins
     implementation(gradleApi())
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
-    implementation("com.android.tools.build:gradle:${libs.versions.agp.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+    implementation("com.android.tools.build:gradle:8.5.1")
     
     // Test dependencies
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${libs.versions.kotlin.get()}")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     
     // Use the Gradle version that comes with the wrapper
@@ -78,7 +78,7 @@ dependencies {
 // Additional Kotlin compiler options
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         freeCompilerArgs.add("-Xjvm-default=all")
     }
 }
