@@ -21,11 +21,14 @@ val agpVersion = "8.13.0"
 // Configure Kotlin compilation for the buildSrc module
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
-        // CORRECTED: Use fromTarget("24") for JVM 24 compatibility
-        jvmTarget.set(JvmTarget.fromTarget("21"))
         // It's good practice to align the language and API version
         languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
         apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+        
+        // CORRECTED: The previous `jvmTarget.set(...)` method was not recognized
+        // by the isolated buildSrc compiler. Using freeCompilerArgs is a more direct
+        // and robust way to set the JVM target.
+        freeCompilerArgs.add("-Xjvm-target=24")
     }
 }
 
