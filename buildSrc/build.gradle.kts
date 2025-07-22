@@ -19,7 +19,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         
         // CORRECTED: Using freeCompilerArgs is a more direct and robust way to 
         // set the JVM target, preventing the fallback to JVM 22.
-        freeCompilerArgs.add("-Xjvm-target=24")
+        freeCompilerArgs.add("-Xjvm-target=22")
     }
 }
 
