@@ -1,19 +1,11 @@
-// Gradle configuration for AuraFrameFX with Java 24 and Gradle 8.14.3
-
-// Project properties
-extra["ndkVersion"] = "27.0.12077973"
-extra["cmakeVersion"] = "3.22.1"
-extra["compileSdkVersion"] = 36
-extra["targetSdkVersion"] = 36
-extra["minSdkVersion"] = 33
-extra["kotlinVersion"] = libs.versions.kotlin.get()
-
-val javaVersion = JavaVersion.VERSION_24
-
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+// This version contains the corrected plugin alias syntax.
+
+@Suppress("DSL_SCOPE_VIOLATION") // Suppress false positive warning for 'libs'
 plugins {
     alias(libs.plugins.android.application) version "8.11.1" apply false
     alias(libs.plugins.android.library) apply false
+
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
@@ -23,22 +15,18 @@ plugins {
     alias(libs.plugins.openapi.generator) apply false
 }
 
-// Configure all projects
-allprojects {
-    // Configure Java toolchain for all projects
-    plugins.withType<org.gradle.api.plugins.JavaBasePlugin> {
-        configure<JavaPluginExtension> {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(javaVersion.majorVersion.toInt()))
-                vendor.set(org.gradle.jvm.toolchain.JvmVendorSpec.ADOPTIUM)
-            }
-        }
-    }
+// Global project properties
+extra["ndkVersion"] = "27.0.12077973"
+extra["cmakeVersion"] = "3.22.1"
+extra["compileSdkVersion"] = 36
+extra["targetSdkVersion"] = 36
+extra["minSdkVersion"] = 33
+extra["kotlinVersion"] = libs.versions.kotlin.get()
 
-    // Configure Kotlin compilation for all projects
+// Configure all projects for consistency
+allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
             freeCompilerArgs.addAll(
                 "-Xjvm-target=24",
                 "-opt-in=kotlin.RequiresOptIn",
@@ -52,7 +40,6 @@ allprojects {
         }
     }
 
-    // Configure Java compilation for all projects
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = "24"
         targetCompatibility = "24"
@@ -61,7 +48,6 @@ allprojects {
         options.compilerArgs.add("--enable-preview")
     }
 
-    // Configure test tasks
     tasks.withType<Test> {
         useJUnitPlatform()
         jvmArgs("--enable-preview")
@@ -71,10 +57,10 @@ allprojects {
     }
 }
 
-// Clean task for the root project
 tasks.register<Delete>("clean") {
-    delete(layout.buildDirectory)
+    delete(rootProject.buildDir)
 }
+
 
 // Oracle Drive specific dependencies
 dependencies {

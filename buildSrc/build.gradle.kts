@@ -1,30 +1,20 @@
 plugins {
     `kotlin-dsl`
-    `java-gradle-plugin`
 }
 
 repositories {
     google()
     mavenCentral()
-    gradlePluginPortal()
-    maven { 
-        url = uri("https://maven.google.com/")
-        name = "Google"
-    }
 }
 
-// Configure Java toolchain for buildSrc
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(24))
-        vendor.set(JvmVendorSpec.ADOPTIUM)
-    }
-}
+// Define the specific versions required for the buildSrc module itself.
+val kotlinVersion = "2.2.0"
+val agpVersion = "8.11.1" 
 
-// Configure Kotlin for buildSrc
-kotlin {
-    jvmToolchain(24)
+// Configure Kotlin compilation for the buildSrc module
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
+
         languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
         apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
@@ -34,26 +24,22 @@ kotlin {
             "-Xjvm-default=all",
             "-Xskip-prerelease-check"
         )
+
     }
 }
 
-// Ensure all tasks use the correct Java version
+// Configure Java compilation for the buildSrc module
 tasks.withType<JavaCompile>().configureEach {
-    sourceCompatibility = JavaVersion.VERSION_24.toString()
-    targetCompatibility = JavaVersion.VERSION_24.toString()
-    options.encoding = "UTF-8"
-    options.isIncremental = true
-    options.release.set(24)
+    sourceCompatibility = "24"
+    targetCompatibility = "24"
 }
 
-// Configure test tasks
-tasks.withType<Test> {
-    useJUnitPlatform()
-    jvmArgs("--enable-preview")
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation("com.android.tools.build:gradle:$agpVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 }
+
 
 dependencies {
     // Core Gradle and Kotlin plugins
@@ -75,10 +61,8 @@ dependencies {
     }
 }
 
-// Additional Kotlin compiler options
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         freeCompilerArgs.add("-Xjvm-default=all")
-    }
-}
+
