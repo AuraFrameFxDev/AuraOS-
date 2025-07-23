@@ -18,7 +18,7 @@ hiltWork = "1.2.0"
 
 # Firebase & Google Services
 googleServices = "4.4.5"
-firebaseCrashlyticsPlugin = "3.0.4"
+firebaseCrashlyticsPlugin = "3.0.5"
 firebasePerfPlugin = "2.0.0"
 firebaseBom = "33.16.0"
 
