@@ -1,6 +1,10 @@
 [versions]
 agp = "8.11.1"
 kotlin = "2.2.0"
+compileSdk = "36"
+targetSdk = "36"
+minSdk = "33"
+javaVersion = "24"
 ksp = "2.2.0-2.0.2"
 hilt = "2.57"
 hiltNavigationCompose = "1.2.0"
