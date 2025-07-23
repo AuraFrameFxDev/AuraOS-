@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -12,8 +12,6 @@ android {
 
     defaultConfig {
         minSdk = 33
-        targetSdk = 36
-        
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -33,10 +31,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_24
     }
 
-    kotlinOptions {
-        jvmTarget = "24"
-    }
-
     buildFeatures {
         compose = true
     }
@@ -48,33 +42,33 @@ android {
 
 dependencies {
     implementation(project(":app"))
-    
+
     // Core Android and Compose
     implementation(libs.bundles.core)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.lifecycle)
-    
+
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
-    kapt(libs.hilt.compiler)
-    
+    ksp(libs.hilt.compiler)
+
     // Firebase and Cloud Storage
     implementation(libs.bundles.firebase)
     implementation(libs.google.cloud.storage)
-    
+
     // Networking and Serialization
     implementation(libs.bundles.network)
     implementation(libs.kotlinx.serialization.json)
-    
+
     // Security and Encryption
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.biometric)
-    
+
     // Coroutines and Flow
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
-    
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
