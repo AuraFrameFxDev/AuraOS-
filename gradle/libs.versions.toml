@@ -20,7 +20,7 @@ hiltWork = "1.2.0"
 googleServices = "4.4.5"
 firebaseCrashlyticsPlugin = "3.0.5"
 firebasePerfPlugin = "2.0.0"
-firebaseBom = "33.16.0"
+firebaseBom = "34.0.0"
 
 # Build Tools & Plugins
 openapiGeneratorPlugin = "7.14.0"
