@@ -1,22 +1,30 @@
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
     alias(libs.plugins.openapi.generator)
 }
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "dev.aurakai.auraframefx" // ✅ FIXED: Proper package name
-        minSdk = 33
-        targetSdk = 36
+        applicationId = "dev.aurakai.auraframefx"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner = "dev.aurakai.auraframefx.HiltTestRunner" // ✅ FIXED
 
+        testInstrumentationRunner = "dev.aurakai.auraframefx.HiltTestRunner"
         multiDexEnabled = true
+        
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -30,19 +38,28 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+        }
+    }
+
+    // Simplified compile options - Kotlin plugin handles Java compatibility automatically
+    compileOptions {
+        sourceCompatibility = JavaVersion.toVersion(libs.versions.javaVersion.get())
+        targetCompatibility = JavaVersion.toVersion(libs.versions.javaVersion.get())
+        isCoreLibraryDesugaringEnabled = true
     }
 
     buildFeatures {
         buildConfig = true
-        compose = true
+        // compose = true <- Removed, automatically handled by kotlin.compose plugin
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_24
-        targetCompatibility = JavaVersion.VERSION_24
-        isCoreLibraryDesugaringEnabled = true
+    // Only needed if you want to override the default compiler extension version
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
-
 
     packaging {
         resources {
@@ -53,7 +70,7 @@ android {
     }
 }
 
-// OpenAPI Generator Configuration
+// OpenAPI Generator Configuration - Streamlined
 openApiGenerate {
     generatorName.set("kotlin")
     inputSpec.set("$projectDir/src/main/openapi.yml")
@@ -67,14 +84,17 @@ openApiGenerate {
     ))
 }
 
+// KSP Configuration
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+// Source sets configuration
 android.sourceSets.getByName("main") {
     java.srcDir("${layout.buildDirectory.get().asFile}/generated/openapi/src/main/kotlin")
 }
 
+// Task dependencies
 tasks.named("preBuild") {
     dependsOn("openApiGenerate")
 }
@@ -101,7 +121,7 @@ dependencies {
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.compose.ui.test.junit4)
 
-    // Lifecycle - using bundle
+    // Lifecycle - using bundle for cleaner dependency management
     implementation(libs.bundles.lifecycle)
 
     // Dagger Hilt
