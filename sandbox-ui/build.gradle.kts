@@ -2,10 +2,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
-    id("kotlin-parcelize")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -14,18 +12,8 @@ android {
 
     defaultConfig {
         minSdk = 33
-        // targetSdk is deprecated in library modules, using testOptions and lint instead
-        testOptions.targetSdk = 36
-        lint.targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        // Configure NDK if needed
-        ndk {
-            abiFilters.addAll(listOf("arm64-v8a", "x86_64"))
-            version = rootProject.extra["ndkVersion"] as String
-            debugSymbolLevel = "FULL"
-        }
     }
 
     buildTypes {
@@ -43,29 +31,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_24
     }
 
-    kotlinOptions {
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
     }
 
-    packaging {
-        resources {
-            excludes.addAll(
-                listOf(
-                    "META-INF/*.kotlin_module",
-                    "META-INF/*.version",
-                    "META-INF/proguard/*",
-                    "**/libjni*.so"
-                )
-            )
-        }
-    }
-
     composeOptions {
-        kotlinCompilerExtensionVersion = "2.0.0"
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 }
 
@@ -74,35 +46,33 @@ dependencies {
     api(project(":app"))
 
     // AndroidX Core
-    implementation(libs.androidxCoreKtx)
-    implementation(libs.androidxLifecycleRuntimeKtx)
-    implementation(libs.androidxActivityCompose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
 
     // Compose BOM
-    implementation(platform(libs.composeBom))
-    implementation(libs.ui)
-    implementation(libs.uiToolingPreview)
-    implementation(libs.androidxMaterial3)
-    implementation(libs.animation)
-    implementation(libs.foundation)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.animation)
+    implementation(libs.compose.foundation)
 
     // Navigation
-    implementation(libs.navigationComposeV291)
+    implementation(libs.navigation.compose)
 
     // Hilt
-    implementation(libs.hiltAndroid)
-    kapt(libs.hiltCompiler)
-    implementation(libs.hiltNavigationCompose)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
 
     // Debug tools
-    debugImplementation(libs.uiTooling)
-    debugImplementation(libs.uiTestManifest)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
 
     // Testing
-    testImplementation(libs.testJunit)
-    testImplementation("org.gradle:gradle-tooling-api:8.4")
-    testImplementation("org.gradle:gradle-test-kit:8.4")
-    androidTestImplementation(libs.junitV115)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.uiTestJunit4)
+    androidTestImplementation(libs.compose.ui.test.junit4)
 }

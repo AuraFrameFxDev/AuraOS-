@@ -4,6 +4,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
@@ -13,8 +14,15 @@ dependencyResolutionManagement {
         mavenLocal()
         google()
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
 rootProject.name = "AuraFrameFX"
-include(":app")
+include(
+    ":app",
+    ":jvm-test",
+    ":sandbox-ui",
+    ":oracle-drive-integration",
+    ":oracledrive"
+)

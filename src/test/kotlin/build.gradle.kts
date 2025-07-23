@@ -3,12 +3,12 @@ plugins {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testImplementation("org.gradle:gradle-tooling-api:8.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.gradle.tooling.api)
+    testImplementation(libs.kotlin.test)
     testImplementation(gradleTestKit())
 }
 
-tasks.test {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
