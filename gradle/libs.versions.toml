@@ -3,13 +3,17 @@
 compileSdk = "36"
 targetSdk = "36"
 minSdk = "33"
-javaVersion = "21"
+javaVersion = "24"
 
 # Core Build Tools
 agp = "8.11.1"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
 compose-compiler = "1.5.15"
+
+# Code Quality
+detekt = "1.23.6"
+spotless = "6.25.0"
 
 # Dependency Injection
 hilt = "2.57"
@@ -140,6 +144,8 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 openapi-generator = { id = "org.openapi.generator", version.ref = "openapiGeneratorPlugin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+spotless = { id = "com.diffplug.gradle.spotless", version.ref = "spotless" }
 
 [bundles]
 room = ["room-runtime", "room-ktx"]
