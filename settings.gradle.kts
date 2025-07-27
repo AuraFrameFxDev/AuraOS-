@@ -24,5 +24,11 @@ include(
     ":jvm-test",
     ":sandbox-ui",
     ":oracle-drive-integration",
-    ":oracledrive"
+    ":oracledrive",
+    ":module-a",
+    ":module-b",
+    ":module-c",
+    ":module-d",
+    ":module-e",
+    ":module-f"
 )

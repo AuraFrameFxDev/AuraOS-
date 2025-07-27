@@ -7,11 +7,8 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "2.2.0"
-val agpVersion = "8.11.1"
-
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("com.android.tools.build:gradle:$agpVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+    implementation(files("../gradle/libs.versions.toml"))
+    implementation(libs.findPlugin("kotlin-android").get())
+    implementation(libs.findPlugin("androidApplication").get())
 }

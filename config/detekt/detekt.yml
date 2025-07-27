@@ -1,0 +1,98 @@
+# This is a placeholder for your Detekt configuration.
+# You can find more information about the configuration options here:
+# https://detekt.dev/docs/introduction/configurations
+
+# Formatting
+formatting:
+  # Reports formatting issues
+  active: true
+  # The default configuration is used
+  # You can override the default configuration by creating a .editorconfig file
+  # and pointing to it with the following property:
+  # config: ".editorconfig"
+  # You can also use the following properties to override the default configuration:
+  # IndentSize: 2
+  # ContinuationIndentSize: 2
+  # MaxLineLength: 120
+  # NoWildcardImports: true
+  # NoEmptyClassBody: true
+  # NoLineBreakBeforeAssignment: true
+  # NoLineBreakAfterElse: true
+  # NoMultipleSpaces: true
+  # NoSemicolons: true
+  # NoTrailingSpaces: true
+  # NoUnitReturn: true
+  # ParameterListWrapping: true
+  # StringTemplate: true
+  # TrailingCommaOnCallSite: true
+  # TrailingCommaOnDeclarationSite: true
+
+# Complexity
+complexity:
+  # Reports complex code
+  active: true
+  # The default configuration is used
+  # You can override the default configuration with the following properties:
+  # ComplexCondition: 3
+  # CyclomaticComplexMethod: 10
+  # LargeClass: 150
+  # LongMethod: 60
+  # LongParameterList: 5
+  # MethodOverloading: 5
+  # NestedBlockDepth: 3
+  # TooManyFunctions: 10
+
+# Naming
+naming:
+  # Reports naming convention violations
+  active: true
+  # The default configuration is used
+  # You can override the default configuration with the following properties:
+  # ClassNaming: '[A-Z][a-zA-Z0-9]*'
+  # EnumNaming: '[A-Z][a-zA-Z0-9]*'
+  # FunctionNaming: '([a-z][a-zA-Z0-9]*)|(`.*`)'
+  # ObjectNaming: '[A-Z][a-zA-Z0-9]*'
+  # PackageNaming: '[a-z]+(\.[a-z]+)*'
+  # PropertyNaming: '[a-z][a-zA-Z0-9]*'
+  # TopLevelPropertyNaming: '[a-z][a-zA-Z0-9]*'
+  # VariableNaming: '[a-z][a-zA-Z0-9]*'
+
+# Performance
+performance:
+  # Reports performance issues
+  active: true
+  # The default configuration is used
+  # You can override the default configuration with the following properties:
+  # ForEachOnRange: true
+  # SpreadOperator: true
+  # UnnecessaryTemporaryInstantiation: true
+
+# Style
+style:
+  # Reports style guide violations
+  active: true
+  # The default configuration is used
+  # You can override the default configuration with the following properties:
+  # CollapsibleIfStatements: true
+  # DataClassContainsFunctions: true
+  # ExplicitItLambdaParameter: true
+  # ExpressionBodySyntax: true
+  # ForbiddenComment: true
+  # FunctionOnlyReturningConstant: true
+  # MagicNumber: true
+  # MayBeConst: true
+  # NestedClassesVisibility: true
+  # ProtectedMemberInFinalClass: true
+  # RedundantExplicitType: true
+  # RedundantReturnUnitType: true
+  # RedundantVisibilityModifier: true
+  # SpacingBetweenPackageAndImports: true
+  # TooManyFunctions: 10
+  # UnnecessaryAbstractClass: true
+  # UnnecessaryApply: true
+  # UnnecessaryParentheses: true
+  # UntilTo: true
+  # UseDataClass: true
+  # UtilityClassWithPublicConstructor: true
+  # VarCouldBeVal: true
+  # WildcardImport: true
