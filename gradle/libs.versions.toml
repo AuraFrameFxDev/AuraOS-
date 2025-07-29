@@ -13,7 +13,7 @@ compose-compiler = "1.5.15"
 
 # Code Quality
 detekt = "1.23.6"
-spotless = "6.25.0"
+spotless = "7.2.1"
 
 # Dependency Injection
 hilt = "2.57"
