@@ -50,7 +50,7 @@ lifecycle = "2.9.2"
 room = "2.7.2"
 workManager = "2.10.2"
 datastore = "1.1.7"
-securityCrypto = "1.1.0-beta01"
+securityCrypto = "1.1.0"
 
 # Network & Serialization
 retrofit = "3.0.0"
