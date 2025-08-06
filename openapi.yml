@@ -17,7 +17,7 @@ servers:
     description: Production API
   - url: https://dev-api.auraframefx.com/v1
     description: Development API
-  - url: http://localhost:8080/v1
+  - url: https://localhost:8080/v1
     description: Local development server
 
 tags:
