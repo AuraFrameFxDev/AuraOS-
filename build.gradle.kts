@@ -1,9 +1,21 @@
-// Minimal build.gradle.kts for AuraOS
-plugins {
-    id("com.android.application") version "8.11.1" apply false
-    id("com.android.library") version "8.11.1" apply false
-    id("org.jetbrains.kotlin.android") version "2.2.0" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.0" apply false
+// Fixed build.gradle.kts for AuraOS
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
 tasks.register("clean", Delete::class) {
