@@ -1,40 +1,44 @@
-# app/src/main/cpp/CMakeLists.txt
-
-# Set shorter paths for build outputs
-set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
-
-# Set minimum required CMake version
+# app/src/cpp/CMakeLists.txt
 cmake_minimum_required(VERSION 3.22.1)
 
-# Configure project with shorter name
-project("aura" LANGUAGES CXX)
+# Configure project
+project("aura-native" LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add library with shorter name
-add_library(aura-lib SHARED native-lib.cpp)
+# Set output directories
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
 
-# Set output name to match the original
-set_target_properties(aura-lib PROPERTIES OUTPUT_NAME "aura-native-lib")
+# Add native library
+add_library(aura-native SHARED 
+    native-lib.cpp
+    language_id_l2c_jni.cpp
+)
 
-# Find and link required libraries
+# Find required libraries (Android-specific)
 find_library(log-lib log)
-target_link_libraries(aura-lib PRIVATE ${log-lib})
+
+# Link libraries
+if(log-lib)
+    target_link_libraries(aura-native PRIVATE ${log-lib})
+else()
+    # For non-Android builds, we don't need the log library
+    message(STATUS "Android log library not found - building for non-Android target")
+endif()
 
 # Set compile options
-target_compile_options(aura-lib PRIVATE
-        -Wall
-        -Werror
-        -fexceptions
-        -frtti
+target_compile_options(aura-native PRIVATE
+    -Wall
+    -Wextra
+    -fexceptions
+    -frtti
 )
 
 # Set include directories
-target_include_directories(aura-lib PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(aura-native PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
