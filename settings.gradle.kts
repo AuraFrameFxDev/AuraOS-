@@ -1,4 +1,12 @@
-// Minimal settings.gradle.kts for AuraOS
+// Fixed settings.gradle.kts for AuraOS
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {

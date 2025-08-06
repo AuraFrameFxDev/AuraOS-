@@ -1,10 +1,19 @@
-// Minimal build.gradle.kts for AuraOS - Without Android dependencies for now
-plugins {
-    kotlin("jvm") version "1.8.10" apply false
+// Fixed build.gradle.kts for AuraOS
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
+    }
 }
 
 allprojects {
     repositories {
+        google()
         mavenCentral()
     }
 }
