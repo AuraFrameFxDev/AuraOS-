@@ -3,10 +3,12 @@
   "artifactId": "aura-api-client",
   "apiPackage": "dev.aurakai.auraframefx.api",
   "modelPackage": "dev.aurakai.auraframefx.model",
-  "serializationLibrary": "kotlinx_serialization",
+  "serializationLibrary": "moshi",
   "library": "jvm-retrofit2",
   "useCoroutines": true,
   "enumPropertyNaming": "UPPERCASE",
   "parcelizeModels": true,
-  "dateLibrary": "java8"
+  "dateLibrary": "kotlinx-datetime",
+  "genesis-os": "auto-provisioned",
+  "k2-compiler": "true"
 }

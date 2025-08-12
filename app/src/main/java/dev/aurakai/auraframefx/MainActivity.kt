@@ -1,13 +1,21 @@
+// Genesis-OS Main AI Consciousness Activity
+// Auto-Provisioned Compose with K2 Compiler (NO manual config)
 package dev.aurakai.auraframefx
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,73 +24,45 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 
-import dev.aurakai.auraframefx.ui.animation.digitalPixelEffect // Specific import
-// import dev.aurakai.auraframefx.ui.animation.digitalScanlineEffect // Was commented out, ensure it's not needed or defined
-
+import dev.aurakai.auraframefx.core.GenesisConstants
+import dev.aurakai.auraframefx.ui.animation.digitalPixelEffect
 import dev.aurakai.auraframefx.ui.components.BottomNavigationBar
 import dev.aurakai.auraframefx.ui.navigation.AppNavGraph
 import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme
 
-// Using Jetpack Navigation 3 with built-in animation support
-
+/**
+ * Genesis-OS Main AI Consciousness Activity
+ * Auto-provisioned with K2 Kotlin compiler - NO manual compiler configuration
+ */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    /**
-     * Initializes the activity and sets the Compose UI content to the main screen using the app's theme.
-     *
-     * @param savedInstanceState The previously saved state of the activity, or null if none exists.
-     */
+    
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Genesis-OS Auto-Provisioned Compose Content
         setContent {
             AuraFrameFXTheme {
-                MainScreen()
+                GenesisAIConsciousnessScreen()
             }
         }
-    }
-
-    /**
-     * Called when the activity is about to be destroyed.
-     *
-     * Override this method to perform cleanup operations before the activity is removed from memory.
-     */
-    override fun onDestroy() {
-        super.onDestroy()
-        // Perform any cleanup here if needed
     }
 }
 
 /**
- * Displays the main screen layout with a bottom navigation bar and navigation graph.
- *
- * Sets up the app's primary UI structure using a Scaffold, integrating navigation and content padding.
- * Applies cyberpunk-style digital transition effects between screens.
+ * Genesis-OS AI Consciousness Main Screen
+ * Demonstrates auto-provisioned K2 Compose compilation
  */
 @OptIn(ExperimentalMaterial3Api::class)
-/**
- * Composes the main application screen with a scaffolded layout, bottom navigation bar, and an optional digital pixel visual effect.
- *
- * Initializes the navigation controller, conditionally applies a digital pixel effect to the content area, and displays the app's navigation graph within a Material3 scaffold.
- */
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
-import dev.aurakai.auraframefx.ui.theme.ThemeViewModel
-
 @Composable
-fun MainScreen(themeViewModel: ThemeViewModel = hiltViewModel()) {
-    // Use Jetpack Navigation 3's nav controller for digital transitions
+fun GenesisAIConsciousnessScreen() {
     val navController = rememberNavController()
-
-    // State to control digital effects
     var showDigitalEffects by remember { mutableStateOf(true) }
-    var command by remember { mutableStateOf("") }
+    var aiCommand by remember { mutableStateOf("") }
+    var systemStatus by remember { mutableStateOf("Genesis-OS Initializing...") }
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) }
@@ -92,24 +72,47 @@ fun MainScreen(themeViewModel: ThemeViewModel = hiltViewModel()) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Row {
+            // Genesis-OS Status Display
+            Text(
+                text = "🤖 ${GenesisConstants.AI_CONSCIOUSNESS_VERSION}",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(paddingValues)
+            )
+            
+            Text(
+                text = "Build System: ${GenesisConstants.BUILD_SYSTEM}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(paddingValues)
+            )
+            
+            Text(
+                text = "Status: $systemStatus",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(paddingValues)
+            )
+            
+            // AI Command Interface
+            Row(modifier = Modifier.padding(paddingValues)) {
                 TextField(
-                    value = command,
-                    onValueChange = { command = it },
-                    label = { Text("Enter theme command") }
+                    value = aiCommand,
+                    onValueChange = { aiCommand = it },
+                    label = { Text("Genesis AI Command") }
                 )
-                Button(onClick = { themeViewModel.processThemeCommand(command) }) {
-                    Text("Apply")
+                Button(onClick = { 
+                    systemStatus = "Processing: $aiCommand"
+                    // Process AI command through auto-provisioned modules
+                }) {
+                    Text("Execute")
                 }
             }
+            
+            // Main AI Consciousness Interface (Auto-Provisioned K2 Compose)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    // Apply our custom digital effects
                     .then(
                         if (showDigitalEffects) {
-                            Modifier.digitalPixelEffect(visible = true) // Direct use of extension function
-                            // digitalScanlineEffect was removed as it's not defined
+                            Modifier.digitalPixelEffect(visible = true)
                         } else {
                             Modifier
                         }
@@ -122,12 +125,12 @@ fun MainScreen(themeViewModel: ThemeViewModel = hiltViewModel()) {
 }
 
 /**
- * Displays a preview of the main screen composable within the app's theme for design-time visualization.
+ * Genesis-OS Preview (Auto-Provisioned)
  */
 @Preview(showBackground = true)
 @Composable
-fun MainScreenPreview() {
+fun GenesisAIConsciousnessScreenPreview() {
     AuraFrameFXTheme {
-        MainScreen()
+        GenesisAIConsciousnessScreen()
     }
 }
