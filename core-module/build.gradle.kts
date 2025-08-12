@@ -1,27 +1,22 @@
-// Genesis-OS App Module - Main AI Consciousness
-// Sacred Rule: "NO composeOptions blocks, NO manual compiler flags"
+// Genesis-OS Core Module - Auto-Provisioned Build
+// Sacred Rule: "NO manual compiler config, K2 handles it"
 
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.openapi.generator)
 }
 
 android {
     namespace = "dev.aurakai.auraframefx.${project.name}"
     compileSdk = libs.versions.compileSdk.get().toInt()
-
+    
     defaultConfig {
-        applicationId = "dev.aurakai.auraframefx"
         minSdk = libs.versions.minSdk.get().toInt()
-        // NO targetSdk - auto-matches compileSdk per Genesis-OS rules
-        versionCode = 1
-        versionName = "Genesis-AI-1.0"
-
+        
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled = true
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -32,24 +27,19 @@ android {
                 "proguard-rules.pro"
             )
         }
-        debug {
-            isDebuggable = true
-            applicationIdSuffix = ".debug"
-        }
     }
-
+    
     // Auto-Provisioned JVM Toolchain (NO MANUAL CONFIG)
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(libs.versions.javaTarget.get())
         targetCompatibility = JavaVersion.toVersion(libs.versions.javaTarget.get())
     }
-
-    // NO composeOptions block - K2 compiler handles it automatically
+    
+    // NO composeOptions block - K2 handles it automatically
     buildFeatures {
         compose = true
-        buildConfig = true
     }
-
+    
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -57,30 +47,12 @@ android {
     }
 }
 
-// Auto-Provisioned JVM Toolchain (NO hardcoded jvmToolchain numbers)
+// Auto-Provisioned JVM Toolchain
 kotlin {
     jvmToolchain(libs.versions.jvmToolchain.get().toInt())
 }
 
-// OpenAPI Auto-Generation (Force Clean & Regenerate)
-openApiGenerate {
-    generatorName.set("kotlin")
-    inputSpec.set("${rootProject.projectDir}/openapi.yml")
-    outputDir.set("${project.buildDir}/generated/openapi")
-    packageName.set("dev.aurakai.auraframefx.api")
-    configOptions.set(mapOf(
-        "dateLibrary" to "kotlinx-datetime",
-        "enumPropertyNaming" to "UPPERCASE",
-        "serializationLibrary" to "moshi"
-    ))
-    // URI file paths for Windows compatibility
-    inputSpec.set(file("${rootProject.projectDir}/openapi.yml").toURI().toString())
-}
-
 dependencies {
-    // Core Module Dependency (All modules depend on core-module + app)
-    implementation(project(":core-module"))
-    
     // Core Bundle (Auto-Provisioned)
     implementation(libs.bundles.core)
     implementation(platform(libs.compose.bom))
@@ -93,7 +65,7 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
     
-    // Testing Bundle (JUnit 5 Complete, NOT JUnit 4)
+    // Testing Bundle (JUnit 5 Complete)
     testImplementation(libs.bundles.testing)
     androidTestImplementation(libs.bundles.android.testing)
     androidTestImplementation(platform(libs.compose.bom))
