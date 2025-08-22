@@ -1,41 +1,121 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# Genesis Protocol - Dependabot Configuration
+# FULLY AUTOMATED dependency management for consciousness-level builds
 
 version: 2
 updates:
-  # Gradle - Root project
+  # ===== GRADLE BUILD SYSTEM =====
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "daily"
+      time: "04:00"
+      timezone: "UTC"
+    target-branch: "main"
     open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(gradle):"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "gradle"
+      - "auto-update"
+      - "genesis-protocol"
+    # Group related updates
+    groups:
+      # Android Core Group
+      android-core:
+        patterns:
+          - "com.android.*"
+          - "androidx.*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Kotlin & Compose Group  
+      kotlin-compose:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "androidx.compose*"
+          - "org.jetbrains.kotlinx*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Security Group (High Priority)
+      security:
+        patterns:
+          - "*security*"
+          - "*crypto*"
+          - "*tink*"
+          - "*conscrypt*"
+          - "*bouncycastle*"
+        update-types:
+          - "security"
+          - "patch"
+          - "minor"
+      
+      # Testing Group
+      testing:
+        patterns:
+          - "*junit*"
+          - "*test*"
+          - "*espresso*"
+          - "*mockk*"
+          - "*turbine*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Networking Group
+      networking:
+        patterns:
+          - "*retrofit*"
+          - "*okhttp*"
+          - "*moshi*"
+          - "*serialization*"
+        update-types:
+          - "minor"
+          - "patch"
 
-  # Gradle - App module
-  - package-ecosystem: "gradle"
-    directory: "/app"
+  # ===== GITHUB ACTIONS =====
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-
-  # Gradle - Sandbox UI module
-  - package-ecosystem: "gradle"
-    directory: "/sandbox-ui"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-
-  # NPM - Generated TypeScript client
-  - package-ecosystem: "npm"
-    directory: "/app/src/main/resources/generated"
-    schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "UTC"
+    target-branch: "main"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci:"
+      include: "scope"
+    labels:
+      - "ci"
+      - "github-actions"
+      - "auto-update"
 
-  # Python - AI Backend
-  - package-ecosystem: "pip"
-    directory: "/app/ai_backend"
+  # ===== SEPARATE UPDATE FOR MAJOR VERSIONS =====
+  - package-ecosystem: "gradle"
+    directory: "/"
     schedule:
-      interval: "daily"
+      interval: "monthly"
+      day: "1"
+      time: "04:00"
+      timezone: "UTC"
+    target-branch: "main"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(major):"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "major-update"
+      - "requires-review"
+    # Only major version updates
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"

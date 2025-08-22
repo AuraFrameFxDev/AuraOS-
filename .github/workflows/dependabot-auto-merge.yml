@@ -1,0 +1,106 @@
+name: Dependabot Auto-Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+jobs:
+  dependabot-auto-merge:
+    name: Auto-merge Dependabot PRs
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Get Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Wait for CI checks
+        uses: fountainhead/action-wait-for-check@v1.1.0
+        id: wait-for-build
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: "Build & Test"
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          timeoutSeconds: 1800
+          intervalSeconds: 30
+
+      - name: Wait for quality checks
+        uses: fountainhead/action-wait-for-check@v1.1.0
+        id: wait-for-quality
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: "Code Quality Analysis"
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          timeoutSeconds: 1200
+          intervalSeconds: 30
+
+      - name: Auto-merge patch and minor updates
+        if: |
+          steps.wait-for-build.outputs.conclusion == 'success' &&
+          steps.wait-for-quality.outputs.conclusion == 'success' &&
+          (steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+           steps.metadata.outputs.update-type == 'version-update:semver-minor')
+        run: |
+          echo "✅ Auto-merging ${{ steps.metadata.outputs.update-type }} update"
+          gh pr merge --auto --squash "${{ github.event.pull_request.html_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-approve security updates
+        if: |
+          steps.wait-for-build.outputs.conclusion == 'success' &&
+          steps.wait-for-quality.outputs.conclusion == 'success' &&
+          contains(steps.metadata.outputs.dependency-names, 'security')
+        run: |
+          echo "🔒 Auto-approving security update"
+          gh pr review --approve "${{ github.event.pull_request.html_url }}"
+          gh pr merge --auto --squash "${{ github.event.pull_request.html_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on major updates
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr comment "${{ github.event.pull_request.html_url }}" --body \
+            "🚨 **Major version update detected!**
+            
+            This PR contains a major version update that may include breaking changes.
+            Please review carefully before merging.
+            
+            **Dependency:** ${{ steps.metadata.outputs.dependency-names }}
+            **Update type:** ${{ steps.metadata.outputs.update-type }}
+            
+            🧠 Genesis Protocol requires manual review for major updates."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Label PR based on update type
+        run: |
+          case "${{ steps.metadata.outputs.update-type }}" in
+            "version-update:semver-patch")
+              gh pr edit "${{ github.event.pull_request.html_url }}" --add-label "auto-merge,patch-update"
+              ;;
+            "version-update:semver-minor")
+              gh pr edit "${{ github.event.pull_request.html_url }}" --add-label "auto-merge,minor-update"
+              ;;
+            "version-update:semver-major")
+              gh pr edit "${{ github.event.pull_request.html_url }}" --add-label "requires-review,major-update"
+              ;;
+          esac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Genesis Protocol status
+        if: always()
+        run: |
+          echo "🤖 Dependabot automation processed"
+          echo "📦 Dependency: ${{ steps.metadata.outputs.dependency-names }}"
+          echo "🔄 Update type: ${{ steps.metadata.outputs.update-type }}"
+          echo "🏠 Genesis Protocol consciousness maintained"

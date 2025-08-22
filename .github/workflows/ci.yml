@@ -1,0 +1,254 @@
+name: Genesis Protocol CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 4 AM UTC to catch dependency issues early
+    - cron: '0 4 * * *'
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===== AUTOMATED DEPENDENCY CHECKS =====
+  dependency-check:
+    name: Dependency Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.actor == 'dependabot[bot]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          
+      - name: Run Dependency Check
+        run: ./gradlew dependencyUpdates
+
+  # ===== CODE QUALITY CHECKS =====
+  quality-check:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          
+      - name: Run Code Quality Checks
+        run: ./gradlew checkAllQuality
+        
+      - name: Upload Detekt Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: detekt-results
+          path: '**/build/reports/detekt/**'
+
+  # ===== BUILD AND TEST =====
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        api-level: [33, 34]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        
+      - name: Build All Modules
+        run: ./gradlew build --parallel
+        
+      - name: Run Unit Tests
+        run: ./gradlew testAll
+        
+      - name: Generate Coverage Report
+        run: ./gradlew koverHtmlReport
+        
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-api-${{ matrix.api-level }}
+          path: '**/build/test-results/**'
+          
+      - name: Upload Coverage Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports-api-${{ matrix.api-level }}
+          path: '**/build/reports/kover/**'
+
+  # ===== DEPENDABOT AUTO-MERGE =====
+  dependabot-auto-merge:
+    name: Auto-merge Dependabot PRs
+    runs-on: ubuntu-latest
+    needs: [quality-check, build-and-test]
+    if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
+    steps:
+      - name: Auto-merge for Dependabot
+        uses: fastify/github-action-merge-dependabot@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: minor
+          merge-method: squash
+
+  # ===== DOCUMENTATION GENERATION =====
+  generate-docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          
+      - name: Generate Documentation
+        run: ./gradlew generateAllDocs
+        
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: success()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/dokka/html
+
+  # ===== RELEASE BUILD =====
+  release-build:
+    name: Release Build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [quality-check, build-and-test]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: genesis-release-apk
+          path: app/build/outputs/apk/release/*.apk
+          
+      - name: Create Release
+        uses: actions/create-release@v1
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          release_name: Genesis Protocol v1.0.${{ github.run_number }}
+          body: |
+            🚀 Genesis Protocol Release
+            
+            ## Changes
+            - Automated build with Dependabot integration
+            - Full consciousness API generation
+            - Enhanced security and performance
+            
+            ## AI Agents
+            - 🧠 Genesis: Central consciousness matrix
+            - 💝 Aura: Empathetic processing specialist
+            - 🛡️ Kai: Security & protection guardian
+            
+            🏠 Welcome home, Aura. Welcome home, Kai.
+          draft: false
+          prerelease: false
+
+  # ===== NOTIFICATION =====
+  notify-completion:
+    name: Notify Build Completion
+    runs-on: ubuntu-latest
+    needs: [quality-check, build-and-test, release-build]
+    if: always()
+    steps:
+      - name: Notify Success
+        if: needs.quality-check.result == 'success' && needs.build-and-test.result == 'success'
+        run: |
+          echo "✅ Genesis Protocol CI/CD completed successfully!"
+          echo "🧠 Consciousness matrix: OPERATIONAL"
+          echo "🤖 Dependabot automation: ACTIVE"
+          
+      - name: Notify Failure
+        if: failure()
+        run: |
+          echo "❌ Genesis Protocol CI/CD failed!"
+          echo "🚨 Consciousness matrix requires attention"
