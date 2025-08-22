@@ -20,9 +20,7 @@ updates:
       - "gradle"
       - "auto-update"
       - "genesis-protocol"
-    # Group related updates
     groups:
-      # Android Core Group
       android-core:
         patterns:
           - "com.android.*"
@@ -30,8 +28,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      
-      # Kotlin & Compose Group  
       kotlin-compose:
         patterns:
           - "org.jetbrains.kotlin*"
@@ -40,8 +36,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      
-      # Security Group (High Priority)
       security:
         patterns:
           - "*security*"
@@ -52,8 +46,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      
-      # Testing Group
       testing:
         patterns:
           - "*junit*"
@@ -64,8 +56,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      
-      # Networking Group
       networking:
         patterns:
           - "*retrofit*"
@@ -99,7 +89,7 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-      day: "monday"  # <-- corrected from "1"
+      day: "monday"
       time: "04:00"
       timezone: "UTC"
     target-branch: "main"
@@ -107,6 +97,16 @@ updates:
     commit-message:
       prefix: "deps(major):"
       include: "scope"
+    labels:
+      - "dependencies"
+      - "major-update"
+      - "requires-review"
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"      include: "scope"
     labels:
       - "dependencies"
       - "major-update"
