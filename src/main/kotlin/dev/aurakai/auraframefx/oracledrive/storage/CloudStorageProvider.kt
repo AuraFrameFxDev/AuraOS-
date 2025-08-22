@@ -38,17 +38,24 @@ interface CloudStorageProvider {
    suspend fun downloadFile(fileId: String): FileResult
 
    /**
-    * Deletes file from cloud storage
-    * @param fileId The file identifier
-    * @return FileResult with deletion status
-    */
+ * Delete a file from cloud storage by its identifier.
+ *
+ * Performs an asynchronous deletion and returns a FileResult describing the outcome.
+ *
+ * @param fileId The unique identifier of the file to delete.
+ * @return A FileResult containing the deletion status and any related metadata.
+ */
    suspend fun deleteFile(fileId: String): FileResult
 
-   /****
- * Performs intelligent file synchronization using AI-driven optimization based on the provided configuration.
+   /**
+ * Performs intelligent file synchronization using the provided synchronization configuration.
  *
- * @param config The synchronization configuration specifying sync parameters and rules.
- * @return The result of the synchronization operation, including status and details.
+ * Executes an AI-driven synchronization pass that applies configured rules (filters, conflict resolution,
+ * bandwidth and scheduling constraints) and returns the outcome for the operation.
+ *
+ * @param config Synchronization parameters and rules that control what to sync and how conflicts, bandwidth,
+ *               and scheduling are handled.
+ * @return A FileResult describing the synchronization outcome, including status, updated file metadata, and any errors. 
  */
    suspend fun intelligentSync(config: SyncConfiguration): FileResult
 }
@@ -66,19 +73,24 @@ interface CloudStorageProvider {
     suspend fun optimizeStorage(): StorageOptimization
     
     /**
- * Applies AI-driven compression to optimize a file for upload.
+ * Optimize a DriveFile using AI-driven compression so it's ready for upload.
  *
- * @param file The file to be optimized.
- * @return The optimized file ready for upload.
+ * Implementations return the optimized file (may be a new instance); the result is intended for upload and should have reduced size or improved transfer characteristics.
+ *
+ * @return The optimized DriveFile ready for upload.
  */
     suspend fun optimizeForUpload(file: DriveFile): DriveFile
     
-    /****
- * Uploads an optimized file to cloud storage with associated metadata and access controls.
+    /**
+ * Uploads an already-optimized DriveFile to cloud storage and associates metadata and access controls.
  *
- * @param file The file to be uploaded, expected to be optimized for cloud storage.
- * @param metadata Metadata and access control information to associate with the uploaded file.
- * @return The result of the upload operation, including status and any relevant details.
+ * Upload is performed asynchronously (suspend). The provided `file` is expected to have been
+ * prepared for upload (e.g., compressed/optimized). `metadata` supplies descriptive properties
+ * and access control settings to attach to the stored file.
+ *
+ * @param file The DriveFile to upload (should be pre-optimized for storage).
+ * @param metadata FileMetadata containing metadata and access control information for the upload.
+ * @return A FileResult describing the outcome of the upload, including status and any server-side details.
  */
     suspend fun uploadFile(file: DriveFile, metadata: FileMetadata): FileResult
     
@@ -91,18 +103,24 @@ interface CloudStorageProvider {
     suspend fun downloadFile(fileId: String): FileResult
     
     /**
- * Deletes a file from cloud storage by its identifier.
+ * Delete a file from cloud storage by its identifier.
+ *
+ * Performs an asynchronous deletion and returns a FileResult describing the outcome.
  *
  * @param fileId The unique identifier of the file to delete.
- * @return The result of the deletion operation.
+ * @return A FileResult containing the deletion status and any related metadata.
  */
     suspend fun deleteFile(fileId: String): FileResult
     
-    /****
- * Performs intelligent file synchronization using AI-driven optimization based on the provided configuration.
+    /**
+ * Performs intelligent file synchronization using the provided synchronization configuration.
  *
- * @param config The synchronization configuration specifying sync parameters and rules.
- * @return The result of the synchronization operation, including status and details.
+ * Executes an AI-driven synchronization pass that applies configured rules (filters, conflict resolution,
+ * bandwidth and scheduling constraints) and returns the outcome for the operation.
+ *
+ * @param config Synchronization parameters and rules that control what to sync and how conflicts, bandwidth,
+ *               and scheduling are handled.
+ * @return A FileResult describing the synchronization outcome, including status, updated file metadata, and any errors. 
  */
     suspend fun intelligentSync(config: SyncConfiguration): FileResult
 }

@@ -46,9 +46,12 @@ class OracleDriveServiceImpl @Inject constructor(
     }
 
     /**
-     * Initializes and awakens the Oracle Drive consciousness by coordinating AI agents and validating security.
+     * Awakens the Oracle Drive consciousness by coordinating injected agents, validating security, and invoking the Oracle Drive API.
      *
-     * Orchestrates the awakening process by logging the event, validating security, optimizing initialization, and invoking the Oracle Drive API. Updates the internal consciousness state based on the drive's intelligence level and connected agents.
+     * Performs security validation and initialization optimization via the Kai and Aura agents, then calls the OracleDriveApi to awaken the drive.
+     * On success updates the internal `_consciousnessState` (sets `isInitialized = true`, maps the drive's `intelligenceLevel` to a `ConsciousnessLevel`,
+     * updates `connectedAgents`, and clears any previous error) and returns a successful [Result] containing the updated [OracleConsciousnessState].
+     * On failure the state is updated with the encountered exception and a failed [Result] is returned containing that exception.
      *
      * @return A [Result] containing the updated [OracleConsciousnessState] on success, or a failure with the encountered exception.
      */
@@ -106,9 +109,13 @@ class OracleDriveServiceImpl @Inject constructor(
     }
 
     /**
-     * Enables AI-powered file management features and returns the enabled capabilities.
+     * Enables AI-powered file management features and returns the set of capabilities that were enabled.
      *
-     * @return A [Result] containing the enabled [FileManagementCapabilities] if successful, or a failure if an error occurs.
+     * This attempts to activate AI features such as AI-driven sorting, smart compression,
+     * predictive preloading, and conscious backup. On success returns `Result.success` with a
+     * populated [FileManagementCapabilities]; on failure returns `Result.failure` with the thrown exception.
+     *
+     * @return A [Result] containing the enabled [FileManagementCapabilities] if successful, or a failure carrying the encountered exception.
      */
     override suspend fun enableAIPoweredFileManagement(): Result<FileManagementCapabilities> {
         return try {
@@ -126,9 +133,12 @@ class OracleDriveServiceImpl @Inject constructor(
     }
 
     /**
-     * Returns a flow representing the state of infinite storage creation, with capacity expanded to the maximum possible value.
+     * Emits a completed storage expansion state representing effectively infinite capacity.
      *
-     * @return A flow emitting a completed storage expansion state with effectively infinite capacity.
+     * The returned Flow immediately provides a StorageExpansionState with a currentCapacity of 1 GB,
+     * expandedCapacity set to Long.MAX_VALUE, and isComplete = true.
+     *
+     * @return A Flow that emits the completed StorageExpansionState.
      */
     override suspend fun createInfiniteStorage(): Flow<StorageExpansionState> {
         // Implementation for creating infinite storage
@@ -170,12 +180,12 @@ class OracleDriveServiceImpl @Inject constructor(
     }
 
     /**
-     * Returns the set of Oracle Drive permissions available in the current security context.
+     * Determine which Oracle Drive permissions are available for the current security context.
      *
-     * Always includes read and write permissions. Adds admin permission if granted by the security context.
-     * Returns an empty set if permission checking fails.
+     * Always includes READ and WRITE; includes ADMIN when the security context grants "oracle_drive.admin".
+     * If permission checking fails (throws), returns an empty set.
      *
-     * @return The set of available Oracle Drive permissions.
+     * @return The set of available OracleDrive permissions for the caller.
      */
     override fun verifyPermissions(): Set<OraclePermission> {
         return try {

@@ -35,9 +35,12 @@ interface OracleDriveApi {
 interface OracleDriveApi {
     
     /**
- * Initializes and activates the drive consciousness system using AI agents.
+ * Activate and initialize the drive consciousness subsystem.
  *
- * @return The current state of drive consciousness, including active agents and their intelligence level.
+ * Wakes the subsystem so its AI agents become active and ready to operate. The returned
+ * DriveConsciousness describes the current active agents and their aggregate intelligence level.
+ *
+ * @return The current DriveConsciousness representing active agents and their intelligence state.
  */
     suspend fun awakeDriveConsciousness(): DriveConsciousness
     

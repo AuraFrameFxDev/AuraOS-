@@ -79,7 +79,13 @@ class OracleDriveManager @Inject constructor(
    }
 
    /**
-    * Synchronizes with Oracle database backend
+    * Synchronizes local drive metadata with the Oracle database backend.
+    *
+    * Performs a metadata sync by delegating to the OracleDriveApi. Returns an
+    * OracleSyncResult describing the outcome (e.g., success with updated metadata
+    * details or an error result).
+    *
+    * @return The result of the synchronization as an [OracleSyncResult].
     */
    suspend fun syncWithOracle(): OracleSyncResult {
        return oracleDriveApi.syncDatabaseMetadata()
@@ -108,11 +114,15 @@ class OracleDriveManager @Inject constructor(
 ) {
     
     /**
-     * Initializes the Oracle Drive by validating security, awakening AI consciousness, and optimizing storage.
+     * Initialize the Oracle Drive: validate access, wake the AI consciousness, and optimize storage.
      *
-     * Performs a security check, awakens the drive's AI consciousness, and optimizes storage. Returns a result indicating success with relevant data, a security failure, or an error if an exception occurs.
+     * Performs a security validation and, if allowed, awakens the drive's AI consciousness and runs storage
+     * optimization. Returns a DriveInitResult representing one of:
+     * - Success(consciousness, optimization): initialization completed with generated consciousness and optimization data.
+     * - SecurityFailure(reason): access validation failed; initialization aborted with the provided reason.
+     * - Error(exception): an unexpected exception occurred during initialization.
      *
-     * @return The result of the initialization, containing success data, security failure reason, or error details.
+     * @return A [DriveInitResult] describing the outcome of initialization.
      */
     suspend fun initializeDrive(): DriveInitResult {
         return try {
@@ -176,9 +186,10 @@ class OracleDriveManager @Inject constructor(
     }
     
     /**
-     * Synchronizes drive metadata with the Oracle database backend.
+     * Synchronizes local drive metadata with the Oracle backend and returns the operation result.
      *
-     * @return The result of the synchronization operation.
+     * Delegates the synchronization to the OracleDriveApi and returns the resulting OracleSyncResult,
+     * representing success or failure of the metadata sync.
      */
     suspend fun syncWithOracle(): OracleSyncResult {
         return oracleDriveApi.syncDatabaseMetadata()

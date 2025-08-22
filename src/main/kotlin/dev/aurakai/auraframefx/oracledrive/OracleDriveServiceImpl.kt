@@ -89,12 +89,22 @@ class OracleDriveServiceImpl @Inject constructor(
        return cloudStorageProvider.intelligentSync(config)
    }
 
+   /**
+    * Triggers synchronization of local database metadata with the Oracle drive and returns the result.
+    *
+    * Delegates the work to the OracleDriveApi implementation.
+    *
+    * @return An [OracleSyncResult] representing the outcome of the synchronization operation (success, partial, or error).
+    */
    override suspend fun syncWithOracle(): OracleSyncResult {
        return oracleDriveApi.syncDatabaseMetadata()
    }
 
    /**
-    * Returns a state flow representing the current state of the drive consciousness.
+    * Exposes the current drive consciousness as a read-only StateFlow.
+    *
+    * Returns a StateFlow that emits the current and subsequent DriveConsciousnessState updates
+    * provided by the underlying OracleDriveApi.
     *
     * @return A [StateFlow] emitting updates to the [DriveConsciousnessState].
     */
@@ -114,11 +124,13 @@ class OracleDriveServiceImpl @Inject constructor(
 ) : OracleDriveService {
     
     /**
-     * Initializes the Oracle Drive by validating security access, awakening drive consciousness, and optimizing storage.
+     * Initialize the Oracle Drive: validate access, awaken drive consciousness, and optimize storage.
      *
-     * Performs a security check before activating AI-driven consciousness and storage optimization. Returns a result indicating success, security failure, or error.
+     * Validates drive access via the security manager. If validation fails returns [DriveInitResult.SecurityFailure] with the provided reason.
+     * On successful validation, awakens the drive consciousness and runs storage optimization, returning [DriveInitResult.Success] with both results.
+     * Any thrown exception is captured and returned as [DriveInitResult.Error].
      *
-     * @return The result of the drive initialization, containing success data, security failure reason, or error details.
+     * @return A [DriveInitResult] representing success (with consciousness and optimization data), a security failure, or an error.
      */
     override suspend fun initializeDrive(): DriveInitResult {
         return try {
@@ -141,12 +153,11 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Executes the specified file operation, such as upload, download, delete, or sync, and returns the result.
+     * Dispatches the given FileOperation to the corresponding handler (upload, download, delete, or sync)
+     * and returns the resulting FileResult.
      *
-     * Dispatches the operation to the appropriate handler based on the type of file operation requested.
-     *
-     * @param operation The file operation to perform.
-     * @return The result of the file operation.
+     * @param operation The operation to execute; its concrete subtype determines which handler is invoked.
+     * @return The result produced by the executed file operation.
      */
     override suspend fun manageFiles(operation: FileOperation): FileResult {
         return when (operation) {
@@ -201,11 +212,17 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Validates deletion authorization for a file and performs secure deletion with an audit trail if authorized.
+     * Validate that the requester is authorized to delete the specified file and, if authorized,
+     * perform a secure deletion returning the resulting FileResult.
      *
-     * @param fileId The identifier of the file to be deleted.
+     * Performs an access check for the given user and file. If the check fails, returns
+     * FileResult.UnauthorizedDeletion with the validation reason. If authorized, delegates
+     * the deletion to the cloud storage provider and returns its FileResult (which may include
+     * success, failure, or audit-related outcomes).
+     *
+     * @param fileId The identifier of the file to delete.
      * @param userId The identifier of the user requesting deletion.
-     * @return The result of the deletion operation, including unauthorized status if access is denied.
+     * @return The outcome of the deletion attempt; may be FileResult.UnauthorizedDeletion when access is denied.
      */
     private suspend fun handleDeletion(fileId: String, userId: String): FileResult {
         // Deletion authorization with security consciousness
@@ -230,18 +247,23 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Synchronizes the drive's database metadata with the OracleDrive API.
+     * Synchronizes the drive's database metadata with the Oracle Drive backend.
      *
-     * @return The result of the synchronization operation.
+     * Performs the suspendable synchronization operation and returns the resulting
+     * OracleSyncResult produced by the API call.
+     *
+     * @return The OracleSyncResult representing the outcome of the synchronization.
      */
     override suspend fun syncWithOracle(): OracleSyncResult {
         return oracleDriveApi.syncDatabaseMetadata()
     }
     
     /**
-     * Returns a state flow representing the current state of the drive consciousness.
+     * Exposes the current drive consciousness as a hot StateFlow that emits updates whenever the state changes.
      *
-     * @return A [StateFlow] emitting updates to the [DriveConsciousnessState].
+     * The returned StateFlow always contains the latest DriveConsciousnessState and can be observed for realtime updates.
+     *
+     * @return A read-only [StateFlow] emitting the current and subsequent [DriveConsciousnessState] values.
      */
     override fun getDriveConsciousnessState(): StateFlow<DriveConsciousnessState> {
         return oracleDriveApi.consciousnessState

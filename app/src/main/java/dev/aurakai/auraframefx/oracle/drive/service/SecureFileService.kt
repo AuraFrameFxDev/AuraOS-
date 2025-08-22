@@ -10,14 +10,14 @@ import java.io.File
 interface SecureFileService {
     
     /**
-     * Saves encrypted data to a file, optionally within a specified subdirectory.
+     * Persistently saves encrypted `data` to `fileName`, optionally inside `directory`.
      *
-     * Emits the result of the save operation as a flow, including success or error states.
+     * Suspends and returns a Flow that emits one or more FileOperationResult values representing success (with the saved File) or an error. If `directory` is null the file is saved in the root storage location.
      *
-     * @param data The byte array to be securely saved.
-     * @param fileName The target file name.
-     * @param directory The optional subdirectory in which to save the file.
-     * @return A flow emitting the result of the file save operation.
+     * @param data The raw bytes to encrypt and save.
+     * @param fileName Target file name (including extension if desired).
+     * @param directory Optional subdirectory name; null → root.
+     * @return A Flow emitting FileOperationResult instances describing the outcome.
      */
     suspend fun saveFile(
         data: ByteArray,
@@ -26,11 +26,14 @@ interface SecureFileService {
     ): Flow<FileOperationResult>
     
     /**
-     * Reads and decrypts the specified file, optionally from a subdirectory.
+     * Read and decrypt the specified file and emit the result as a Flow.
      *
-     * @param fileName The name of the file to read.
-     * @param directory The subdirectory to read from, or null for the root directory.
-     * @return A Flow emitting the file data or an error result.
+     * Suspends while performing I/O and encryption operations. Emits a FileOperationResult.Data
+     * containing the file bytes and name on success, or FileOperationResult.Error on failure.
+     *
+     * @param fileName The file name to read (without directory path).
+     * @param directory Optional subdirectory to read from; null indicates the root directory.
+     * @return A Flow that emits one or more FileOperationResult values representing the operation outcome.
      */
     suspend fun readFile(
         fileName: String,
@@ -40,9 +43,11 @@ interface SecureFileService {
     /**
      * Securely deletes the specified file, optionally from a given subdirectory.
      *
+     * Performs a secure deletion of the file identified by [fileName] in the optional [directory] (null = root).
+     *
      * @param fileName The name of the file to delete.
-     * @param directory The subdirectory containing the file, or null for the root directory.
-     * @return The result of the delete operation.
+     * @param directory The subdirectory containing the file, or null to target the root directory.
+     * @return A FileOperationResult describing success or an error.
      */
     suspend fun deleteFile(
         fileName: String,
@@ -50,12 +55,12 @@ interface SecureFileService {
     ): FileOperationResult
     
     /**
- * Returns a list of file names (without extensions) in the specified directory.
+ * Lists file names (without extensions) in the given subdirectory or the root if null.
  *
- * If no directory is provided, lists files in the root directory.
+ * The function is suspendable and returns only the base names of files (extension removed).
  *
- * @param directory The optional subdirectory to list files from.
- * @return A list of file names without their extensions.
+ * @param directory Optional subdirectory to list; when null the root directory is used.
+ * @return List of file names without their extensions.
  */
     suspend fun listFiles(directory: String? = null): List<String>
 }
@@ -90,9 +95,15 @@ sealed class FileOperationResult {
     }
     
     /**
-     * Returns a hash code value for the `FileOperationResult` instance based on its type and contained data.
+     * Computes a hash code for this FileOperationResult based on its concrete variant and contained data.
      *
-     * Ensures that equal instances produce the same hash code, supporting correct usage in hash-based collections.
+     * - Success: uses the contained File's hashCode().
+     * - Data: combines the byte-array content hash (contentHashCode()) with the fileName's hashCode().
+     * - Error: combines the message's hashCode() with the exception's hashCode() if present (0 otherwise).
+     *
+     * This implementation ensures that equal instances produce the same hash code for correct use in hash-based collections.
+     *
+     * @return An Int hash code for this instance.
      */
     override fun hashCode(): Int {
         return when (this) {

@@ -48,14 +48,21 @@ class OracleDriveIntegration @Inject constructor(
        println("👥 Active Agents: ${consciousness.activeAgents.joinToString(", ")}")
    }
 
+   /**
+    * Logs a security failure for Oracle Drive to standard output.
+    *
+    * @param reason Human-readable explanation of why the security failure occurred.
+    */
    private fun logSecurityFailure(reason: String) {
        println("🔒 Oracle Drive Security Failure: $reason")
    }
 
    /**
-    * Logs a technical error message for Oracle Drive using the provided exception.
+    * Log a technical error related to Oracle Drive.
     *
-    * @param exception The exception representing the technical error.
+    * Records details of the given exception so callers can observe or capture the failure.
+    *
+    * @param exception The exception describing the technical error to be logged. 
     */
    private fun logTechnicalError(exception: Exception) {
        println("⚠️ Oracle Drive Technical Error: ${exception.message}")
@@ -104,9 +111,9 @@ class OracleDriveIntegration @Inject constructor(
     }
     
     /**
-     * Logs the intelligence level and active agents from the provided Oracle Drive consciousness state.
+     * Log the Oracle Drive's consciousness awakening (intelligence level and active agents).
      *
-     * @param consciousness The current state of Oracle Drive consciousness containing intelligence level and active agents.
+     * @param consciousness Current Oracle Drive consciousness containing `intelligenceLevel` and `activeAgents`.
      */
     private fun logConsciousnessAwakening(consciousness: DriveConsciousness) {
         println("🧠 Oracle Drive Consciousness Awakened: Intelligence Level ${consciousness.intelligenceLevel}")
@@ -114,18 +121,20 @@ class OracleDriveIntegration @Inject constructor(
     }
     
     /**
-     * Logs the reason for an Oracle Drive security failure.
+     * Logs an Oracle Drive security failure message.
      *
-     * @param reason The description of the security failure.
+     * Writes a formatted message including the provided reason to standard output.
      */
     private fun logSecurityFailure(reason: String) {
         println("🔒 Oracle Drive Security Failure: $reason")
     }
     
     /**
-     * Logs a technical error message with details from the provided exception.
+     * Log a technical error from the given exception to standard output.
      *
-     * @param exception The exception containing the technical error information.
+     * Only the exception's message is printed (no stack trace).
+     *
+     * @param exception The exception whose message will be logged.
      */
     private fun logTechnicalError(exception: Exception) {
         println("⚠️ Oracle Drive Technical Error: ${exception.message}")

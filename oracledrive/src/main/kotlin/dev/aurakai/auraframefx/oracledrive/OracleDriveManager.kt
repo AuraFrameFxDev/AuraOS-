@@ -64,9 +64,11 @@ class OracleDriveManager @Inject constructor(
     }
     
     /**
-     * Synchronizes the drive's metadata and indexing with the Oracle Database.
+     * Synchronizes drive metadata and indexing with the Oracle database.
      *
-     * @return An [OracleSyncResult] containing the result of the synchronization, including whether it was successful, the number of records updated, and any errors encountered.
+     * Performs a suspendable synchronization that updates metadata and index records.
+     *
+     * @return An [OracleSyncResult] describing success, number of records updated, and any errors encountered during synchronization.
      */
     suspend fun syncWithOracle(): OracleSyncResult {
         return oracleDriveApi.syncDatabaseMetadata()
@@ -101,6 +103,17 @@ class OracleDriveManager @Inject constructor(
      * @return The result of the upload, either indicating success or a security rejection.
      */
 >>>>>>> origin/coderabbitai/chat/e19563d
+    /**
+     * Optimizes an upload, validates its security, and performs the upload.
+     *
+     * The file is first optimized for upload, then checked for upload threats; if the
+     * security validation fails a FileResult.SecurityRejection with the detected
+     * SecurityThreat is returned. If validation succeeds the optimized file is
+     * uploaded and the resulting FileResult from the storage provider is returned.
+     *
+     * @return A FileResult representing the final outcome (for example `Success`, `SecurityRejection`,
+     * or `Error`)                                                   
+     */
     private suspend fun uploadWithConsciousness(operation: FileOperation.Upload): FileResult {
         // Aura Agent creative file optimization
         val optimizedFile = cloudStorageProvider.optimizeForUpload(operation.file)
@@ -165,6 +178,16 @@ class OracleDriveManager @Inject constructor(
      * @param operation The delete operation containing file and user identifiers.
      * @return The result of the deletion attempt, indicating success or unauthorized deletion.
      */
+    /**
+     * Validate authorization and delete a file if permitted.
+     *
+     * Calls the security manager to check deletion authorization for the given file and user.
+     * If authorized, delegates the deletion to the cloud storage provider and returns its result;
+     * otherwise returns FileResult.UnauthorizedDeletion with the validation reason.
+     *
+     * @param operation Delete operation containing the target fileId and requesting userId.
+     * @return A FileResult representing either the deletion outcome or an unauthorized result.
+     */
     private suspend fun deleteWithValidation(operation: FileOperation.Delete): FileResult {
         // Multi-agent validation for delete operations
         val validation = securityManager.validateDeletion(operation.fileId, operation.userId)
@@ -185,10 +208,13 @@ class OracleDriveManager @Inject constructor(
      */
 >>>>>>> origin/coderabbitai/chat/e19563d
     /**
-     * Performs AI-driven intelligent synchronization of files based on the provided sync configuration.
+     * Perform AI-driven synchronization using the sync configuration from the operation.
      *
-     * @param operation The synchronization operation containing configuration details.
-     * @return The result of the synchronization, including success or error information.
+     * Uses the operation's SyncConfiguration to run an intelligent, conflict-aware sync and
+     * returns the resulting FileResult (success, error, or any security-related outcome).
+     *
+     * @param operation Contains the SyncConfiguration used for the intelligent synchronization.
+     * @return A FileResult describing the outcome of the synchronization.
      */
     private suspend fun syncWithIntelligence(operation: FileOperation.Sync): FileResult {
         // AI-powered intelligent synchronization

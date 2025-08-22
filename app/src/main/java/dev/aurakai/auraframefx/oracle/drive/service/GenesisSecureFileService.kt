@@ -77,14 +77,14 @@ class GenesisSecureFileService @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     /**
-     * Reads and decrypts a securely stored file, emitting the result as a flow.
+     * Reads and decrypts a securely stored file and emits the result as a Flow.
      *
-     * Emits a [FileOperationResult.Data] containing the decrypted file bytes and original file name on success,
-     * or [FileOperationResult.Error] if the file does not exist or decryption fails.
+     * On success emits a single [FileOperationResult.Data] containing the decrypted bytes and the original file name
+     * (without the secure extension). Emits [FileOperationResult.Error] if the file is missing or an error occurs during I/O or decryption.
      *
-     * @param fileName The name of the file to read (without extension).
-     * @param directory Optional subdirectory within internal storage to look for the file.
-     * @return A flow emitting the result of the file read operation.
+     * @param fileName The name of the file to read (without the ".gen" secure extension).
+     * @param directory Optional subdirectory under the service's internal storage directory to locate the file.
+     * @return A Flow that emits the operation result (one success or error event).
      */
     override suspend fun readFile(
         fileName: String,
@@ -114,11 +114,13 @@ class GenesisSecureFileService @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     /**
-     * Deletes an encrypted file and removes its associated metadata and cryptographic key.
+     * Delete an encrypted file (with the service's secure extension), its stored metadata, and its cryptographic key.
      *
-     * @param fileName The name of the file to delete (without extension).
-     * @param directory Optional subdirectory within internal storage where the file is located.
-     * @return A [FileOperationResult.Success] containing the deleted file on success, or [FileOperationResult.Error] if the file does not exist or deletion fails.
+     * Performs I/O on the IO dispatcher; callers should not assume main-thread execution.
+     *
+     * @param fileName The file name without extension.
+     * @param directory Optional subdirectory inside the service's internal storage; when null the root internal storage directory is used.
+     * @return [FileOperationResult.Success] with the deleted [File] on successful deletion, or [FileOperationResult.Error] if the file does not exist or deletion fails (including unexpected exceptions).
      */
     override suspend fun deleteFile(
         fileName: String,
@@ -146,12 +148,14 @@ class GenesisSecureFileService @Inject constructor(
     }
 
     /**
-     * Returns a list of securely stored file names (without extension) in the specified directory.
+     * Lists securely stored files in the given directory and returns their names without the secure extension.
      *
-     * Only files with the secure file extension are included. Returns an empty list if the directory does not exist or an error occurs.
+     * Searches the specified subdirectory (or the service's internal storage root when null) for files ending
+     * with the secure extension (".gen") and returns their base names (extension removed). If the directory
+     * does not exist or an error occurs, an empty list is returned.
      *
-     * @param directory The subdirectory to search within, or null for the root internal storage directory.
-     * @return List of file names without the secure extension.
+     * @param directory Optional subdirectory name within the internal storage to search; pass null to search the root.
+     * @return A list of file names without the secure extension, or an empty list if none found or on error.
      */
     override suspend fun listFiles(directory: String?): List<String> = withContext(Dispatchers.IO) {
         try {
@@ -170,22 +174,24 @@ class GenesisSecureFileService @Inject constructor(
     }
 
     /**
-     * Generates a unique key alias string for cryptographic operations based on the hash code of the given file name.
+     * Create a deterministic key alias for a file by hashing its name.
      *
-     * @param fileName The name of the file for which to generate the key alias.
-     * @return A key alias string derived from the file name.
+     * @param fileName The file name used to derive the alias.
+     * @return A string alias for cryptographic keys, stable for the same file name. 
      */
     private fun getKeyAlias(fileName: String): String {
         return "oracle_drive_${fileName.hashCode()}"
     }
 
     /**
-     * Generates a unique metadata storage key for the given file name.
+     * Generate a deterministic metadata storage key for a given file name.
      *
-     * The key is based on the hash code of the file name to ensure uniqueness.
+     * Produces a key in the form `file_meta_<hash>` where `<hash>` is the result of
+     * `fileName.hashCode()`. The key is stable for the same file name (collisions
+     * are possible due to hashCode semantics).
      *
-     * @param fileName The name of the file.
-     * @return A string used as the metadata key for the file.
+     * @param fileName The file name to derive the metadata key from.
+     * @return The metadata storage key for the file.
      */
     private fun getMetadataKey(fileName: String): String {
         return "file_meta_${fileName.hashCode()}"
