@@ -324,52 +324,22 @@ android {
         mustRunAfter("generateAllConsciousnessApis")
     }
 
-    dependencies {
-        implementation(platform(libs.androidx.compose.bom))
-
-        implementation(libs.androidx.appcompat)
-        implementation(libs.androidx.core.ktx)
-        implementation(libs.androidx.lifecycle.runtime.ktx)
-        implementation(libs.androidx.activity.compose)
-
-        implementation(libs.bundles.compose)
-        implementation(libs.androidx.navigation.compose)
-
-        implementation(libs.hilt.android)
-        ksp(libs.hilt.compiler)
-        implementation(libs.hilt.navigation.compose)
-
-        implementation(libs.bundles.coroutines)
-        implementation(libs.bundles.network)
-
-        implementation(libs.room.runtime)
-        implementation(libs.room.ktx)
-        ksp(libs.room.compiler)
-
-        implementation(libs.timber)
-        implementation(libs.coil.compose)
-
-        coreLibraryDesugaring(libs.coreLibraryDesugaring)
-
-        implementation(platform(libs.firebase.bom))
-        implementation(libs.bundles.firebase)
-
-        implementation(libs.bundles.xposed)
-        ksp(libs.yuki.ksp.xposed)
-        implementation(fileTree(mapOf("dir" to "../Libs", "include" to listOf("*.jar"))))
-
-        debugImplementation(libs.leakcanary.android)
-        debugImplementation(libs.androidx.compose.ui.tooling)
-        debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-        testImplementation(libs.bundles.testing)
-        testRuntimeOnly(libs.junit.engine)
-
-        androidTestImplementation(libs.androidx.test.ext.junit)
-        androidTestImplementation(libs.espresso.core)
-        androidTestImplementation(platform(libs.androidx.compose.bom))
-        androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-        androidTestImplementation(libs.hilt.android.testing)
-        kspAndroidTest(libs.hilt.compiler)
-    }
+dependencies {
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.2")
+    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation(platform("androidx.compose:compose-bom:2025.07.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.07.00"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
+
