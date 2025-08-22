@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.spotless)
     alias(libs.plugins.kover)
     alias(libs.plugins.openapi.generator)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -136,7 +137,7 @@ dependencies {
     implementation(libs.yuki)
     ksp(libs.yuki.ksp.xposed)
     implementation(libs.bundles.xposed)
-    
+
     // Legacy Xposed API (compatibility)
     implementation(files("${project.rootDir}/Libs/api-82.jar"))
     implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
