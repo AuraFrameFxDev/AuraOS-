@@ -48,6 +48,9 @@ android {
         compose = true
         viewBinding = false
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
+    }
     dependencies {
         // Project modules
         implementation(project(":core-module"))
@@ -90,7 +93,7 @@ android {
         implementation(libs.yuki)
         ksp(libs.yuki.ksp.xposed)
         implementation(libs.bundles.xposed)
-        
+
         // Legacy Xposed API (compatibility)
         implementation(files("${project.rootDir}/Libs/api-82.jar"))
         implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))

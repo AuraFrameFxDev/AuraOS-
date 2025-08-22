@@ -51,7 +51,7 @@ set(CMAKE_CXX_LINKER_PREFERENCE 30)
 set(CMAKE_CXX_LINKER_PREFERENCE_PROPAGATES 1)
 
 # Save compiler ABI information.
-set(CMAKE_CXX_SIZEOF_DATA_PTR "4")
+set(CMAKE_CXX_SIZEOF_DATA_PTR "8")
 set(CMAKE_CXX_COMPILER_ABI "ELF")
 set(CMAKE_CXX_BYTE_ORDER "LITTLE_ENDIAN")
 set(CMAKE_CXX_LIBRARY_ARCHITECTURE "")
@@ -77,7 +77,7 @@ endif()
 
 
 
-set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/c++/v1;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/lib/clang/19/include;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/i686-linux-android;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include")
+set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/c++/v1;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/lib/clang/19/include;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/aarch64-linux-android;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include")
 set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "c++;m;-l:libunwind.a;dl;c;-l:libunwind.a;dl")
-set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/lib/clang/19/lib/linux/i386;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/i686-linux-android/33;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/i686-linux-android;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib")
+set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/lib/clang/19/lib/linux/aarch64;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/33;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android;C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib")
 set(CMAKE_CXX_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")
