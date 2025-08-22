@@ -21,17 +21,22 @@ import dev.aurakai.auraframefx.oracledrive.ConsciousnessLevel
  * and controls for interacting with the AI-powered storage consciousness.
  */
 /**
- * Displays the main Oracle Drive AI Storage Consciousness interface.
+ * Displays the Oracle Drive AI Storage Consciousness interface.
  *
- * Presents the current consciousness status, storage capacity, connected agents, and integration details for the Oracle Drive system. Provides controls to awaken the Oracle or optimize storage, with UI elements and actions dynamically reflecting the current state of the AI-powered storage consciousness.
- */
-/**
- * Displays the Oracle Drive AI Storage Consciousness UI and binds to the view model's state.
+ * Presents a reactive UI driven by [OracleDriveViewModel.consciousnessState] showing:
+ * - Consciousness status card with awakening state, level, and connected agents
+ * - Storage information card displaying capacity and AI-powered features
+ * - Control buttons to awaken Oracle or optimize storage (context-sensitive)
+ * - AI agent integration card when the system is awakened
  *
- * Shows a consciousness status card, storage information card, action buttons to awaken or
- * optimize the system, and — when the system is awake — an AI agent integration card. The
- * UI is reactive and driven by OracleDriveViewModel.consciousnessState.
+ * The interface adapts dynamically based on the current consciousness state of the Oracle Drive system.
+ *
+ * @param viewModel The [OracleDriveViewModel] providing the consciousness state and operations
  */
+@Composable
+fun OracleDriveScreen(viewModel: OracleDriveViewModel) {
+    // … rest of the implementation …
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OracleDriveScreen(
