@@ -18,7 +18,7 @@ class BuildScriptsIntegrationTest {
     private lateinit var buildScriptFile: File
     private lateinit var settingsFile: File
     private lateinit var propertiesFile: File
-    
+
     // Mock dependencies that might be used in build script processing
     private val mockProcessBuilder = mockk<ProcessBuilder>()
     private val mockProcess = mockk<Process>()
@@ -55,11 +55,11 @@ class BuildScriptsIntegrationTest {
                     alias(libs.plugins.kotlinAndroid) apply true
                     alias(libs.plugins.hiltAndroid) apply true
                 }
-                
+
                 android {
                     namespace = "dev.aurakai.auraframefx"
                     compileSdk = 36
-                    
+
                     defaultConfig {
                         applicationId = "dev.aurakai.auraframefx"
                         minSdk = 26
@@ -70,12 +70,12 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(androidBuildScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(buildScriptFile.exists())
             assertTrue(content.contains("androidApplication"))
@@ -97,18 +97,18 @@ class BuildScriptsIntegrationTest {
                         compose = true
                         viewBinding = true
                     }
-                    
+
                     composeOptions {
                         kotlinCompilerExtensionVersion = "2.2.0"
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(buildScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("buildConfig = true"))
             assertTrue(content.contains("compose = true"))
@@ -129,7 +129,7 @@ class BuildScriptsIntegrationTest {
                             version = "27.0.12077973"
                         }
                     }
-                    
+
                     externalNativeBuild {
                         cmake {
                             path = file("src/main/cpp/CMakeLists.txt")
@@ -138,12 +138,12 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(buildScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("abiFilters"))
             assertTrue(content.contains("arm64-v8a"))
@@ -166,7 +166,7 @@ class BuildScriptsIntegrationTest {
                     kotlin("jvm") version "2.2.0"
                     id("org.jetbrains.kotlin.plugin.compose") version "2.2.0"
                 }
-                
+
                 kotlin {
                     compilerOptions {
                         jvmTarget = JvmTarget.JVM_21
@@ -178,12 +178,12 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(kotlinScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("kotlin(\"jvm\")"))
             assertTrue(content.contains("JvmTarget.JVM_21"))
@@ -201,7 +201,7 @@ class BuildScriptsIntegrationTest {
                     sourceCompatibility = JavaVersion.VERSION_21
                     targetCompatibility = JavaVersion.VERSION_21
                 }
-                
+
                 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
                     compilerOptions {
                         jvmTarget.set(JvmTarget.JVM_21)
@@ -209,12 +209,12 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(kotlinScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("JavaVersion.VERSION_21"))
             assertTrue(content.contains("KotlinCompile"))
@@ -236,23 +236,23 @@ class BuildScriptsIntegrationTest {
                     implementation(libs.androidxLifecycleRuntimeKtx)
                     implementation(libs.hiltAndroid)
                     ksp(libs.hiltCompiler)
-                    
+
                     testImplementation(libs.testJunit)
                     testImplementation(libs.kotlinxCoroutinesTest)
                     testImplementation(libs.mockkAgent)
-                    
+
                     androidTestImplementation(libs.androidxTestExtJunit)
                     androidTestImplementation(libs.espressoCore)
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(dependenciesScript)
-            
+
             // When
             val content = buildScriptFile.readText()
             val implementationDeps = content.lines().filter { it.contains("implementation(libs.") }
             val testDeps = content.lines().filter { it.contains("testImplementation(libs.") }
-            
+
             // Then
             assertTrue(content.contains("libs.androidxCoreKtx"))
             assertTrue(content.contains("libs.hiltAndroid"))
@@ -272,20 +272,20 @@ class BuildScriptsIntegrationTest {
                     implementation(libs.androidxUi)
                     implementation(libs.androidxUiGraphics)
                     implementation(libs.androidxMaterial3)
-                    
+
                     androidTestImplementation(composeBom)
                     androidTestImplementation(libs.composeUiTestJunit4)
-                    
+
                     debugImplementation(libs.composeUiTooling)
                     debugImplementation(libs.composeUiTestManifest)
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(composeDeps)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("composeBom"))
             assertTrue(content.contains("platform(libs.composeBom)"))
@@ -306,18 +306,18 @@ class BuildScriptsIntegrationTest {
                     ksp(libs.androidxRoomCompiler)
                     kspAndroidTest(libs.hiltAndroidCompiler)
                 }
-                
+
                 ksp {
                     arg("room.schemaLocation", "${'$'}projectDir/schemas")
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(kspScript)
-            
+
             // When
             val content = buildScriptFile.readText()
             val kspDependencies = content.lines().filter { it.contains("ksp(libs.") }
-            
+
             // Then
             assertTrue(content.contains("ksp(libs.hiltCompiler)"))
             assertTrue(content.contains("kspAndroidTest"))
@@ -346,13 +346,13 @@ class BuildScriptsIntegrationTest {
                     id("org.jetbrains.kotlin.plugin.compose") version "2.2.0"
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(pluginsScript)
-            
+
             // When
             val content = buildScriptFile.readText()
             val aliasPlugins = content.lines().filter { it.contains("alias(libs.plugins.") }
-            
+
             // Then
             assertTrue(content.contains("androidApplication"))
             assertTrue(content.contains("kotlinAndroid"))
@@ -372,7 +372,7 @@ class BuildScriptsIntegrationTest {
                     alias(libs.plugins.firebase.crashlytics) apply true
                     alias(libs.plugins.firebase.perf) apply true
                 }
-                
+
                 dependencies {
                     implementation(platform(libs.firebaseBom))
                     implementation(libs.firebaseAnalyticsKtx)
@@ -380,12 +380,12 @@ class BuildScriptsIntegrationTest {
                     implementation(libs.firebasePerfKtx)
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(firebaseScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("google.services"))
             assertTrue(content.contains("firebase.crashlytics"))
@@ -418,12 +418,12 @@ class BuildScriptsIntegrationTest {
                     )
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(openApiScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("openApiGenerate"))
             assertTrue(content.contains("generatorName.set(\"kotlin\")"))
@@ -449,12 +449,12 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(lintScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("lint-baseline.xml"))
             assertTrue(content.contains("warningsAsErrors = true"))
@@ -478,7 +478,7 @@ class BuildScriptsIntegrationTest {
                                     "**/libjni*.so"
                                 )
                             )
-                            
+
                             jniLibs {
                                 keepDebugSymbols.add("**/*.so")
                             }
@@ -486,12 +486,12 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(packagingScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("packaging"))
             assertTrue(content.contains("META-INF/*.kotlin_module"))
@@ -516,7 +516,7 @@ class BuildScriptsIntegrationTest {
                         gradlePluginPortal()
                     }
                 }
-                
+
                 allprojects {
                     afterEvaluate {
                         if (plugins.hasPlugin("com.android.application")) {
@@ -527,12 +527,12 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(rootScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(content.contains("buildscript"))
             assertTrue(content.contains("allprojects"))
@@ -552,7 +552,7 @@ class BuildScriptsIntegrationTest {
                         gradlePluginPortal()
                     }
                 }
-                
+
                 dependencyResolutionManagement {
                     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
                     repositories {
@@ -560,18 +560,18 @@ class BuildScriptsIntegrationTest {
                         mavenCentral()
                     }
                 }
-                
+
                 rootProject.name = "AuraFrameFX"
                 include(":app")
                 include(":jvm-test")
                 include(":sandbox-ui")
             """.trimIndent()
-            
+
             settingsFile.writeText(settingsScript)
-            
+
             // When
             val content = settingsFile.readText()
-            
+
             // Then
             assertTrue(settingsFile.exists())
             assertTrue(content.contains("pluginManagement"))
@@ -594,13 +594,13 @@ class BuildScriptsIntegrationTest {
                 android.nonTransitiveRClass=true
                 android.enableResourceOptimizations=true
             """.trimIndent()
-            
+
             propertiesFile.writeText(properties)
-            
+
             // When
             val content = propertiesFile.readText()
             val lines = content.lines().filter { it.isNotBlank() }
-            
+
             // Then
             assertTrue(propertiesFile.exists())
             assertTrue(content.contains("-Xmx4096m"))
@@ -625,12 +625,12 @@ class BuildScriptsIntegrationTest {
                     kotlin("jvm" version "2.2.0"  // Missing closing parenthesis
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(malformedScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            
+
             // Then
             assertTrue(buildScriptFile.exists())
             assertTrue(content.contains("androidApplication apply true"))
@@ -643,7 +643,7 @@ class BuildScriptsIntegrationTest {
         fun shouldHandleEmptyBuildScriptGracefully() {
             // Given
             buildScriptFile.writeText("")
-            
+
             // When & Then
             assertTrue(buildScriptFile.exists())
             assertEquals(0, buildScriptFile.length())
@@ -660,15 +660,16 @@ class BuildScriptsIntegrationTest {
                    spanning multiple lines */
                 // Another comment
             """.trimIndent()
-            
+
             buildScriptFile.writeText(commentOnlyScript)
-            
+
             // When
             val content = buildScriptFile.readText()
-            val nonCommentLines = content.lines().filter { 
-                it.trim().isNotEmpty() && !it.trim().startsWith("//") && !it.trim().startsWith("/*") && !it.trim().startsWith("*")
+            val nonCommentLines = content.lines().filter {
+                it.trim().isNotEmpty() && !it.trim().startsWith("//") && !it.trim().startsWith("/*") && !it.trim()
+                    .startsWith("*")
             }
-            
+
             // Then
             assertTrue(buildScriptFile.exists())
             assertTrue(content.contains("This is a comment"))
@@ -686,14 +687,14 @@ class BuildScriptsIntegrationTest {
                     // Missing required test dependencies
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(incompleteDepsScript)
-            
+
             // When
             val content = buildScriptFile.readText()
             val hasTestDeps = content.contains("testImplementation")
             val hasAndroidTestDeps = content.contains("androidTestImplementation")
-            
+
             // Then
             assertTrue(content.contains("androidxCoreKtx"))
             assertFalse(hasTestDeps, "Should not have test dependencies")
@@ -715,16 +716,16 @@ class BuildScriptsIntegrationTest {
                     ${(1..50).joinToString("\n    ") { "testImplementation(\"org.test:test-lib$it:1.0.0\")" }}
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(largeDepsScript)
-            
+
             // When
             val startTime = System.currentTimeMillis()
             val content = buildScriptFile.readText()
             val implementationLines = content.lines().filter { it.contains("implementation(") }
             val testLines = content.lines().filter { it.contains("testImplementation(") }
             val endTime = System.currentTimeMillis()
-            
+
             // Then
             assertTrue(endTime - startTime < 2000, "Should process within 2 seconds")
             assertEquals(200, implementationLines.size)
@@ -742,7 +743,7 @@ class BuildScriptsIntegrationTest {
                             abiFilters.addAll(listOf("arm64-v8a", "x86_64"))
                         }
                     }
-                    
+
                     buildTypes {
                         release {
                             isMinifyEnabled = false
@@ -756,7 +757,7 @@ class BuildScriptsIntegrationTest {
                             debuggable = true
                         }
                     }
-                    
+
                     flavorDimensions.add("version")
                     productFlavors {
                         create("demo") {
@@ -769,15 +770,15 @@ class BuildScriptsIntegrationTest {
                     }
                 }
             """.trimIndent()
-            
+
             buildScriptFile.writeText(complexScript)
-            
+
             // When
             val content = buildScriptFile.readText()
             val nestingLevel = content.lines().maxOfOrNull { line ->
                 line.takeWhile { it == ' ' || it == '\t' }.length
             } ?: 0
-            
+
             // Then
             assertTrue(content.contains("buildTypes"))
             assertTrue(content.contains("productFlavors"))

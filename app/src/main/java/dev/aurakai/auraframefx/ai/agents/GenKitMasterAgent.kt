@@ -362,7 +362,7 @@ class GenKitMasterAgent @Inject constructor(
     ): Boolean {
         // Implement optimization decision logic
         return !isSystemOptimized ||
-                (System.currentTimeMillis() - lastOptimizationTime > 600000) // 10 minutes
+            (System.currentTimeMillis() - lastOptimizationTime > 600000) // 10 minutes
     }
 
     private fun getMemoryUsage(): Float {

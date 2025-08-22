@@ -24,21 +24,21 @@ android {
 
     buildToolsVersion = 36
 }
-    vectorDrawables {
-        useSupportLibrary = true
-    }
+vectorDrawables {
+    useSupportLibrary = true
+}
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+buildTypes {
+    release {
+        isMinifyEnabled = true
+        proguardFiles(
+            getDefaultProguardFile("proguard-android-optimize.txt"),
+            "proguard-rules.pro"
+        )
     }
-    buildFeatures {
-        compose = true
-        viewBinding = false
-    }
+}
+buildFeatures {
+    compose = true
+    viewBinding = false
+}
 }

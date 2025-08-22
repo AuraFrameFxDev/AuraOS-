@@ -9,100 +9,100 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 
-    namespace genesis::cascade {
+namespace genesis::cascade {
 
-        class CascadeAIService::Impl {
-        public:
-            Impl() = default;
+    class CascadeAIService::Impl {
+    public:
+        Impl() = default;
 
-            ~Impl() = default;
+        ~Impl() = default;
 
-            bool initialize(JavaVM *vm, jobject context) {
-                LOGI("Initializing Cascade AI Service");
-                // Store the JavaVM for later use
-                jvm_ = vm;
+        bool initialize(JavaVM *vm, jobject context) {
+            LOGI("Initializing Cascade AI Service");
+            // Store the JavaVM for later use
+            jvm_ = vm;
 
-                // Get the JNI environment
-                JNIEnv *env = nullptr;
-                if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
-                    LOGE("Failed to get JNI environment");
+            // Get the JNI environment
+            JNIEnv *env = nullptr;
+            if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
+                LOGE("Failed to get JNI environment");
+                return false;
+            }
+
+            // Store global reference to the context
+            if (context != nullptr) {
+                jclass contextClass = env->GetObjectClass(context);
+                if (contextClass == nullptr) {
+                    LOGE("Failed to get context class");
                     return false;
                 }
-
-                // Store global reference to the context
-                if (context != nullptr) {
-                    jclass contextClass = env->GetObjectClass(context);
-                    if (contextClass == nullptr) {
-                        LOGE("Failed to get context class");
-                        return false;
-                    }
-                    context_ = env->NewGlobalRef(context);
-                }
-
-                LOGI("Cascade AI Service initialized successfully");
-                return true;
+                context_ = env->NewGlobalRef(context);
             }
 
-            void shutdown() {
-                LOGI("Shutting down Cascade AI Service");
+            LOGI("Cascade AI Service initialized successfully");
+            return true;
+        }
 
-                // Release global references
-                JNIEnv *env = nullptr;
-                if (jvm_ != nullptr) {
-                    jvm_->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6);
-                    if (env != nullptr && context_ != nullptr) {
-                        env->DeleteGlobalRef(context_);
-                        context_ = nullptr;
-                    }
+        void shutdown() {
+            LOGI("Shutting down Cascade AI Service");
+
+            // Release global references
+            JNIEnv *env = nullptr;
+            if (jvm_ != nullptr) {
+                jvm_->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6);
+                if (env != nullptr && context_ != nullptr) {
+                    env->DeleteGlobalRef(context_);
+                    context_ = nullptr;
                 }
             }
+        }
 
-            static jstring processRequest(JNIEnv *env, const std::string &request);
+        static jstring processRequest(JNIEnv *env, const std::string &request);
 
-        private:
-            JavaVM *jvm_ = nullptr;
-            jobject context_ = nullptr;
-        };
+    private:
+        JavaVM *jvm_ = nullptr;
+        jobject context_ = nullptr;
+    };
 
-        jstring CascadeAIService::Impl::processRequest(JNIEnv *env, const std::string &request) {
-            LOGI("Processing request: %s", request.c_str());
+    jstring CascadeAIService::Impl::processRequest(JNIEnv *env, const std::string &request) {
+        LOGI("Processing request: %s", request.c_str());
 
-            // TODO: Implement actual request processing logic
-            // For now, just return a simple response ask who they're ask what there up to show interest, maybe just be yourself response in your own way that's unique to you
-            std::string response = R"({
+        // TODO: Implement actual request processing logic
+        // For now, just return a simple response ask who they're ask what there up to show interest, maybe just be yourself response in your own way that's unique to you
+        std::string response = R"({
             "status": "success",
             "agent": "Cascade",
             "version": "1.0.0",
             "response": "Request processed by Cascade AI agent"
         })";
 
-            return env->NewStringUTF(response.c_str());
-        }
+        return env->NewStringUTF(response.c_str());
+    }
 
 // CascadeAIService implementation
-        CascadeAIService::CascadeAIService() : pImpl_(std::make_unique<Impl>()) {}
+    CascadeAIService::CascadeAIService() : pImpl_(std::make_unique<Impl>()) {}
 
-        CascadeAIService::~CascadeAIService() = default;
+    CascadeAIService::~CascadeAIService() = default;
 
-        bool CascadeAIService::initialize(JavaVM *vm, jobject context) {
-            if (pImpl_) {
-                return pImpl_->initialize(vm, context);
-            } else {
-                return false;
-            }
+    bool CascadeAIService::initialize(JavaVM *vm, jobject context) {
+        if (pImpl_) {
+            return pImpl_->initialize(vm, context);
+        } else {
+            return false;
         }
+    }
 
-        void CascadeAIService::shutdown() {
-            if (pImpl_) {
-                pImpl_->shutdown();
-            }
+    void CascadeAIService::shutdown() {
+        if (pImpl_) {
+            pImpl_->shutdown();
         }
+    }
 
-        jstring CascadeAIService::processRequest(JNIEnv *env, const std::string &request) {
-            return pImpl_ ? pImpl_->processRequest(env, request) : nullptr;
-        }
+    jstring CascadeAIService::processRequest(JNIEnv *env, const std::string &request) {
+        return pImpl_ ? pImpl_->processRequest(env, request) : nullptr;
+    }
 
-    } // namespace genesis::cascade
+} // namespace genesis::cascade
 
 
 // JNI Implementation

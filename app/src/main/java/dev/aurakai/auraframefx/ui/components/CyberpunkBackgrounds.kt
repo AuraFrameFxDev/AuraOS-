@@ -109,7 +109,7 @@ fun HexagonGridBackground(
                 // Determine color based on position and animation
                 val distanceToCenter = sqrt(
                     ((offsetX - width / 2) * (offsetX - width / 2) +
-                            (offsetY - height / 2) * (offsetY - height / 2)).toFloat()
+                        (offsetY - height / 2) * (offsetY - height / 2)).toFloat()
                 )
                 val maxDistance = sqrt((width * width + height * height).toFloat()) / 2
                 val colorRatio = (distanceToCenter / maxDistance + digitalEffect) % 1f
@@ -292,8 +292,8 @@ fun DigitalLandscapeBackground(
             val normalizedX = i / terrainSegments.toFloat()
             val terrainHeight =
                 sin(normalizedX * 5 + terrainAnimation) * 10 +
-                        sin(normalizedX * 13 + terrainAnimation * 0.7f) * 5 +
-                        sin(normalizedX * 23 - terrainAnimation * 0.3f) * 2.5f
+                    sin(normalizedX * 13 + terrainAnimation * 0.7f) * 5 +
+                    sin(normalizedX * 23 - terrainAnimation * 0.3f) * 2.5f
 
             val y = horizon - terrainHeight
             terrainPath.lineTo(x, y)

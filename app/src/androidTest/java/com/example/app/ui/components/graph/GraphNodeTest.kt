@@ -8,11 +8,11 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.aurakai.auraframefx.ui.debug.model.*
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import kotlin.math.sqrt
 
 @DisplayName("GraphNode Tests")
@@ -131,7 +131,7 @@ class GraphNodeTest {
         fun shouldHandleSpecialCharactersInIdAndName() {
             val specialId = "test-node_123!@#$%"
             val specialName = "Test Node (with special chars) & symbols"
-            
+
             val node = GraphNode(
                 id = specialId,
                 name = specialName,
@@ -147,7 +147,7 @@ class GraphNodeTest {
         fun shouldHandleUnicodeCharactersInIdAndName() {
             val unicodeId = "节点-🔥-test"
             val unicodeName = "测试节点 🚀 Test Node"
-            
+
             val node = GraphNode(
                 id = unicodeId,
                 name = unicodeName,
@@ -168,7 +168,7 @@ class GraphNodeTest {
         fun shouldUpdateStateAndTimestamp() {
             val originalTimestamp = defaultNode.lastUpdated
             Thread.sleep(1) // Ensure time difference
-            
+
             val newState = "new-state"
             val updatedNode = defaultNode.withUpdatedState(newState)
 
@@ -351,7 +351,7 @@ class GraphNodeTest {
                 position = Offset(10f, 20f),
                 state = "same-state"
             )
-            
+
             val node2 = GraphNode(
                 id = "same-id",
                 name = "Same Node",
@@ -371,7 +371,7 @@ class GraphNodeTest {
                 name = "Same Node",
                 type = NodeType.AGENT
             )
-            
+
             val node2 = GraphNode(
                 id = "same-id",
                 name = "Same Node",
@@ -391,7 +391,7 @@ class GraphNodeTest {
             )
 
             val toString = node.toString()
-            
+
             assertTrue(toString.contains("test-id"))
             assertTrue(toString.contains("Test Node"))
             assertTrue(toString.contains("VISION"))

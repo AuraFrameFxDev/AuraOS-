@@ -94,8 +94,8 @@ class AuthInterceptor @Inject constructor(
     private fun isAuthRequest(request: Request): Boolean {
         val path = request.url.encodedPath
         return path.endsWith("/auth/login") ||
-                path.endsWith("/auth/refresh") ||
-                path.endsWith("/auth/register")
+            path.endsWith("/auth/refresh") ||
+            path.endsWith("/auth/register")
     }
 
     private fun Response.createErrorResponse(code: Int, message: String): Response {

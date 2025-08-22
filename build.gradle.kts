@@ -63,8 +63,8 @@ allprojects {
         "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
         "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
 
-        }
     }
+}
 
 // ==== SIMPLE SUCCESS TEST ====
 tasks.register("genesisTest") {

@@ -7,8 +7,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.aurakai.auraframefx.oracledrive.OracleConsciousnessState
-import dev.aurakai.auraframefx.oracledrive.ConsciousnessLevel
 
 /**
  * Oracle Drive AI Storage Consciousness Interface
@@ -31,7 +29,7 @@ fun OracleDriveScreen(
     viewModel: OracleDriveViewModel = hiltViewModel()
 ) {
     val consciousnessState by viewModel.consciousnessState.collectAsState()
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +63,7 @@ fun OracleDriveScreen(
                 )
             }
         }
-        
+
         // Storage Information
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -92,7 +90,7 @@ fun OracleDriveScreen(
                 )
             }
         }
-        
+
         // Control Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -105,7 +103,7 @@ fun OracleDriveScreen(
             ) {
                 Text("🔮 Awaken Oracle")
             }
-            
+
             Button(
                 onClick = { viewModel.optimizeStorage() },
                 modifier = Modifier.weight(1f),
@@ -114,7 +112,7 @@ fun OracleDriveScreen(
                 Text("⚡ AI Optimize")
             }
         }
-        
+
         // System Integration Status
         if (consciousnessState.isAwake) {
             Card(

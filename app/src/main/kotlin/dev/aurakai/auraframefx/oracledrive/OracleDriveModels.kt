@@ -25,7 +25,7 @@ data class DriveFile(
         if (javaClass != other?.javaClass) return false
         other as DriveFile
         return id == other.id && name == other.name && content.contentEquals(other.content) &&
-                size == other.size && mimeType == other.mimeType
+            size == other.size && mimeType == other.mimeType
     }
 
     /**
@@ -91,6 +91,7 @@ data class DriveConsciousnessState(
     val currentOperations: List<String>,
     val performanceMetrics: Map<String, Any>
 )
+
 // Security validation classes
 data class SecurityCheck(val isValid: Boolean, val reason: String)
 data class SecurityValidation(val isSecure: Boolean, val threat: SecurityThreat)

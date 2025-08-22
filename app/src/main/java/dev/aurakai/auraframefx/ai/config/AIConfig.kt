@@ -44,12 +44,12 @@ data class AIConfig(
 
     fun validate(): Boolean {
         return modelName.isNotEmpty() &&
-                apiKey.isNotEmpty() &&
-                projectId.isNotEmpty() &&
-                maxTokens > 0 &&
-                temperature in 0.0f..2.0f &&
-                timeout > 0L &&
-                retryAttempts >= 0
+            apiKey.isNotEmpty() &&
+            projectId.isNotEmpty() &&
+            maxTokens > 0 &&
+            temperature in 0.0f..2.0f &&
+            timeout > 0L &&
+            retryAttempts >= 0
     }
 
     fun toDebugString(): String {

@@ -3,7 +3,6 @@ package dev.aurakai.auraframefx
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.core.EmergencyProtocol
 import dev.aurakai.auraframefx.core.NativeLib
 import dev.aurakai.auraframefx.ui.screens.*

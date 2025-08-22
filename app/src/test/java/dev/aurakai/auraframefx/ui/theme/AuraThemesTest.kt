@@ -663,19 +663,19 @@ class AuraThemesTest {
         fun `Theme descriptions should contain relevant keywords`() {
             assertTrue(
                 CyberpunkTheme.description.contains("energy", ignoreCase = true) ||
-                        CyberpunkTheme.description.contains("neon", ignoreCase = true),
+                    CyberpunkTheme.description.contains("neon", ignoreCase = true),
                 "CyberpunkTheme description should mention energy or neon"
             )
 
             assertTrue(
                 SolarFlareTheme.description.contains("warm", ignoreCase = true) ||
-                        SolarFlareTheme.description.contains("bright", ignoreCase = true),
+                    SolarFlareTheme.description.contains("bright", ignoreCase = true),
                 "SolarFlareTheme description should mention warmth or brightness"
             )
 
             assertTrue(
                 ForestTheme.description.contains("natural", ignoreCase = true) ||
-                        ForestTheme.description.contains("calm", ignoreCase = true),
+                    ForestTheme.description.contains("calm", ignoreCase = true),
                 "ForestTheme description should mention nature or calm"
             )
         }

@@ -3,8 +3,8 @@ package dev.aurakai.auraframefx.securecomm.keystore
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith

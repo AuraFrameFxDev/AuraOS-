@@ -144,8 +144,8 @@ class AuraShieldAgent @Inject constructor(
             val learningRate = 0.1f
 
             val newFreq = currentFreq * (1 - learningRate) +
-                    (pattern.recentActivity.count { it == activity }
-                        .toFloat() / pattern.recentActivity.size) * learningRate
+                (pattern.recentActivity.count { it == activity }
+                    .toFloat() / pattern.recentActivity.size) * learningRate
 
             pattern.normalActivity[activity] = newFreq
         }

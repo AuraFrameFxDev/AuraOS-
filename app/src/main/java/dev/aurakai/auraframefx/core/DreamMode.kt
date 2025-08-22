@@ -288,7 +288,7 @@ class DreamMode(private val context: Context) {
      */
     private fun checkIfDeviceIdle(): Boolean {
         return powerManager.isDeviceIdleMode ||
-                powerManager.isInteractive.not()
+            powerManager.isInteractive.not()
     }
 
     /**

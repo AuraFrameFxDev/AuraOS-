@@ -38,7 +38,7 @@ class CloudStatusMonitor @Inject constructor(
         val networkCapabilities =
             connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
         return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
     suspend fun checkActualInternetReachability(): Boolean = withContext(Dispatchers.IO) {

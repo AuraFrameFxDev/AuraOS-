@@ -69,7 +69,7 @@ dependencies {
     // Compose Runtime
     implementation("androidx.compose.runtime:runtime:1.9.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.9.0")
-    
+
     // Security bundles
     implementation("org.bouncycastle:bcprov-jdk18on:1.81")  // Bouncy Castle for cryptographic operations
 

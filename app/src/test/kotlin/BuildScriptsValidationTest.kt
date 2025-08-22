@@ -877,7 +877,7 @@ class BuildScriptsValidationTest {
         assertTrue(
             "Version references should use proper syntax",
             content.contains("libs.versions.kotlin.get()") ||
-                    content.contains("libs.versions.composeCompiler.get()")
+                content.contains("libs.versions.composeCompiler.get()")
         )
     }
 

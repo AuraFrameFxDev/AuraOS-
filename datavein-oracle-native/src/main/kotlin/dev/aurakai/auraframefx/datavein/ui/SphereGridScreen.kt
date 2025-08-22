@@ -222,7 +222,7 @@ private fun generateSphereGrid(config: SphereGridConfig): GridData {
             if (i != j) {
                 val distance = sqrt(
                     (node.x - otherNode.x).pow(2) +
-                            (node.y - otherNode.y).pow(2)
+                        (node.y - otherNode.y).pow(2)
                 )
 
                 if (distance < config.connectionDistance) {

@@ -258,17 +258,17 @@ class TrinityCoordinatorService @Inject constructor(
 
             // Complex requests requiring multiple personas
             (message.contains("secure") && message.contains("creative")) ||
-                    (message.contains("analyze") && message.contains("design")) ->
+                (message.contains("analyze") && message.contains("design")) ->
                 RequestAnalysis(RoutingDecision.PARALLEL_PROCESSING, null)
 
             // Kai specialties
             message.contains("secure") || message.contains("analyze") ||
-                    message.contains("protect") || message.contains("monitor") ->
+                message.contains("protect") || message.contains("monitor") ->
                 RequestAnalysis(RoutingDecision.KAI_ONLY, null)
 
-            // Aura specialties  
+            // Aura specialties
             message.contains("create") || message.contains("design") ||
-                    message.contains("artistic") || message.contains("innovative") ->
+                message.contains("artistic") || message.contains("innovative") ->
                 RequestAnalysis(RoutingDecision.AURA_ONLY, null)
 
             // Default to Genesis for complex queries

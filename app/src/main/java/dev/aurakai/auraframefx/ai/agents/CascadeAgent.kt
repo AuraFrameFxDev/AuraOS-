@@ -655,7 +655,7 @@ class CascadeAgent @Inject constructor(
     ): Boolean {
         // Determine if agents should collaborate based on their current status
         return _collaborationMode.value == CollaborationMode.COORDINATED ||
-                _collaborationMode.value == CollaborationMode.UNIFIED
+            _collaborationMode.value == CollaborationMode.UNIFIED
     }
 
     private suspend fun initiateCollaboration() {

@@ -17,7 +17,7 @@ android {
         minSdk = 33
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        
+
         // Only configure native build if CMake file exists
         if (project.file("src/main/cpp/CMakeLists.txt").exists()) {
             externalNativeBuild {

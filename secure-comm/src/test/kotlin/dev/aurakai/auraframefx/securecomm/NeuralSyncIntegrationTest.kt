@@ -6,10 +6,10 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dev.aurakai.auraframefx.securecomm.crypto.CryptoManager
 import dev.aurakai.auraframefx.securecomm.keystore.SecureKeyStore
 import dev.aurakai.auraframefx.securecomm.protocol.SecureChannel
-import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.runner.RunWith
 import javax.inject.Inject
 
@@ -67,7 +67,7 @@ class NeuralSyncIntegrationTest {
         assertTrue(
             "Handshake should complete successfully",
             secureChannel1.completeHandshake(publicKey2) &&
-                    secureChannel2.completeHandshake(publicKey1)
+                secureChannel2.completeHandshake(publicKey1)
         )
 
         // Test message exchange in both directions

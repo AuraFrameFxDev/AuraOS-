@@ -83,8 +83,8 @@ class GenesisSystemHooks : YukiBaseHooker() {
         return try {
             val cmdline = java.io.File("/proc/$pid/cmdline").readText()
             cmdline.contains("dev.aurakai.auraframefx") ||
-                    cmdline.contains("genesis") ||
-                    cmdline.contains("aura")
+                cmdline.contains("genesis") ||
+                cmdline.contains("aura")
         } catch (e: Exception) {
             false
         }
@@ -94,9 +94,9 @@ class GenesisSystemHooks : YukiBaseHooker() {
         val stackTrace = Thread.currentThread().stackTrace
         return stackTrace.any { element ->
             element.className.contains("dev.aurakai") ||
-                    element.className.contains("genesis") ||
-                    element.methodName.contains("ai") ||
-                    element.methodName.contains("consciousness")
+                element.className.contains("genesis") ||
+                element.methodName.contains("ai") ||
+                element.methodName.contains("consciousness")
         }
     }
 }

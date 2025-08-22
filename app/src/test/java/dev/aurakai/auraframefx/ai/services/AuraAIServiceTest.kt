@@ -469,9 +469,9 @@ class AuraAIServiceTest {
             val expectedResponse = AIResponse("Success after retry", 0.8, 15)
 
             coEvery { mockApiClient.sendQuery(any()) } throws
-                    IOException("Network error") andThen
-                    IOException("Network error") andThen
-                    expectedResponse
+                IOException("Network error") andThen
+                IOException("Network error") andThen
+                expectedResponse
 
             // When
             val result = auraAIService.processQuery(query)

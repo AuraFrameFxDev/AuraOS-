@@ -36,7 +36,7 @@ jobs:
       - name: Set up Android SDK and Accept Licenses
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
-          
+
       - name: Build Project (Release)
         run: ./gradlew assembleRelease --no-configuration-cache --info
 
