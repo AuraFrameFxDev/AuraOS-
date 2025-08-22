@@ -1,8 +1,10 @@
 package dev.aurakai.collabcanvas.model
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathIterator
 import com.google.gson.*
 import java.lang.reflect.Type
 
@@ -23,9 +25,10 @@ import java.lang.reflect.Type
 data class CanvasElement(
     val id: String,
     val type: ElementType,
-    val path: PathData,
+    val path: Path?,
     val color: Color,
     val strokeWidth: Float,
+    val bounds: Rect? = null,
     val zIndex: Int = 0,
     val isSelected: Boolean = false,
     val createdBy: String,
@@ -35,7 +38,7 @@ data class CanvasElement(
     /**
      * Creates a copy of this element with the specified path.
      */
-    fun withPath(newPath: PathData): CanvasElement {
+    fun withPath(newPath: Path?): CanvasElement {
         return copy(path = newPath, updatedAt = System.currentTimeMillis())
     }
 
@@ -74,7 +77,7 @@ data class CanvasElement(
         fun createDefault(
             id: String,
             createdBy: String,
-            path: PathData = PathData(),
+            path: Path? = null,
             color: Color = Color.Black,
             strokeWidth: Float = 5f,
         ): CanvasElement {
@@ -140,7 +143,7 @@ data class PathData(
 }
 
 /**
- * Type adapter for serializing/deserializing Path objects.
+ * Type adapter for serializing/deserializing Compose UI Path objects.
  */
 class PathTypeAdapter : JsonSerializer<Path>, JsonDeserializer<Path> {
     override fun serialize(
@@ -148,15 +151,8 @@ class PathTypeAdapter : JsonSerializer<Path>, JsonDeserializer<Path> {
         typeOfSrc: Type,
         context: JsonSerializationContext,
     ): JsonElement {
-        val bounds = android.graphics.RectF()
-        src.computeBounds(bounds, true)
-
         val pathData = src.toPathData()
         val jsonObject = JsonObject()
-        jsonObject.addProperty("boundsLeft", bounds.left)
-        jsonObject.addProperty("boundsTop", bounds.top)
-        jsonObject.addProperty("boundsRight", bounds.right)
-        jsonObject.addProperty("boundsBottom", bounds.bottom)
         jsonObject.addProperty("pathData", pathData)
         return jsonObject
     }
@@ -169,53 +165,79 @@ class PathTypeAdapter : JsonSerializer<Path>, JsonDeserializer<Path> {
         val jsonObject = json.asJsonObject
         val pathData = jsonObject.get("pathData").asString
         return Path().apply {
-            // Implement path parsing from string representation
-            // This is a simplified version - you might need a more robust parser
-            pathData.split(" ").forEach { cmd ->
-                when (cmd[0]) {
-                    'M' -> {
-                        val (x, y) = cmd.drop(1).split(",").map { it.toFloat() }
-                        moveTo(x, y)
-                    }
-
-                    'L' -> {
-                        val (x, y) = cmd.drop(1).split(",").map { it.toFloat() }
-                        lineTo(x, y)
-                    }
-
-                    'Z' -> close()
-                }
-            }
+            parsePathData(pathData)
         }
     }
 
     private fun Path.toPathData(): String {
         val pathData = StringBuilder()
-        val pathIterator = PathIterator()
-        pathIterator.iterate(this) { verb, points ->
-            when (verb) {
-                PathIterator.Verb.MOVE -> {
-                    pathData.append("M${points[0].x},${points[0].y} ")
+        val iterator = PathIterator.create(this, density = 1f)
+        val points = FloatArray(8)
+        
+        while (iterator.hasNext()) {
+            when (iterator.next(points)) {
+                PathIterator.Verb.Move -> {
+                    pathData.append("M${points[0]},${points[1]} ")
                 }
-
-                PathIterator.Verb.LINE -> {
-                    pathData.append("L${points[1].x},${points[1].y} ")
+                PathIterator.Verb.Line -> {
+                    pathData.append("L${points[0]},${points[1]} ")
                 }
-
-                PathIterator.Verb.QUAD -> {
-                    pathData.append("Q${points[1].x},${points[1].y} ${points[2].x},${points[2].y} ")
+                PathIterator.Verb.Quad -> {
+                    pathData.append("Q${points[0]},${points[1]} ${points[2]},${points[3]} ")
                 }
-
-                PathIterator.Verb.CUBIC -> {
-                    pathData.append("C${points[1].x},${points[1].y} ${points[2].x},${points[2].y} ${points[3].x},${points[3].y} ")
+                PathIterator.Verb.Cubic -> {
+                    pathData.append("C${points[0]},${points[1]} ${points[2]},${points[3]} ${points[4]},${points[5]} ")
                 }
-
-                PathIterator.Verb.CLOSE -> {
+                PathIterator.Verb.Close -> {
                     pathData.append("Z ")
                 }
+                PathIterator.Verb.Done -> break
             }
         }
         return pathData.toString().trim()
+    }
+    
+    private fun Path.parsePathData(pathData: String) {
+        val commands = pathData.split(" ").filter { it.isNotEmpty() }
+        
+        for (cmd in commands) {
+            if (cmd.isEmpty()) continue
+            
+            when (cmd[0]) {
+                'M' -> {
+                    val coords = cmd.drop(1).split(",")
+                    if (coords.size >= 2) {
+                        moveTo(coords[0].toFloat(), coords[1].toFloat())
+                    }
+                }
+                'L' -> {
+                    val coords = cmd.drop(1).split(",")
+                    if (coords.size >= 2) {
+                        lineTo(coords[0].toFloat(), coords[1].toFloat())
+                    }
+                }
+                'Q' -> {
+                    val coords = cmd.drop(1).split(",")
+                    if (coords.size >= 4) {
+                        quadraticTo(
+                            coords[0].toFloat(), coords[1].toFloat(),
+                            coords[2].toFloat(), coords[3].toFloat()
+                        )
+                    }
+                }
+                'C' -> {
+                    val coords = cmd.drop(1).split(",")
+                    if (coords.size >= 6) {
+                        cubicTo(
+                            coords[0].toFloat(), coords[1].toFloat(),
+                            coords[2].toFloat(), coords[3].toFloat(),
+                            coords[4].toFloat(), coords[5].toFloat()
+                        )
+                    }
+                }
+                'Z' -> close()
+            }
+        }
     }
 }
 

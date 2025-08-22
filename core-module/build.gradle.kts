@@ -38,7 +38,7 @@ android {
             isMinifyEnabled = false
             buildConfigField("boolean", "DEBUG_MODE", "true")
         }
-        
+
         release {
             isMinifyEnabled = true
             proguardFiles(
@@ -132,7 +132,12 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Xposed Framework (for core hooks)
+    // Xposed Framework - YukiHookAPI (Standardized)
+    implementation(libs.yuki)
+    ksp(libs.yuki.ksp.xposed)
+    implementation(libs.bundles.xposed)
+    
+    // Legacy Xposed API (compatibility)
     implementation(files("${project.rootDir}/Libs/api-82.jar"))
     implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
 }
@@ -142,9 +147,8 @@ spotless {
     kotlin {
         target("**/*.kt")
         targetExclude("**/build/**/*.kt")
-        ktlint(libs.versions.ktlint.get()).userData(mapOf("android" to "true"))
+        ktlint()
         trimTrailingWhitespace()
-        indentWithSpaces(4)
         endWithNewline()
     }
 }
@@ -171,7 +175,7 @@ dokka {
             includes.from("module.md")
             sourceLink {
                 localDirectory.set(file("src/main/kotlin"))
-                remoteUrl.set("https://github.com/aurakai/Genesis-Os/tree/main/core-module/src/main/kotlin")
+                remoteUrl.set(uri("https://github.com/aurakai/Genesis-Os/tree/main/core-module/src/main/kotlin"))
                 remoteLineSuffix.set("#L")
             }
         }

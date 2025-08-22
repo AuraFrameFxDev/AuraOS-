@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.oracle.drive.utils
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.aurakai.auraframefx.oracle.drive.service.FileOperationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class SecureFileManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val encryptionManager: EncryptionManager,
+    private val encryptionManager: EncryptionManager
 ) {
     private val internalStorageDir: File = context.filesDir
     private val secureFileExtension = ".aes"
@@ -39,7 +40,7 @@ class SecureFileManager @Inject constructor(
     suspend fun saveFile(
         data: ByteArray,
         fileName: String,
-        directory: String? = null,
+        directory: String? = null
     ): Flow<FileOperationResult> = flow {
         try {
             val targetDir = directory?.let { File(internalStorageDir, it) } ?: internalStorageDir
@@ -75,12 +76,12 @@ class SecureFileManager @Inject constructor(
      */
     suspend fun readFile(
         fileName: String,
-        directory: String? = null,
+        directory: String? = null
     ): Flow<FileOperationResult> = flow {
         try {
             val targetDir = directory?.let { File(internalStorageDir, it) } ?: internalStorageDir
             val inputFile = File(targetDir, "$fileName$secureFileExtension")
-
+            
             if (!inputFile.exists()) {
                 emit(FileOperationResult.Error("File not found"))
                 return@flow
@@ -100,22 +101,24 @@ class SecureFileManager @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     /**
-     * Deletes an encrypted file from internal storage.
+     * Delete a previously saved encrypted file (with the `.aes` extension) from internal storage.
      *
-     * Attempts to remove the specified file with the secure extension from the given directory. Returns a result indicating success or failure, including error details if the file does not exist or deletion fails.
+     * Attempts to remove the file identified by `fileName` (without extension) from the optional `directory`
+     * inside the app's internal files directory. Returns Success with the deleted File on success, or Error
+     * with a message (and the caught exception, if any) when the file is missing or deletion fails.
      *
-     * @param fileName The name of the file to delete (without extension).
-     * @param directory Optional subdirectory within internal storage.
-     * @return A [FileOperationResult] representing the outcome of the deletion.
+     * @param fileName Name of the file to delete, without the `.aes` extension.
+     * @param directory Optional subdirectory under the app's internal files directory; when null the root internal directory is used.
+     * @return A [FileOperationResult] indicating success (deleted file) or error (not found, deletion failure, or exception).
      */
     suspend fun deleteFile(
         fileName: String,
-        directory: String? = null,
+        directory: String? = null
     ): FileOperationResult = withContext(Dispatchers.IO) {
         try {
             val targetDir = directory?.let { File(internalStorageDir, it) } ?: internalStorageDir
             val fileToDelete = File(targetDir, "$fileName$secureFileExtension")
-
+            
             if (!fileToDelete.exists()) {
                 return@withContext FileOperationResult.Error("File not found")
             }
@@ -131,12 +134,13 @@ class SecureFileManager @Inject constructor(
     }
 
     /**
-     * Returns a list of decrypted file names (without extensions) from the specified directory.
+     * Lists stored encrypted files' names (without the secure extension) in the given directory.
      *
-     * Only files with the secure encrypted extension are included. Returns an empty list if the directory does not exist or an error occurs.
+     * Only regular files that end with the manager's secure extension (".aes") are returned.
+     * If the directory does not exist or an error occurs, an empty list is returned.
      *
-     * @param directory Optional subdirectory to search within the internal storage directory.
-     * @return List of file names without the encrypted extension.
+     * @param directory Optional subdirectory of the app's internal files directory to search; when null the root internal storage directory is used.
+     * @return A list of file names with the secure extension removed.
      */
     suspend fun listFiles(directory: String? = null): List<String> = withContext(Dispatchers.IO) {
         try {
@@ -153,13 +157,4 @@ class SecureFileManager @Inject constructor(
             emptyList()
         }
     }
-}
-
-/**
- * Represents the result of a file operation
- */
-sealed class FileOperationResult {
-    data class Success(val file: File) : FileOperationResult()
-    data class Data(val data: ByteArray, val fileName: String) : FileOperationResult()
-    data class Error(val message: String, val exception: Exception? = null) : FileOperationResult()
 }

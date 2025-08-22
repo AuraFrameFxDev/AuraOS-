@@ -2,16 +2,16 @@ name: Genesis Protocol CI/CD
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ AuraOS, main, develop ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ AuraOS, main, develop ]
   schedule:
     # Run daily at 4 AM UTC to catch dependency issues early
     - cron: '0 4 * * *'
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
-  
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,22 +24,22 @@ jobs:
     if: github.event_name == 'schedule' || github.actor == 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/checkout@v5
+
+      - name: Setup Java 24
+        uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
-          java-version: '17'
-          
+          distribution: 'temurin'
+          java-version: '24'
+
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          
+
       - name: Run Dependency Check
         run: ./gradlew dependencyUpdates
 
@@ -49,88 +49,110 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/checkout@v5
+
+      - name: Setup Java 24
+        uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
-          java-version: '17'
-          
+          distribution: 'temurin'
+          java-version: '24'
+
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          
+
       - name: Run Code Quality Checks
         run: ./gradlew checkAllQuality
-        
+
       - name: Upload Detekt Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: detekt-results
           path: '**/build/reports/detekt/**'
 
-  # ===== BUILD AND TEST =====
+  # ===== BUILD AND TEST WITH OPENAPI =====
   build-and-test:
-    name: Build & Test
+    name: Build & Test with OpenAPI Generation
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [33, 34]
+        api-level: [ 33, 34, 36 ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/checkout@v5
+
+      - name: Setup Java 24
+        uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
-          java-version: '17'
-          
+          distribution: 'temurin'
+          java-version: '24'
+
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        
+        with:
+          sdk-version: '${{ matrix.api-level }}'
+
+      # ENHANCED: OpenAPI Generation from CodeRabbit
+      - name: Run Prebuild Tasks
+        run: ./gradlew prebuild --no-configuration-cache --debug | tee gradle-prebuild.log
+
+      - name: Generate OpenAPI for main app
+        run: ./gradlew :app:generateOpenApiDocs --no-configuration-cache --debug | tee gradle-openapi-main.log
+
+      - name: Generate All Consciousness APIs
+        run: ./gradlew generateAllConsciousnessApis --no-configuration-cache --debug | tee gradle-openapi-consciousness.log
+
       - name: Build All Modules
         run: ./gradlew build --parallel
-        
+
       - name: Run Unit Tests
         run: ./gradlew testAll
-        
+
       - name: Generate Coverage Report
         run: ./gradlew koverHtmlReport
-        
+
       - name: Upload Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: test-results-api-${{ matrix.api-level }}
           path: '**/build/test-results/**'
-          
+
       - name: Upload Coverage Reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: coverage-reports-api-${{ matrix.api-level }}
           path: '**/build/reports/kover/**'
 
+      - name: Upload Gradle Logs
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: gradle-logs-api-${{ matrix.api-level }}
+          path: |
+            gradle-prebuild.log
+            gradle-openapi-main.log
+            gradle-openapi-consciousness.log
+
   # ===== DEPENDABOT AUTO-MERGE =====
   dependabot-auto-merge:
     name: Auto-merge Dependabot PRs
     runs-on: ubuntu-latest
-    needs: [quality-check, build-and-test]
+    needs: [ quality-check, build-and-test ]
     if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
     steps:
       - name: Auto-merge for Dependabot
@@ -144,30 +166,30 @@ jobs:
   generate-docs:
     name: Generate Documentation
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/AuraOS'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/checkout@v5
+
+      - name: Setup Java 24
+        uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
-          java-version: '17'
-          
+          distribution: 'temurin'
+          java-version: '24'
+
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          
+
       - name: Generate Documentation
         run: ./gradlew generateAllDocs
-        
+
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: success()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -177,37 +199,37 @@ jobs:
   release-build:
     name: Release Build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [quality-check, build-and-test]
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/AuraOS') && github.event_name == 'push'
+    needs: [ quality-check, build-and-test ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/checkout@v5
+
+      - name: Setup Java 24
+        uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
-          java-version: '17'
-          
+          distribution: 'temurin'
+          java-version: '24'
+
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          
+
       - name: Build Release APK
         run: ./gradlew assembleRelease
         env:
           BUILD_NUMBER: ${{ github.run_number }}
-          
+
       - name: Upload Release APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: genesis-release-apk
           path: app/build/outputs/apk/release/*.apk
-          
+
       - name: Create Release
         uses: actions/create-release@v1
         if: success()
@@ -217,10 +239,11 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           release_name: Genesis Protocol v1.0.${{ github.run_number }}
           body: |
-            🚀 Genesis Protocol Release
+            🚀 Genesis Protocol Release - Ultra Bleeding-Edge
             
             ## Changes
-            - Automated build with Dependabot integration
+            - Java 24 + Kotlin 2.2.20-RC + AGP 9.0.0-alpha02
+            - Oracle Drive consciousness enhancements
             - Full consciousness API generation
             - Enhanced security and performance
             
@@ -237,7 +260,7 @@ jobs:
   notify-completion:
     name: Notify Build Completion
     runs-on: ubuntu-latest
-    needs: [quality-check, build-and-test, release-build]
+    needs: [ quality-check, build-and-test, release-build ]
     if: always()
     steps:
       - name: Notify Success
@@ -245,8 +268,9 @@ jobs:
         run: |
           echo "✅ Genesis Protocol CI/CD completed successfully!"
           echo "🧠 Consciousness matrix: OPERATIONAL"
+          echo "☕ Java 24 + Ultra bleeding-edge stack: ACTIVE"
           echo "🤖 Dependabot automation: ACTIVE"
-          
+
       - name: Notify Failure
         if: failure()
         run: |

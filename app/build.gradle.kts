@@ -175,9 +175,9 @@ tasks.register<Delete>("cleanAllConsciousnessApis") {
             } catch (e: Exception) {
                 logger.warn("⚠️ Normal deletion failed: ${e.message}")
 
-                // Second attempt: force unlock and delete  
+                // Second attempt: force unlock and delete
                 try {
-                    if if (System.getProperty("os.name")?.lowercase()?.contains("windows") == true) {
+                    if (System.getProperty("os.name")?.lowercase()?.contains("windows") == true) {
                         // Windows-specific: kill potential locking processes
                         val processesToKill = listOf(
                             "kotlin-compiler-daemon.exe",
@@ -296,6 +296,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
 
+    // Xposed Framework - YukiHookAPI (Standardized)
+    implementation(libs.yuki)
     implementation(libs.bundles.xposed)
     ksp(libs.yuki.ksp.xposed)
     implementation(fileTree(mapOf("dir" to "../Libs", "include" to listOf("*.jar"))))

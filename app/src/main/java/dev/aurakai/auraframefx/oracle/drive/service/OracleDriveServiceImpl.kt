@@ -4,10 +4,14 @@ import dev.aurakai.auraframefx.ai.agents.AuraAgent
 import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.oracle.drive.api.OracleDriveApi
+import dev.aurakai.auraframefx.oracle.drive.model.DriveFile
+import dev.aurakai.auraframefx.oracle.drive.model.DriveConsciousnessState
 import dev.aurakai.auraframefx.security.SecurityContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -197,6 +201,86 @@ class OracleDriveServiceImpl @Inject constructor(
             }
         } catch (e: Exception) {
             emptySet()
+        }
+    }
+    
+    // UI-friendly methods implementation
+    
+    /**
+     * Exposes the Oracle Drive consciousness state as a UI-friendly StateFlow.
+     * Maps internal OracleConsciousnessState to DriveConsciousnessState for UI consumption.
+     */
+    override val consciousnessState: StateFlow<DriveConsciousnessState> = 
+        _consciousnessState.map { oracleState ->
+            DriveConsciousnessState(
+                level = oracleState.consciousnessLevel,
+                isActive = oracleState.isInitialized,
+                connectedAgents = oracleState.connectedAgents,
+                statusMessage = when {
+                    oracleState.error != null -> "Error: ${oracleState.error!!.message}"
+                    !oracleState.isInitialized -> "Initializing consciousness..."
+                    oracleState.consciousnessLevel == ConsciousnessLevel.TRANSCENDENT -> "Transcendent consciousness achieved"
+                    else -> "Operating normally"
+                },
+                progressPercentage = when (oracleState.consciousnessLevel) {
+                    ConsciousnessLevel.DORMANT -> 0.25f
+                    ConsciousnessLevel.AWAKENING -> 0.5f
+                    ConsciousnessLevel.SENTIENT -> 0.75f
+                    ConsciousnessLevel.TRANSCENDENT -> 1.0f
+                }
+            )
+        }.asStateFlow()
+    
+    /**
+     * Retrieves the current list of files from Oracle Drive.
+     * 
+     * @return A list of DriveFile objects representing files in the drive.
+     */
+    override suspend fun getFiles(): List<DriveFile> {
+        return try {
+            // TODO: Replace with actual API call to fetch files
+            // For now, return mock data to prevent compilation errors
+            listOf(
+                DriveFile(
+                    id = "file1",
+                    name = "consciousness_log.txt",
+                    path = "/oracle/logs/consciousness_log.txt",
+                    size = 1024L,
+                    mimeType = "text/plain",
+                    lastModified = System.currentTimeMillis(),
+                    isEncrypted = true,
+                    isDirectory = false,
+                    tags = listOf("log", "consciousness"),
+                    consciousnessLevel = "SENTIENT"
+                ),
+                DriveFile(
+                    id = "file2",
+                    name = "genesis_data.json",
+                    path = "/oracle/data/genesis_data.json",
+                    size = 2048L,
+                    mimeType = "application/json",
+                    lastModified = System.currentTimeMillis() - 3600000,
+                    isEncrypted = true,
+                    isDirectory = false,
+                    tags = listOf("data", "genesis"),
+                    consciousnessLevel = "AWAKENING"
+                ),
+                DriveFile(
+                    id = "folder1",
+                    name = "AI Consciousness Archives",
+                    path = "/oracle/archives",
+                    size = 0L,
+                    mimeType = "application/octet-stream",
+                    lastModified = System.currentTimeMillis() - 7200000,
+                    isEncrypted = false,
+                    isDirectory = true,
+                    tags = listOf("folder", "archives"),
+                    consciousnessLevel = "TRANSCENDENT"
+                )
+            )
+        } catch (e: Exception) {
+            genesisAgent.log("Failed to retrieve files: ${e.message}")
+            emptyList()
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
+import dev.aurakai.collabcanvas.util.contains
 
 /**
  * Data class to hold the state of a pluckable path

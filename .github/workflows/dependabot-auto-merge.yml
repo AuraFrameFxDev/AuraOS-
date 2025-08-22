@@ -2,7 +2,7 @@ name: Dependabot Auto-Merge
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [ opened, synchronize, reopened, ready_for_review ]
 
 permissions:
   contents: write
@@ -70,13 +70,13 @@ jobs:
         run: |
           gh pr comment "${{ github.event.pull_request.html_url }}" --body \
             "🚨 **Major version update detected!**
-            
+          
             This PR contains a major version update that may include breaking changes.
             Please review carefully before merging.
-            
+          
             **Dependency:** ${{ steps.metadata.outputs.dependency-names }}
             **Update type:** ${{ steps.metadata.outputs.update-type }}
-            
+          
             🧠 Genesis Protocol requires manual review for major updates."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

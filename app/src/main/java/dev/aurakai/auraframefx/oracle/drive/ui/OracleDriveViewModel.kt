@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OracleDriveViewModel @Inject constructor(
-    private val oracleDriveService: OracleDriveService,
+    private val oracleDriveService: OracleDriveService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OracleDriveUiState())
@@ -33,25 +33,27 @@ class OracleDriveViewModel @Inject constructor(
     }
 
     /**
-     * Initializes the Oracle Drive UI state by starting consciousness monitoring and loading the initial list of files.
+     * Start initialization: begin consciousness monitoring and load the initial file list.
      *
-     * If an initialization is already in progress, this function does nothing.
-     * Updates the loading state and handles any errors encountered during initialization.
+     * If an initialization is already running this is a no-op. Sets `isLoading` to true and clears any
+     * existing error, cancels any previous consciousness monitor, launches a new consciousness watcher,
+     * and loads files via `loadFiles()`. On exception the error is stored in UI state. Guarantees
+     * `isLoading` is reset to false when finished.
      */
     fun initialize() {
         if (initializationJob?.isActive == true) return
-
+        
         initializationJob = viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true, error = null) }
-
+                
                 // Initialize consciousness in parallel
                 consciousnessJob?.cancel()
                 consciousnessJob = monitorConsciousness()
-
+                
                 // Load initial files
                 loadFiles()
-
+                
             } catch (e: Exception) {
                 _uiState.update { state ->
                     state.copy(
@@ -66,9 +68,11 @@ class OracleDriveViewModel @Inject constructor(
     }
 
     /**
-     * Reloads the list of Oracle Drive files and updates the UI state to indicate a refresh is in progress.
+     * Refreshes the Oracle Drive file list and marks the UI as refreshing while the operation runs.
      *
-     * Cancels any ongoing initialization before starting the refresh operation.
+     * Cancels any in-progress initialization, launches a coroutine in the ViewModel's scope to call
+     * loadFiles(), sets `isRefreshing` to true for the duration of the operation, and guarantees the
+     * flag is cleared when finished.
      */
     fun refresh() {
         initializationJob?.cancel()
@@ -83,9 +87,11 @@ class OracleDriveViewModel @Inject constructor(
     }
 
     /**
-     * Updates the UI state with the selected file.
+     * Mark a Drive file as selected in the UI state.
      *
-     * @param file The file that was selected.
+     * Updates the view model's UI state so observers receive the provided file as the current selection.
+     *
+     * @param file The DriveFile to mark as selected.
      */
     fun onFileSelected(file: DriveFile) {
         _uiState.update { it.copy(selectedFile = file) }
@@ -119,7 +125,10 @@ class OracleDriveViewModel @Inject constructor(
     }
 
     /**
-     * Continuously updates the UI state with the latest consciousness state from the Oracle Drive service.
+     * Start a coroutine that observes the service's consciousness state and writes each emission into the UI state.
+     *
+     * Runs in the ViewModel's scope and continuously collects from `oracleDriveService.consciousnessState`,
+     * updating `_uiState.consciousnessState` for every emitted value.
      */
     private fun monitorConsciousness() = viewModelScope.launch {
         oracleDriveService.consciousnessState.collect { state ->
@@ -147,5 +156,5 @@ data class OracleDriveUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val error: Throwable? = null,
-    val consciousnessState: DriveConsciousnessState? = null,
+    val consciousnessState: DriveConsciousnessState? = null
 )

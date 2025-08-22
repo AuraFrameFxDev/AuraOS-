@@ -741,12 +741,12 @@ const char *info_language_standard_default = "INFO" ":" "standard_default["
                                              "20"
                                              #elif CXX_STD >= 201703L
                                              "17"
-#elif CXX_STD >= 201402L
-  "14"
-#elif CXX_STD >= 201103L
-  "11"
-#else
-  "98"
+                                             #elif CXX_STD >= 201402L
+                                             "14"
+                                             #elif CXX_STD >= 201103L
+                                             "11"
+                                             #else
+                                             "98"
                                              #endif
                                              "]";
 

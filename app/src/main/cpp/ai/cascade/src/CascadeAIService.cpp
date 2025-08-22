@@ -107,7 +107,7 @@ namespace genesis::cascade {
 
 // JNI Implementation
 namespace {
-    std::unique_ptr<genesis::cascade::CascadeAIService> g_cascadeService;
+    std::unique_ptr <genesis::cascade::CascadeAIService> g_cascadeService;
     JavaVM *g_vm = nullptr;
 
     JNIEnv *getEnv() {
@@ -122,7 +122,8 @@ namespace {
 // JNI Methods
 extern "C" {
 
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jboolean
+JNICALL
 Java_dev_aurakai_auraframefx_ai_services_CascadeAIService_nativeInitialize(
         JNIEnv *env,
         jobject thiz,
@@ -158,7 +159,8 @@ Java_dev_aurakai_auraframefx_ai_services_CascadeAIService_nativeInitialize(
     return JNI_TRUE;
 }
 
-JNIEXPORT jstring JNICALL
+JNIEXPORT jstring
+JNICALL
 Java_dev_aurakai_auraframefx_ai_services_CascadeAIService_nativeProcessRequest(
         JNIEnv *env,
         jobject thiz,
@@ -183,19 +185,19 @@ Java_dev_aurakai_auraframefx_ai_services_CascadeAIService_nativeProcessRequest(
 
 JNIEXPORT void JNICALL
 Java_dev_aurakai_auraframefx_ai_services_CascadeAIService_nativeShutdown(
-        JNIEnv *env,
-        jobject thiz
+        JNIEnv * env ,
+jobject thiz
 ) {
-    if (g_cascadeService) {
-        g_cascadeService->shutdown();
-        g_cascadeService.reset();
-    }
+if ( g_cascadeService ) {
+g_cascadeService -> shutdown();
+g_cascadeService . reset();
+}
 
-    if (g_vm) {
-        g_vm = nullptr;
-    }
+if (g_vm) {
+g_vm = nullptr;
+}
 
-    LOGI("Cascade AI Service shutdown complete");
+LOGI("Cascade AI Service shutdown complete");
 }
 
 } // extern "C"

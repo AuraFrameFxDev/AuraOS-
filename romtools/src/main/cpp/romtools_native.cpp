@@ -7,14 +7,16 @@
 extern "C" {
 
 // ROM Tools Native Interface - Placeholder implementation
-JNIEXPORT jstring JNICALL
+JNIEXPORT jstring
+JNICALL
 Java_dev_aurakai_auraframefx_romtools_ROMToolsNative_getVersion(JNIEnv *env, jobject /* this */) {
     LOGI("ROM Tools Native Library initialized");
     return env->NewStringUTF("1.0.0-genesis");
 }
 
 // Boot image analysis placeholder
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jboolean
+JNICALL
 Java_dev_aurakai_auraframefx_romtools_ROMToolsNative_analyzeBootImage(JNIEnv *env,
                                                                       jobject /* this */,
                                                                       jstring path) {
@@ -27,7 +29,8 @@ Java_dev_aurakai_auraframefx_romtools_ROMToolsNative_analyzeBootImage(JNIEnv *en
 }
 
 // Partition management placeholder
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jboolean
+JNICALL
 Java_dev_aurakai_auraframefx_romtools_ROMToolsNative_mountPartition(JNIEnv *env, jobject /* this */,
                                                                     jstring partition) {
     const char *partName = env->GetStringUTFChars(partition, 0);

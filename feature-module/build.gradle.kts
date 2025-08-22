@@ -1,13 +1,13 @@
 // ===== GENESIS-OS SACRED RULES: ZERO MANUAL COMPILER CONFIG =====
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
-    id("org.jetbrains.dokka")
-    id("com.diffplug.spotless")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.spotless)
 }
 
 android {
@@ -93,7 +93,12 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // System interaction and documentation (using local JAR files)
+    // Xposed Framework - YukiHookAPI (Standardized)
+    implementation(libs.yuki)
+    ksp(libs.yuki.ksp.xposed)
+    implementation(libs.bundles.xposed)
+    
+    // Legacy Xposed API (compatibility)
     implementation(files("${project.rootDir}/Libs/api-82.jar"))
     implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import dev.aurakai.collabcanvas.model.CanvasElement
 import dev.aurakai.collabcanvas.model.ElementType
 import dev.aurakai.collabcanvas.ui.animation.*
+import dev.aurakai.collabcanvas.util.getBounds
 import kotlinx.coroutines.launch
 
 /**
@@ -216,60 +217,6 @@ fun CanvasScreen() {
                             }
 
                             ElementType.RECTANGLE -> {
-                                // Draw selection outline if an element is selected with transformed coordinates
-                                selectedElement?.let { element ->
-                                    element.bounds?.let { rect ->
-                                        withTransform({
-                                            scale(scale.value, scale.value, pivot = Offset.Zero)
-                                            translate(offset.x, offset.y)
-                                        }) {
-                                            drawRect(
-                                                color = Color.Blue.copy(alpha = 0.5f),
-                                                topLeft = Offset(rect.left - 4f, rect.top - 4f),
-                                                size = androidx.compose.ui.geometry.Size(
-                                                    rect.width + 8f,
-                                                    rect.height + 8f
-                                                ),
-                                                style = Stroke(
-                                                    width = 2f / scale.value.coerceAtLeast(
-                                                        1f
-                                                    )
-                                                )
-                                            )
-
-                                            // Draw resize handles
-                                            val handleSize = 8f / scale.value.coerceAtLeast(1f)
-
-                                            // Top-left
-                                            drawCircle(
-                                                color = Color.Blue,
-                                                radius = handleSize,
-                                                center = Offset(rect.left, rect.top)
-                                            )
-
-                                            // Top-right
-                                            drawCircle(
-                                                color = Color.Blue,
-                                                radius = handleSize,
-                                                center = Offset(rect.right, rect.top)
-                                            )
-
-                                            // Bottom-left
-                                            drawCircle(
-                                                color = Color.Blue,
-                                                radius = handleSize,
-                                                center = Offset(rect.left, rect.bottom)
-                                            )
-
-                                            // Bottom-right
-                                            drawCircle(
-                                                color = Color.Blue,
-                                                radius = handleSize,
-                                                center = Offset(rect.right, rect.bottom)
-                                            )
-                                        }
-                                    }
-                                }
                                 // Draw rectangle
                                 element.bounds?.let { rect ->
                                     drawRect(
@@ -300,6 +247,40 @@ fun CanvasScreen() {
                             }
 
                             else -> {}
+                        }
+                    }
+                    
+                    // Draw selection outline if an element is selected
+                    selectedElement?.let { element ->
+                        element.bounds?.let { rect ->
+                            drawRect(
+                                color = Color.Blue.copy(alpha = 0.5f),
+                                topLeft = Offset(rect.left - 4f, rect.top - 4f),
+                                size = androidx.compose.ui.geometry.Size(
+                                    rect.width + 8f,
+                                    rect.height + 8f
+                                ),
+                                style = Stroke(
+                                    width = 2f / scale.value.coerceAtLeast(1f)
+                                )
+                            )
+
+                            // Draw resize handles
+                            val handleSize = 8f / scale.value.coerceAtLeast(1f)
+
+                            // Corner handles
+                            listOf(
+                                Offset(rect.left, rect.top),
+                                Offset(rect.right, rect.top),
+                                Offset(rect.left, rect.bottom),
+                                Offset(rect.right, rect.bottom)
+                            ).forEach { center ->
+                                drawCircle(
+                                    color = Color.Blue,
+                                    radius = handleSize,
+                                    center = center
+                                )
+                            }
                         }
                     }
                 }
@@ -430,9 +411,4 @@ private fun DrawingHandler(
     ) {}
 }
 
-// Extension to get bounds of a Path
-private fun Path.getBounds(): Rect {
-    val bounds = PathBounds()
-    this.getBounds(bounds)
-    return bounds
-}
+

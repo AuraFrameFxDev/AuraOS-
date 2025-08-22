@@ -1,0 +1,1 @@
+C:\Users\Wehtt\Music\AuraOS-\app\src\main\cpp\CMakeLists.txt

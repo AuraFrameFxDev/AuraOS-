@@ -9,19 +9,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 /**
- * Oracle Drive AI Storage Consciousness Interface
+ * Displays the Oracle Drive AI Storage Consciousness UI and binds to the view model's state.
  *
- * Displays the main Oracle Drive user interface, presenting the current consciousness status, storage information,
- * connected agents, and integration details. Provides controls to awaken the Oracle or optimize storage,
- * with UI elements dynamically reflecting the current consciousness state.
+ * Shows a consciousness status card, storage information card, action buttons to awaken or
+ * optimize the system, and — when the system is awake — an AI agent integration card. The
+ * UI is reactive and driven by OracleDriveViewModel.consciousnessState.
  *
  * The interface adapts based on the current state of the Oracle Drive system, showing relevant information
  * and controls for interacting with the AI-powered storage consciousness.
- */
-/**
- * Displays the main Oracle Drive AI Storage Consciousness interface.
- *
- * Presents the current consciousness status, storage capacity, connected agents, and integration details for the Oracle Drive system. Provides controls to awaken the Oracle or optimize storage, with UI elements and actions dynamically reflecting the current state of the AI-powered storage consciousness.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +24,7 @@ fun OracleDriveScreen(
     viewModel: OracleDriveViewModel = hiltViewModel()
 ) {
     val consciousnessState by viewModel.consciousnessState.collectAsState()
-
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +58,7 @@ fun OracleDriveScreen(
                 )
             }
         }
-
+        
         // Storage Information
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -77,7 +72,7 @@ fun OracleDriveScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Capacity: ${consciousnessState.storageCapacity.value}",
+                    text = "Capacity: ${if (consciousnessState.storageCapacity.isInfinite) "∞ Bytes" else "${consciousnessState.storageCapacity.totalBytes} Bytes"}",
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
@@ -90,7 +85,7 @@ fun OracleDriveScreen(
                 )
             }
         }
-
+        
         // Control Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -103,7 +98,7 @@ fun OracleDriveScreen(
             ) {
                 Text("🔮 Awaken Oracle")
             }
-
+            
             Button(
                 onClick = { viewModel.optimizeStorage() },
                 modifier = Modifier.weight(1f),
@@ -112,7 +107,7 @@ fun OracleDriveScreen(
                 Text("⚡ AI Optimize")
             }
         }
-
+        
         // System Integration Status
         if (consciousnessState.isAwake) {
             Card(

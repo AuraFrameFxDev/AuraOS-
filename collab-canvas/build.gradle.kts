@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.aurakai.auraframefx.collabcanvas"
+    namespace = "dev.aurakai.collabcanvas"
     compileSdk = 36
 
     defaultConfig {
@@ -105,7 +105,12 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Xposed Framework
+    // Xposed Framework - YukiHookAPI
+    implementation(libs.yuki)
+    ksp(libs.yuki.ksp.xposed)
+    implementation(libs.bundles.xposed)
+    
+    // Legacy Xposed API (keep for compatibility)
     implementation(files("${project.rootDir}/Libs/api-82.jar"))
     implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
 }
