@@ -4,9 +4,9 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Assert.*
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -38,7 +38,7 @@ class OracleDriveModuleTest {
     @Inject
     lateinit var oracleDriveService: OracleDriveService
 
-    @Before
+    @BeforeEach
     fun setup() {
         hiltRule.inject()
     }
@@ -103,7 +103,7 @@ class OracleDriveModuleTest {
         )
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `injected service should be correct implementation type`() {
         // Test that the correct implementation is bound
         assertTrue(
@@ -112,7 +112,7 @@ class OracleDriveModuleTest {
         )
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `module class should be abstract as required by Dagger`() {
         // Verify that the module class is abstract as required by Dagger
         val moduleClass = OracleDriveModule::class.java
@@ -122,7 +122,7 @@ class OracleDriveModuleTest {
         )
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `binding method should be abstract as required by Binds annotation`() {
         // Verify that the binding method is abstract as required by @Binds
         val bindMethod = OracleDriveModule::class.java.declaredMethods
@@ -136,7 +136,7 @@ class OracleDriveModuleTest {
         )
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `binding method should have correct signature`() {
         // Verify method signature matches expected contract
         val bindMethod = OracleDriveModule::class.java.declaredMethods
@@ -176,7 +176,7 @@ class OracleDriveModuleTest {
         )
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `module should have proper constructor structure`() {
         // Verify module has proper constructor structure
         val constructors = OracleDriveModule::class.java.constructors
@@ -225,7 +225,7 @@ class OracleDriveModuleTest {
         }
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `service should be properly annotated with Singleton`() {
         // Verify the service implementation has proper singleton annotation
         val serviceClass = oracleDriveService::class.java
@@ -272,12 +272,12 @@ class OracleDriveModuleIntegrationTest {
     @get:Rule
     val hiltRule = HiltAndroidRule(this)
 
-    @Before
+    @BeforeEach
     fun setup() {
         hiltRule.inject()
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `module should support multiple injection points with singleton consistency`() {
         // Test that the module works correctly when injected in multiple places
         val testComponent1 = TestComponentOne()
@@ -297,7 +297,7 @@ class OracleDriveModuleIntegrationTest {
         )
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `module should provide consistent service instances across multiple test runs`() {
         // Test service consistency within single test execution
         val services = mutableListOf<OracleDriveService>()
@@ -417,7 +417,7 @@ class OracleDriveModuleEdgeCaseTest {
     @Inject
     lateinit var oracleDriveService: OracleDriveService
 
-    @Before
+    @BeforeEach
     fun setup() {
         hiltRule.inject()
     }
@@ -549,7 +549,7 @@ class OracleDriveModuleEdgeCaseTest {
         }
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     fun `module should handle service instantiation edge cases gracefully`() {
         // Test edge cases in service instantiation and validation
         val service = oracleDriveService

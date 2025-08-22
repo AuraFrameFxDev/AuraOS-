@@ -16,8 +16,8 @@ class ThemeViewModel @Inject constructor(
     private val _theme = MutableStateFlow(Theme.DARK)
     val theme: StateFlow<Theme> = _theme
 
-    private val _color = MutableStateFlow(Color.BLUE)
-    val color: StateFlow<Color> = _color
+    private val _color = MutableStateFlow(dev.aurakai.auraframefx.ui.theme.Color.BLUE)
+    val color: StateFlow<dev.aurakai.auraframefx.ui.theme.Color> = _color
 
     fun processThemeCommand(command: String) {
         viewModelScope.launch {

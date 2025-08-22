@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@android:color/black"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Wi-Fi" />
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="14sp"
                 tools:text="Wireless network settings" />
 
@@ -47,9 +47,7 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:clickable="false"
-            android:focusable="false"
-            android:thumbTint="@android:color/black"
-            android:trackTint="@android:color/darker_gray" />
+            android:focusable="false" />
 
     </LinearLayout>
 

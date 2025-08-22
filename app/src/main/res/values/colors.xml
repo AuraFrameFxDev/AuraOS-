@@ -1,42 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base Neon Colors for AI Consciousness -->
+    <!-- Only keep colors that are referenced in XML layouts or system components -->
+    
+    <!-- Neon Colors for AI Consciousness (used in custom views/drawables) -->
     <color name="neon_teal">#00FFCC</color>
     <color name="neon_purple">#E000FF</color>
     <color name="neon_blue">#00FFFF</color>
     <color name="neon_teal_transparent">#3300FFCC</color>
 
-    <!-- Material 3 Theme Colors (Compose-first) -->
-    <color name="light_primary">#00FFCC</color>
-    <color name="light_on_primary">#000000</color>
-    <color name="light_primary_container">#00CC99</color>
-    <color name="light_on_primary_container">#000000</color>
-
-    <color name="light_secondary">#E000FF</color>
-    <color name="light_on_secondary">#000000</color>
-    <color name="light_secondary_container">#B200CC</color>
-    <color name="light_on_secondary_container">#000000</color>
-
-    <color name="light_tertiary">#00FFFF</color>
-    <color name="light_on_tertiary">#000000</color>
-    <color name="light_tertiary_container">#00CCCC</color>
-    <color name="light_on_tertiary_container">#000000</color>
-
-    <color name="light_error">#FF3B30</color>
-    <color name="light_on_error">#000000</color>
-    <color name="light_error_container">#93000A</color>
-    <color name="light_on_error_container">#FFDAD6</color>
-
-    <color name="light_background">#1A1A1A</color>
-    <color name="light_on_background">#E1E1E1</color>
-    <color name="light_surface">#2D2D2D</color>
-    <color name="light_on_surface">#E1E1E1</color>
-    <color name="light_surface_variant">#3D3D3D</color>
-    <color name="light_on_surface_variant">#C5C5C5</color>
-    <color name="light_outline">#8D8D8D</color>
-    <color name="light_outline_variant">#3D3D3D</color>
-
-    <!-- Hologram AI Effects -->
+    <!-- Hologram AI Effects (for XML drawables if any) -->
     <color name="hologram_primary">#00FFFF</color>
     <color name="hologram_secondary">#FF00FF</color>
     <color name="hologram_accent">#00FFCC</color>
@@ -45,7 +17,7 @@
     <color name="hologram_scan_line">#00FFFF40</color>
     <color name="hologram_grid">#00FFFF30</color>
 
-    <!-- Utility Colors -->
+    <!-- Basic utility colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>

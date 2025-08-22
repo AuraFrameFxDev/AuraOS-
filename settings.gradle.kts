@@ -3,7 +3,7 @@
 // No manual version catalog configuration needed
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+// enableFeaturePreview("STABLE_CONFIGURATION_CACHE") // Disabled for OpenAPI compatibility
 
 pluginManagement {
     repositories {

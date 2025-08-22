@@ -140,9 +140,9 @@ fun AuraFrameFXTheme(
 
     val finalColorScheme = baseColorScheme.copy(
         primary = when (color) {
-            Color.RED -> NeonRed
-            Color.GREEN -> NeonGreen
-            Color.BLUE -> NeonBlue
+            dev.aurakai.auraframefx.ui.theme.Color.RED -> NeonRed
+            dev.aurakai.auraframefx.ui.theme.Color.GREEN -> NeonGreen
+            dev.aurakai.auraframefx.ui.theme.Color.BLUE -> NeonBlue
         }
     )
 

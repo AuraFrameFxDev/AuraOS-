@@ -3,16 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_red_light"
+    android:background="?attr/colorBackground"
     tools:context=".ui.settings.QuickSettingsConfigActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/holo_red_dark"
+        android:background="?attr/colorPrimary"
         android:title="@string/quick_settings_config_title"
-        android:titleTextColor="@android:color/white" />
+        android:titleTextColor="?attr/colorOnPrimary" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -41,8 +41,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="@string/quick_settings_tiles"
-                        android:textAppearance="@android:style/TextAppearance.Material.Headline"
-                        android:textColor="@android:color/black"
+                        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:textColor="?attr/colorOnSurface"
                         android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
