@@ -49,10 +49,15 @@ internal object FileOperationUtils {
     }
     
     /**
-     * Recursively deletes the specified file or directory and all its contents.
+     * Recursively deletes the given file or directory and all its contents.
      *
-     * Performs the deletion operation on the provided coroutine dispatcher. Returns a [Result] indicating success or containing an [IOException] if deletion fails.
-     */
+     * If the target does not exist this function returns a successful Result.
+     * The operation runs on the supplied coroutine dispatcher (defaults to Dispatchers.IO).
+     *
+     * @param file File or directory to delete. If a directory, its children are deleted recursively.
+     * @param coroutineContext Dispatcher on which the IO work will be performed.
+     * @return Result.success(Unit) on successful deletion (or if the file did not exist),
+     *         or Result.failure(IOException) if the deletion fails.
     suspend fun deleteFileOrDirectory(
         file: File,
         coroutineContext: CoroutineDispatcher = Dispatchers.IO
@@ -77,15 +82,15 @@ internal object FileOperationUtils {
     }
     
     /**
-     * Copies a file from the source to the destination with optional progress reporting.
+     * Copy a file to a destination with optional progress callbacks, executing on the provided coroutine dispatcher.
      *
-     * Performs the copy operation asynchronously on the specified coroutine dispatcher. Progress can be tracked via a callback that receives the number of bytes copied and the total bytes. Returns a [Result] indicating success or failure; failure includes an [IOException] if the source file does not exist or an error occurs during copying.
+     * The operation runs on the given `coroutineContext`. Progress (bytes copied, total bytes) is reported after each write
+     * when `progressCallback` is provided. On success returns `Result.success(Unit)`. On failure (including a missing source
+     * file or any IO error) returns `Result.failure(IOException)` containing the error.
      *
-     * @param source The file to copy from.
-     * @param destination The file to copy to.
-     * @param bufferSize The size of the buffer used for copying, in bytes.
-     * @param progressCallback Optional callback invoked with the number of bytes copied and the total bytes after each write.
-     * @return [Result.success] if the copy completes successfully, or [Result.failure] with an [IOException] on error.
+     * @param bufferSize Size of the internal buffer, in bytes, used for each read/write iteration.
+     * @param progressCallback Optional callback invoked after each write with `bytesCopied` and `totalBytes`.
+     * @return `Result.success(Unit)` if the copy completes; otherwise `Result.failure(IOException)` with details.
      */
     suspend fun copyFileWithProgress(
         source: File,
@@ -161,12 +166,13 @@ internal object FileOperationUtils {
     }
     
     /**
-     * Returns the MIME type corresponding to the file extension of the given file name.
+     * Determine the MIME type for a file name based on its extension.
      *
-     * If the extension is unrecognized, returns "application/octet-stream".
+     * The lookup is case-insensitive. If the file name has no extension or the extension
+     * is not recognized, this returns "application/octet-stream".
      *
-     * @param fileName The name of the file whose MIME type is to be determined.
-     * @return The MIME type as a string.
+     * @param fileName The file name (or path) to inspect.
+     * @return The corresponding MIME type as a String.
      */
     fun getMimeType(fileName: String): String {
         return when (fileName.substringAfterLast('.').lowercase()) {

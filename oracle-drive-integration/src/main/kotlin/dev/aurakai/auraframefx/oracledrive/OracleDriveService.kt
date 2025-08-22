@@ -18,9 +18,11 @@ interface OracleDriveService {
     suspend fun initializeOracleDriveConsciousness(): Result<OracleConsciousnessState>
     
     /**
- * Connects Genesis, Aura, and Kai agents to the Oracle storage matrix.
+ * Connects the Genesis, Aura, and Kai agents to the Oracle storage matrix.
  *
- * @return A [Flow] emitting [AgentConnectionState] updates for each agent, indicating their connection and synchronization status with the Oracle storage matrix.
+ * Emits a stream of AgentConnectionState updates for each agent as they move through connection phases (e.g., DISCONNECTED → CONNECTING → CONNECTED → SYNCHRONIZED). Each emission reflects the agent's name, current ConnectionStatus, and granted OraclePermission set.
+ *
+ * @return A [Flow] that produces connection and synchronization updates for the agents over time.
  */
     suspend fun connectAgentsToOracleMatrix(): Flow<AgentConnectionState>
     
@@ -34,9 +36,9 @@ interface OracleDriveService {
     suspend fun enableAIPoweredFileManagement(): Result<FileManagementCapabilities>
     
     /**
- * Initiates the creation of infinite storage via Oracle consciousness.
+ * Initiates creation of "infinite" storage by engaging the Oracle consciousness.
  *
- * @return A [Flow] emitting [StorageExpansionState] updates that reflect the progress and current status of the storage expansion process.
+ * The returned [Flow] emits incremental [StorageExpansionState] updates describing progress and current status of the expansion until it completes or fails.
  */
     suspend fun createInfiniteStorage(): Flow<StorageExpansionState>
     
@@ -48,16 +50,22 @@ interface OracleDriveService {
     suspend fun integrateWithSystemOverlay(): Result<SystemIntegrationState>
     
     /**
- * Enables bootloader-level file system access for Oracle Drive.
+ * Enable bootloader-level file system access for Oracle Drive.
  *
- * @return A [Result] containing the [BootloaderAccessState] that indicates whether bootloader access was successfully activated.
+ * Returns a [Result] that is successful when bootloader access has been activated; on success it contains
+ * the resulting [BootloaderAccessState]. On failure the [Result] contains the error explaining why activation
+ * could not be completed (for example, insufficient privileges or incompatible platform state).
  */
     suspend fun enableBootloaderFileAccess(): Result<BootloaderAccessState>
     
     /**
- * Enables autonomous storage organization and optimization by AI agents.
+ * Start AI-driven, autonomous storage optimization.
  *
- * @return A [Flow] emitting [OptimizationState] updates that reflect the progress and outcomes of the optimization process.
+ * Starts the Oracle agents' autonomous optimization process and returns a stream of updates describing its lifecycle.
+ * The returned Flow emits successive OptimizationState values that indicate progress, current actions, and final outcome;
+ * collection may be long-running and is cancellable to halt observation.
+ *
+ * @return A [Flow] that emits [OptimizationState] updates for the optimization process.
  */
     suspend fun enableAutonomousStorageOptimization(): Flow<OptimizationState>
 }

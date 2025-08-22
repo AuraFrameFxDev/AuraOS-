@@ -23,19 +23,23 @@ interface DriveSecurityManager {
    fun validateFileUpload(file: DriveFile): SecurityValidation
 
    /**
-    * Validates file access permissions
-    * @param fileId The file identifier
-    * @param userId The user requesting access
-    * @return AccessCheck with permission result
-    */
+ * Determine whether a specific user is allowed to access a given file.
+ *
+ * @param fileId The identifier of the file to check access for.
+ * @param userId The identifier of the user requesting access.
+ * @return An [AccessCheck] describing whether access is permitted and any relevant constraints. 
+ */
    fun validateFileAccess(fileId: String, userId: String): AccessCheck
 
    /**
- * Validates whether a user is authorized to delete a specified file.
+ * Validate whether the specified user is authorized to delete the given file.
  *
- * @param fileId The identifier of the file to be deleted.
- * @param userId The identifier of the user requesting deletion.
- * @return A DeletionValidation indicating whether the deletion is authorized.
+ * Performs an authorization check and returns a DeletionValidation describing whether
+ * deletion is permitted and any relevant reasons or policy details.
+ *
+ * @param fileId Identifier of the file to delete.
+ * @param userId Identifier of the user requesting deletion.
+ * @return DeletionValidation indicating whether deletion is authorized and associated metadata.
  */
    fun validateDeletion(fileId: String, userId: String): DeletionValidation
 }
@@ -53,28 +57,33 @@ interface DriveSecurityManager {
     fun validateDriveAccess(): SecurityCheck
     
     /**
- * Performs AI-based threat detection to validate the security of a file before upload.
+ * Analyze a DriveFile using AI-based threat detection to determine whether it is safe to upload.
  *
- * @param file The file to be analyzed for potential security threats.
- * @return A SecurityValidation containing the results of the threat assessment.
+ * Performs file content and metadata assessment (e.g., malware, hidden payloads, policy violations) and returns a SecurityValidation summarizing detected risks and recommended disposition.
+ *
+ * @param file The DriveFile to analyze.
+ * @return SecurityValidation with the threat assessment result and any associated metadata (risk level, reasons, remediation suggestions).
  */
     fun validateFileUpload(file: DriveFile): SecurityValidation
     
     /**
- * Checks whether the specified user has permission to access the given file.
+ * Determine whether a specific user is allowed to access a given file.
  *
- * @param fileId The unique identifier of the file to check.
- * @param userId The unique identifier of the user requesting access.
- * @return An [AccessCheck] indicating whether access is permitted.
+ * @param fileId The identifier of the file to check access for.
+ * @param userId The identifier of the user requesting access.
+ * @return An [AccessCheck] describing whether access is permitted and any relevant constraints. 
  */
     fun validateFileAccess(fileId: String, userId: String): AccessCheck
     
     /**
- * Validates whether a user is authorized to delete a specified file.
+ * Validate whether the specified user is authorized to delete the given file.
  *
- * @param fileId The identifier of the file to be deleted.
- * @param userId The identifier of the user requesting deletion.
- * @return A DeletionValidation indicating whether the deletion is authorized.
+ * Performs an authorization check and returns a DeletionValidation describing whether
+ * deletion is permitted and any relevant reasons or policy details.
+ *
+ * @param fileId Identifier of the file to delete.
+ * @param userId Identifier of the user requesting deletion.
+ * @return DeletionValidation indicating whether deletion is authorized and associated metadata.
  */
     fun validateDeletion(fileId: String, userId: String): DeletionValidation
 }

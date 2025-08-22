@@ -40,6 +40,12 @@ abstract class OracleDriveModule {
     /**
      * Binds the OracleDriveServiceImpl implementation to the OracleDriveService interface as a singleton.
      */
+    /**
+     * Binds OracleDriveServiceImpl as the singleton implementation for OracleDriveService.
+     *
+     * This Dagger `@Binds` mapping ensures that requests for OracleDriveService
+     * receive the OracleDriveServiceImpl instance scoped to the SingletonComponent.
+     */
     @Binds
     @Singleton
     abstract fun bindOracleDriveService(
@@ -66,6 +72,15 @@ abstract class OracleDriveModule {
          * are set to 30 seconds.
          *
          * @return A configured OkHttpClient instance for secure network communication.
+         */
+        /**
+         * Provides a singleton OkHttpClient configured for Oracle Drive behavior.
+         *
+         * The client adds per-request security headers (`X-Security-Token` generated from the provided
+         * CryptographyManager and a unique `X-Request-ID`), includes a basic HTTP logging interceptor,
+         * and uses 30-second connect/read/write timeouts.
+         *
+         * @return Configured OkHttpClient instance.
          */
         @Provides
         @Singleton
@@ -94,9 +109,9 @@ abstract class OracleDriveModule {
         }
 
         /**
-         * Provides a singleton instance of CryptographyManager using the application context.
+         * Returns the singleton CryptographyManager initialized with the application context.
          *
-         * @return The singleton CryptographyManager instance.
+         * @return The shared CryptographyManager instance.
          */
         @Provides
         @Singleton
@@ -107,9 +122,9 @@ abstract class OracleDriveModule {
         }
 
         /**
-         * Provides a singleton instance of SecureStorage initialized with the application context and cryptography manager.
+         * Provides the singleton SecureStorage instance initialized with the application context and cryptography manager.
          *
-         * @return The singleton SecureStorage instance.
+         * @return The singleton SecureStorage.
          */
         @Provides
         @Singleton
@@ -121,9 +136,9 @@ abstract class OracleDriveModule {
         }
 
         /**
-         * Provides a singleton instance of `GenesisSecureFileService` initialized with the application context, cryptography manager, and secure storage.
+         * Provides a singleton GenesisSecureFileService configured with the application context, CryptographyManager, and SecureStorage.
          *
-         * @return A configured `GenesisSecureFileService` for secure file operations.
+         * @return A configured GenesisSecureFileService for performing encrypted/secure file operations.
          */
         @Provides
         @Singleton
@@ -139,6 +154,14 @@ abstract class OracleDriveModule {
          * Provides a singleton instance of OracleDriveApi configured with a base URL from the security context, the specified OkHttpClient, and Gson serialization.
          *
          * @return An implementation of OracleDriveApi for making Oracle Drive network requests.
+         */
+        /**
+         * Provides a Retrofit-backed OracleDriveApi using the application's security context for its base URL.
+         *
+         * Builds a Retrofit instance with base URL = securityContext.getApiBaseUrl() + "/oracle/drive/", the provided OkHttpClient,
+         * and a Gson converter, then creates and returns an OracleDriveApi implementation.
+         *
+         * @return Configured OracleDriveApi.
          */
         @Provides
         @Singleton
@@ -166,9 +189,9 @@ abstract class OracleDriveModule {
         }
 
         /**
-         * Provides a singleton instance of OracleDriveApi using a Retrofit client configured with a fixed base URL and Gson converter.
+         * Creates a singleton Retrofit-backed OracleDriveApi using a fixed base URL and Gson for JSON conversion.
          *
-         * @return An implementation of OracleDriveApi for communicating with the Oracle Drive backend.
+         * @return OracleDriveApi configured with "https://api.oracledrive.example.com/".
          */
         @Provides
         @Singleton

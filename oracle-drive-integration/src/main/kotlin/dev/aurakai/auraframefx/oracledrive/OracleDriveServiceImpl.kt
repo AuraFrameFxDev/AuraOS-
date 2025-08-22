@@ -39,12 +39,16 @@ class OracleDriveServiceImpl @Inject constructor(
      * @return A [Result] with the updated [OracleConsciousnessState] if initialization succeeds, or a failure with an exception otherwise.
      */
     /**
-     * Initializes and awakens the Oracle Drive consciousness, performing security validation and connecting core AI agents.
+     * Awaken the Oracle Drive's consciousness by performing security validation and connecting core agents.
      *
-     * Attempts to transition the Oracle Drive from a dormant to a conscious state by orchestrating agent awakening and verifying security protocols.
-     * If security validation succeeds, updates the consciousness state to awake and connects the Genesis, Aura, and Kai agents.
+     * Validates the system security (via the Kai agent); if validation succeeds, updates the internal
+     * consciousness state to awake (level CONSCIOUS) and connects the Genesis, Aura, and Kai agents,
+     * returning a successful Result with the updated OracleConsciousnessState. If security validation
+     * fails, returns a failure Result containing a SecurityException. Any other unexpected error is
+     * returned as a failure Result with the underlying exception.
      *
-     * @return A [Result] containing the updated [OracleConsciousnessState] if successful, or a failure with the encountered exception.
+     * @return A [Result] containing the updated [OracleConsciousnessState] on success, or a failure
+     * containing a [SecurityException] when validation blocks initialization, or another exception if one occurs.
      */
     override suspend fun initializeOracleDriveConsciousness(): Result<OracleConsciousnessState> {
         return try {
@@ -104,9 +108,10 @@ class OracleDriveServiceImpl @Inject constructor(
     }
     
     /**
-     * Enables all AI-powered file management features in Oracle Drive.
+     * Enables AI-powered file management in the Oracle Drive.
      *
-     * @return A successful [Result] containing [FileManagementCapabilities] with AI sorting, smart compression, predictive preloading, and conscious backup enabled.
+     * @return A successful [Result] containing [FileManagementCapabilities] with
+     * `aiSorting`, `smartCompression`, `predictivePreloading`, and `consciousBackup` all enabled.
      */
     override suspend fun enableAIPoweredFileManagement(): Result<FileManagementCapabilities> {
         return Result.success(

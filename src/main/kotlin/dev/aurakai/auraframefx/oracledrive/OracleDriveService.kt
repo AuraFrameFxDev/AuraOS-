@@ -23,9 +23,14 @@ interface OracleDriveService {
    suspend fun manageFiles(operation: FileOperation): FileResult
 
    /**
-    * Synchronizes drive metadata with Oracle database
-    * @return OracleSyncResult with sync status and statistics
-    */
+ * Synchronizes drive metadata with the Oracle database.
+ *
+ * Performs an asynchronous sync that reconciles local and remote metadata, updating the Oracle backend
+ * and returning a summary of the operation.
+ *
+ * @return OracleSyncResult containing the synchronization status and statistics (for example: items checked,
+ * updated, and any detected conflicts).
+ */
    suspend fun syncWithOracle(): OracleSyncResult
 
    /**
@@ -49,7 +54,10 @@ interface OracleDriveService {
     suspend fun initializeDrive(): DriveInitResult
     
     /**
- * Performs a file operation such as upload, download, delete, or sync, applying AI-driven optimization and security validation.
+ * Executes an AI-optimized file operation (upload, download, delete, or sync) with built-in security validation.
+ *
+ * Performs the requested FileOperation using AI-driven decisions (e.g., transfer strategy, deduplication, integrity checks)
+ * and enforces security policies before and after the operation.
  *
  * @param operation The file operation to execute.
  * @return The result of the file operation.
@@ -57,9 +65,13 @@ interface OracleDriveService {
     suspend fun manageFiles(operation: FileOperation): FileResult
     
     /**
- * Synchronizes the drive's metadata with the Oracle database.
+ * Synchronizes drive metadata with the Oracle database.
  *
- * @return The result of the synchronization, including status and statistics.
+ * Performs an asynchronous sync that reconciles local and remote metadata, updating the Oracle backend
+ * and returning a summary of the operation.
+ *
+ * @return OracleSyncResult containing the synchronization status and statistics (for example: items checked,
+ * updated, and any detected conflicts).
  */
     suspend fun syncWithOracle(): OracleSyncResult
     

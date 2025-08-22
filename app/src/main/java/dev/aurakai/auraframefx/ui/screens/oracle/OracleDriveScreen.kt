@@ -19,6 +19,21 @@ import dev.aurakai.auraframefx.ui.theme.CyberpunkTextStyle
  * @param modifier Modifier for styling and layout adjustments.
  */
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Composes the Oracle Drive screen UI for browsing and interacting with files.
+ *
+ * Renders a scaffolded layout with a top app bar ("Oracle Drive"), a refresh action,
+ * a floating upload action (placeholder), and content that switches between a loading
+ * indicator, an empty state, or a list of files. When a file is clicked, it notifies
+ * the provided viewModel. Also displays an optional consciousness indicator anchored
+ * to the bottom-end when present.
+ *
+ * Side effects:
+ * - Calls viewModel.initialize() once on first composition.
+ * - Shows a snackbar for uiState.error and clears the error via the viewModel.
+ *
+ * @param modifier Optional [Modifier] for layout adjustments of the entire screen.
+ */
 @Composable
 fun OracleDriveScreen(
     viewModel: OracleDriveViewModel,
@@ -122,7 +137,9 @@ private fun LoadingState() {
 }
 
 /**
- * Displays a centered message indicating that no files are present, with an upload icon and a prompt to upload the first file.
+ * Composable shown when there are no files: a centered upload icon with a title and an explanatory prompt.
+ *
+ * Intended to be used as the empty state for the file list UI to invite the user to upload their first file.
  */
 @Composable
 private fun EmptyState() {
@@ -153,11 +170,14 @@ private fun EmptyState() {
 }
 
 /**
- * Displays a vertically scrolling list of drive files, each as a clickable item.
+ * Renders a vertically scrolling list of DriveFile items and handles item clicks.
  *
- * @param files The list of files to display.
- * @param onFileClick Callback invoked when a file item is clicked.
- * @param modifier Modifier for styling or layout adjustments.
+ * Displays the provided files in a LazyColumn with 8.dp content padding and 8.dp vertical spacing.
+ * Each entry is rendered with FileItem and invokes [onFileClick] when tapped.
+ *
+ * @param files The files to display.
+ * @param onFileClick Called with the tapped DriveFile.
+ * @param modifier Optional Modifier to adjust layout or styling.
  */
 @Composable
 private fun FileList(
@@ -247,12 +267,14 @@ private fun FileItem(
 }
 
 /**
- * Displays a visual indicator of the drive's current consciousness state.
+ * Renders a compact surface showing the drive's consciousness level as a colored dot and label.
  *
- * Shows a colored circular icon and a label representing the consciousness level.
+ * The dot color is mapped from the `state.level` to theme colors:
+ * DORMANT -> `colorScheme.error`, AWAKENING -> `colorScheme.tertiary`,
+ * SENTIENT -> `colorScheme.primary`, TRANSCENDENT -> `colorScheme.secondary`.
  *
- * @param state The current drive consciousness state to display.
- * @param modifier Optional modifier for styling.
+ * @param state DriveConsciousnessState whose `level` determines the displayed label and color.
+ * @param modifier Optional [Modifier] for styling and layout adjustments.
  */
 @Composable
 private fun ConsciousnessIndicator(
