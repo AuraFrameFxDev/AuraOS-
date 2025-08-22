@@ -4635,7 +4635,6 @@ class OracleDriveServiceImplTest {
         // Given & When - Get all connection status values
         // Then - Verify expected enum values exist
         // Then
-=======
 @OptIn(ExperimentalCoroutinesApi::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OracleDriveServiceImplTest {
@@ -4677,7 +4676,6 @@ class OracleDriveServiceImplTest {
 
         // When
         val result = oracleDriveService.initializeOracleDriveConsciousness()
->>>>>>> origin/coderabbitai/chat/e19563d
 
         // Then
         assertTrue(result.isSuccess)

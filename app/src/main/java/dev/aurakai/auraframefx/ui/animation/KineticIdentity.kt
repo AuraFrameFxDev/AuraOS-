@@ -42,7 +42,6 @@ import dev.aurakai.auraframefx.ui.animation.KineticIdentity.MICRO_DURATION
 @Stable
 object KineticIdentity {
 
-    // ========== CORE TIMING CONSTANTS ==========
 
     /** Quick micro-interactions */
     const val MICRO_DURATION = 200
@@ -56,7 +55,6 @@ object KineticIdentity {
     /** Epic transformations */
     const val EPIC_DURATION = 1200
 
-    // ========== SIGNATURE ANIMATION SPECS ==========
 
     /** A bold, energetic entrance for major UI elements */
     val DaringEnter: AnimationSpec<Float> = tween(
@@ -106,7 +104,6 @@ object KineticIdentity {
         easing = CubicBezierEasing(0.4f, 0f, 0.6f, 1f)
     )
 
-    // ========== ENTER TRANSITIONS ==========
 
     /** Digital materialization - particles coalescing into form */
     val MaterializeEnter: EnterTransition =
@@ -146,7 +143,6 @@ object KineticIdentity {
             initialScale = 0.1f
         ) + fadeIn(DramaticSlow as FiniteAnimationSpec<Float>)
 
-    // ========== EXIT TRANSITIONS ==========
 
     /** Digital deconstruction - form dissolving into particles */
     val DeconstructExit: ExitTransition =
@@ -186,7 +182,6 @@ object KineticIdentity {
             targetScale = 2f
         ) + fadeOut(DramaticSlow as FiniteAnimationSpec<Float>)
 
-    // ========== COMBINED TRANSITION SETS ==========
 
     /** Navigation between screens */
     object Navigation {
@@ -222,7 +217,6 @@ object KineticIdentity {
         val exit = DramaticZoomOut
     }
 
-    // ========== UTILITY FUNCTIONS ==========
 
     /**
      * Returns an infinite repeatable animation spec that smoothly pulses a float value between its initial state and a target value.
