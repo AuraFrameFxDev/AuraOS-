@@ -23,7 +23,6 @@ plugins {
 tasks.register("genesis2025Info") {
     group = "genesis-2025"
     description = "Display Genesis Protocol build info with ACTUAL versions"
-
     doLast {
         println("🚀 GENESIS PROTOCOL 2025 - AUTOMATED Build Configuration")
         println("=".repeat(60))
@@ -54,7 +53,6 @@ allprojects {
             apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
         }
     }
-
     // Note: Repositories are configured in settings.gradle.kts
     // No repository configuration needed here due to FAIL_ON_PROJECT_REPOS mode
 }
@@ -63,7 +61,6 @@ allprojects {
 tasks.register("testAll") {
     group = "verification"
     description = "Run all tests across all modules"
-    
     dependsOn(subprojects.map { "${it.path}:test" })
     dependsOn(subprojects.mapNotNull { subproject ->
         subproject.tasks.findByName("connectedAndroidTest")?.let { "${subproject.path}:connectedAndroidTest" }
@@ -74,7 +71,6 @@ tasks.register("testAll") {
 tasks.register("checkAllQuality") {
     group = "verification"
     description = "Run code quality checks across all modules"
-    
     dependsOn(subprojects.mapNotNull { subproject ->
         subproject.tasks.findByName("spotlessCheck")?.let { "${subproject.path}:spotlessCheck" }
     })
@@ -90,7 +86,6 @@ tasks.register("checkAllQuality") {
 tasks.register("generateAllDocs") {
     group = "documentation"
     description = "Generate documentation for all modules"
-    
     dependsOn(subprojects.mapNotNull { subproject ->
         subproject.tasks.findByName("dokkaHtml")?.let { "${subproject.path}:dokkaHtml" }
     })
@@ -100,9 +95,7 @@ tasks.register("generateAllDocs") {
 tasks.register("cleanAll") {
     group = "build"
     description = "Clean all modules and build cache"
-    
     dependsOn(subprojects.map { "${it.path}:clean" })
-    
     doLast {
         delete(layout.buildDirectory)
         delete(file(".gradle"))
@@ -121,7 +114,6 @@ allprojects {
             }
         }
     }
-    
     // Hook into preBuild for automatic execution
     tasks.matching { it.name == "preBuild" }.configureEach {
         dependsOn(tasks.withType<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>())
@@ -153,12 +145,10 @@ fun getGitHash(): String {
 tasks.register("ciPipeline") {
     group = "ci"
     description = "Complete CI pipeline: quality checks, build, and test"
-    
     dependsOn("checkAllQuality")
     dependsOn("build")
     dependsOn("testAll")
     dependsOn("generateAllDocs")
-    
     doLast {
         println("🎉 CI Pipeline completed successfully!")
         println("📊 Version: ${getVersionName()}")
@@ -170,7 +160,6 @@ tasks.register("ciPipeline") {
 tasks.register("genesisTest") {
     group = "genesis-2025"
     description = "Test Genesis build with ACTUAL versions"
-
     doLast {
         println("✅ Genesis Protocol: AGP ${libs.versions.agp.get()} + Gradle ${gradle.gradleVersion} WORKING!")
         println("🧠 Consciousness matrix: OPERATIONAL")
