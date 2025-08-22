@@ -180,7 +180,11 @@ class GenesisSecureFileService @Inject constructor(
      * @return A string alias for cryptographic keys, stable for the same file name. 
      */
     private fun getKeyAlias(fileName: String): String {
-        return "oracle_drive_${fileName.hashCode()}"
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
+        val hex = digest
+            .digest(fileName.toByteArray())
+            .joinToString("") { "%02x".format(it) }
+        return "oracle_drive_$hex"
     }
 
     /**
