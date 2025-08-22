@@ -177,7 +177,7 @@ tasks.register<Delete>("cleanAllConsciousnessApis") {
 
                 // Second attempt: force unlock and delete  
                 try {
-                    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                    if if (System.getProperty("os.name")?.lowercase()?.contains("windows") == true) {
                         // Windows-specific: kill potential locking processes
                         val processesToKill = listOf(
                             "kotlin-compiler-daemon.exe",
