@@ -19,7 +19,7 @@ firebasePerf = "2.0.1"
 crashlyticsGradle = "2.9.5"
 performanceGradle = "1.4.1"
 composeGradle = "1.4.0"
-# ===== CODE QUALITY & DOCUMENTATION=
+# ===== CODE QUALITY & DOCUMENTATION =====
 dokka = "2.0.0"
 spotless = "7.2.1"
 detekt = "1.23.8"
