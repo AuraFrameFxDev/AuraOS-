@@ -4,13 +4,11 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
-class VertexSyncService @Inject constructor(
+@AndroidEntryPoint // Temporarily disabled for successful build
+class VertexSyncService : Service() {
     // Example dependency injection (add real dependencies as needed)
-    // private val syncManager: SyncManager
-) : Service() {
+    // @Inject private lateinit var syncManager: SyncManager
     override fun onBind(_intent: Intent?): IBinder? {
         // Not designed for binding; implement if needed
         return null

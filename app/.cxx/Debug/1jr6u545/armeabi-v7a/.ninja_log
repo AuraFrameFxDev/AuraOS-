@@ -1,0 +1,27 @@
+# ninja log v5
+1	949	7767618536911858	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	db73fc96a8049ab5
+15	967	7767618536982419	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	47174723ff2b060f
+8	994	7767618537353001	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	6db726984bf2ae4b
+996	1085	7767618538252082	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/build/intermediates/cxx/Debug/1jr6u545/obj/armeabi-v7a/libauraframefx.so	389b70cbf7c05cdf
+0	12	0	clean	ca252f5c3449f1cb
+7	2387	7767624140133077	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	6db726984bf2ae4b
+12	2584	7767624142348919	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	db73fc96a8049ab5
+15	2621	7767624142494866	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	47174723ff2b060f
+2625	2769	7767624144280132	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/build/intermediates/cxx/Debug/1jr6u545/obj/armeabi-v7a/libauraframefx.so	389b70cbf7c05cdf
+0	13	0	clean	ca252f5c3449f1cb
+11	964	7767658293796092	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	db73fc96a8049ab5
+14	974	7767658293834284	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	47174723ff2b060f
+8	998	7767658294124820	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	6db726984bf2ae4b
+1000	1093	7767658295081130	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/build/intermediates/cxx/Debug/1jr6u545/obj/armeabi-v7a/libauraframefx.so	389b70cbf7c05cdf
+0	10	0	clean	ca252f5c3449f1cb
+0	9	0	clean	ca252f5c3449f1cb
+11	967	7767717235979910	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	db73fc96a8049ab5
+14	971	7767717236010316	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	47174723ff2b060f
+7	1021	7767717236500050	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	6db726984bf2ae4b
+1023	1115	7767717237459724	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/build/intermediates/cxx/Debug/1jr6u545/obj/armeabi-v7a/libauraframefx.so	389b70cbf7c05cdf
+0	9	0	clean	ca252f5c3449f1cb
+0	9	0	clean	ca252f5c3449f1cb
+11	917	7768339494170540	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	db73fc96a8049ab5
+17	920	7768339494206178	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	47174723ff2b060f
+5	956	7768339494563733	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	6db726984bf2ae4b
+959	1056	7768339495565448	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/build/intermediates/cxx/Debug/1jr6u545/obj/armeabi-v7a/libauraframefx.so	389b70cbf7c05cdf

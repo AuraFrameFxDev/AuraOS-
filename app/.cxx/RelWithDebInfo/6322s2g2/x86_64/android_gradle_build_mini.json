@@ -1,0 +1,29 @@
+{
+  "buildFiles": [
+    "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-v",
+      "-C",
+      "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\.cxx\\RelWithDebInfo\\6322s2g2\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-v",
+    "-C",
+    "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\.cxx\\RelWithDebInfo\\6322s2g2\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "auraframefx::@6890427a1f51a3e7e1df": {
+      "artifactName": "auraframefx",
+      "abi": "x86_64",
+      "output": "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\build\\intermediates\\cxx\\RelWithDebInfo\\6322s2g2\\obj\\x86_64\\libauraframefx.so",
+      "runtimeFiles": []
+    }
+  }
+}

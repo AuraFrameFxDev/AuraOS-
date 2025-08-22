@@ -1,0 +1,89 @@
+openapi: 3.1.0
+info:
+  title: Customization API
+  description: API for UI theme management.
+  version: 1.0.0
+  license:
+    name: AURAKAI PROPRIETARY LICENSE v1.0
+    identifier: Proprietary
+servers:
+  - url: https://api.auraframefx.com/v1
+    description: Production API
+  - url: https://dev-api.auraframefx.com/v1
+    description: Development API
+  - url: http://localhost:8080/v1
+    description: Local development server
+tags:
+  - name: themes
+    description: UI theme management
+paths:
+  /themes:
+    get:
+      tags: [ themes ]
+      summary: Get available themes
+      responses:
+        '200':
+          description: List of available themes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Theme'
+  /theme/apply:
+    put:
+      tags: [ themes ]
+      summary: Apply a theme
+      security:
+        - OAuth2AuthCode: [ profile ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeApplyRequest'
+      responses:
+        '200':
+          description: Theme applied successfully
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Theme not found
+components:
+  responses:
+    BadRequestError:
+      description: Invalid request format or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnauthorizedError:
+      description: Authentication credentials were missing or incorrect
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    Theme:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        primaryColor: { type: string, format: color }
+        secondaryColor: { type: string, format: color }
+        isDefault: { type: boolean }
+      required: [ id, name, primaryColor, secondaryColor, isDefault ]
+    ThemeApplyRequest:
+      type: object
+      properties:
+        themeId: { type: string }
+      required: [ themeId ]
+    ErrorResponse:
+      type: object
+      properties:
+        code: { type: integer, format: int32 }
+        message: { type: string }
+        details: { type: object, additionalProperties: true, nullable: true }
+      required: [ code, message ]

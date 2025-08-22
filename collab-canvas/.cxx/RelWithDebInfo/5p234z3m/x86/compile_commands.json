@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "C:/Main/collab-canvas/.cxx/RelWithDebInfo/5p234z3m/x86",
+    "command": "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\ndk\\27.0.12077973\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android33 --sysroot=C:/Users/Wehtt/AppData/Local/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dcollab_canvas_native_EXPORTS -IC:/Main/collab-canvas/src/main/cpp -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O2 -g -DNDEBUG -fPIC -std=gnu++20 -o CMakeFiles\\collab-canvas-native.dir\\collab_canvas_native.cpp.o -c C:\\Main\\collab-canvas\\src\\main\\cpp\\collab_canvas_native.cpp",
+    "file": "C:\\Main\\collab-canvas\\src\\main\\cpp\\collab_canvas_native.cpp"
+  }
+]

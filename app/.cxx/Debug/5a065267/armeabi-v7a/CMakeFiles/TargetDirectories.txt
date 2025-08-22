@@ -1,0 +1,3 @@
+C:/Main/app/.cxx/Debug/5a065267/armeabi-v7a/CMakeFiles/auraframefx.dir
+C:/Main/app/.cxx/Debug/5a065267/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Main/app/.cxx/Debug/5a065267/armeabi-v7a/CMakeFiles/rebuild_cache.dir

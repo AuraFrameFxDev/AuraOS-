@@ -1,0 +1,11 @@
+# ninja log v5
+1	391	7774564875350813	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	79e3eea29cc7cd27
+394	2062	7774564891273365	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/x86_64/libcollab-canvas-native.so	c23ad832187f0c2a
+0	18	0	clean	bfff2010d6239e2d
+4	203	7774579902127332	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	79e3eea29cc7cd27
+205	443	7774579904420322	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/x86_64/libcollab-canvas-native.so	c23ad832187f0c2a
+0	20	0	clean	bfff2010d6239e2d
+0	9	0	clean	bfff2010d6239e2d
+0	8	0	clean	bfff2010d6239e2d
+2	174	7775120511526662	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	79e3eea29cc7cd27
+176	631	7775120515960540	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/x86_64/libcollab-canvas-native.so	c23ad832187f0c2a

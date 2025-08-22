@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Message
@@ -16,7 +17,9 @@ sealed class NavDestination(val route: String, val title: String, val icon: Imag
     object OracleDriveControl :
         NavDestination("oracle_drive_control", "Oracle Drive", Icons.Filled.Folder)
 
+    object Canvas : NavDestination("canvas", "Canvas", Icons.Filled.Brush)
+
     companion object {
-        val bottomNavItems = listOf(Home, AiChat, Profile, Settings)
+        val bottomNavItems = listOf(Home, AiChat, Canvas, Profile, Settings)
     }
 }

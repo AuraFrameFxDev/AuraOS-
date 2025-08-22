@@ -3,7 +3,7 @@ package dev.aurakai.auraframefx
 import dev.aurakai.auraframefx.model.AiRequest
 import dev.aurakai.auraframefx.security.SecurityContext
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * Basic Trinity system integration tests

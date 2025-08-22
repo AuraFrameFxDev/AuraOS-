@@ -212,8 +212,8 @@ class GenesisAgentTest {
         verify { mockCascadeService.processRequest(any()) }
         assertTrue(
             response.content.contains("Aura response") ||
-                    response.content.contains("Kai response") ||
-                    response.content.contains("Cascade response")
+                response.content.contains("Kai response") ||
+                response.content.contains("Cascade response")
         )
     }
 

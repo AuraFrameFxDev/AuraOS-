@@ -111,19 +111,19 @@ object KineticIdentity {
     /** Digital materialization - particles coalescing into form */
     val MaterializeEnter: EnterTransition =
         fadeIn(DaringEnter as FiniteAnimationSpec<Float>) +
-                scaleIn(
-                    animationSpec = DaringEnter as FiniteAnimationSpec<Float>,
-                    initialScale = 0.3f,
-                    transformOrigin = TransformOrigin.Center
-                )
+            scaleIn(
+                animationSpec = DaringEnter as FiniteAnimationSpec<Float>,
+                initialScale = 0.3f,
+                transformOrigin = TransformOrigin.Center
+            )
 
     /** Glitch-style entrance from the void */
     val GlitchEnter: EnterTransition =
         fadeIn(tween(MICRO_DURATION)) +
-                slideInHorizontally(
-                    animationSpec = GlitchyFocus as FiniteAnimationSpec<IntOffset>,
-                    initialOffsetX = { -it / 4 }
-                )
+            slideInHorizontally(
+                animationSpec = GlitchyFocus as FiniteAnimationSpec<IntOffset>,
+                initialOffsetX = { -it / 4 }
+            )
 
     /** Confident slide from right - for navigation */
     val SlideFromRight: EnterTransition =
@@ -151,19 +151,19 @@ object KineticIdentity {
     /** Digital deconstruction - form dissolving into particles */
     val DeconstructExit: ExitTransition =
         fadeOut(SubtleExit as FiniteAnimationSpec<Float>) +
-                scaleOut(
-                    animationSpec = SubtleExit as FiniteAnimationSpec<Float>,
-                    targetScale = 0.8f,
-                    transformOrigin = TransformOrigin.Center
-                )
+            scaleOut(
+                animationSpec = SubtleExit as FiniteAnimationSpec<Float>,
+                targetScale = 0.8f,
+                transformOrigin = TransformOrigin.Center
+            )
 
     /** Quick glitch disappearance */
     val GlitchExit: ExitTransition =
         fadeOut(tween(MICRO_DURATION)) +
-                slideOutHorizontally(
-                    animationSpec = tween(MICRO_DURATION),
-                    targetOffsetX = { it / 4 }
-                )
+            slideOutHorizontally(
+                animationSpec = tween(MICRO_DURATION),
+                targetOffsetX = { it / 4 }
+            )
 
     /** Slide to left - for navigation */
     val SlideToLeft: ExitTransition =
@@ -235,7 +235,7 @@ object KineticIdentity {
      */
     fun createBreathingAnimation(
         durationMillis: Int = 2000,
-        targetValue: Float = 1.1f
+        targetValue: Float = 1.1f,
     ): InfiniteRepeatableSpec<Float> = infiniteRepeatable(
         animation = tween(durationMillis, easing = LinearEasing),
         repeatMode = RepeatMode.Reverse
@@ -250,7 +250,7 @@ object KineticIdentity {
      */
     fun createGlitchShake(
         durationMillis: Int = MICRO_DURATION,
-        intensity: Float = 10f
+        intensity: Float = 10f,
     ): AnimationSpec<Float> = tween(
         durationMillis = durationMillis,
         easing = LinearEasing
@@ -267,7 +267,7 @@ object KineticIdentity {
      */
     fun createDramaticPause(
         pauseDurationMillis: Int = 500,
-        actionSpec: AnimationSpec<Float> = DaringEnter
+        actionSpec: AnimationSpec<Float> = DaringEnter,
     ): AnimationSpec<Float> = tween(
         durationMillis = pauseDurationMillis + ((actionSpec as? TweenSpec<*>)?.durationMillis
             ?: STANDARD_DURATION),

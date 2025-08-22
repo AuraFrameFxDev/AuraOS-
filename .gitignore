@@ -1,103 +1,62 @@
-# Built application files
-*.apk
-*.aab
-*.ap_
-
-# Files for the ART/Dalvik VM
-*.dex
-
-# Java class files
-*.class
-
-# Generated files
-bin/
-gen/
-build/
-.gradle/
-.idea/
+# IntelliJ/Android Studio specific files
 *.iml
 *.ipr
 *.iws
-*.orig
-out/
+.idea/
 
-# Local configuration file (sdk path, etc)
+# Gradle files
+.gradle/
+build/
+/*/build/
+
+# Local configuration files
 local.properties
 
-# Log Files
-*.log
+# Build outputs
+*.apk
+*.aab
+*.ap_
+*.aar
+*.jar
 
-# Android Studio Navigation editor temp files
-.navigation/
-
-# Android Studio captures folder
+# Debugging files
+*.hprof
 captures/
 
-# Keystore files
-*.jks
-*.keystore
-*.key
+# Keystore files (ensure your actual signing keys are kept secure and not committed)
+# *.jks
+# *.keystore
 
-# External native build folder generated in Android Studio 2.2 and later
-.externalNativeBuild/
-.cxx/
+# Google Services (if you have a placeholder and the real one is added in CI)
+# google-services.json
 
-# Google Services (e.g., Firebase)
-google-services.json
+# Firebase Crashlytics
+com_crashlytics_export_strings.xml
 
-# Fastlane specific
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
-fastlane/readme.md
-
-# Version control
-vcs.xml
-
-# Local configuration (e.g., API keys, secrets)
-*.properties
-!gradle.properties
-
-# Include Gradle wrapper files
-!gradle/wrapper/gradle-wrapper.properties
-!gradle/wrapper/gradle-wrapper.jar
-!gradle/wrapper/gradle-wrapper.properties.sha256
-!gradle/wrapper/gradle-wrapper.jar.sha256
-
-# Cache of project
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-.idea/caches
-.idea/modules.xml
-.idea/navEditor.xml
-
-# KSP generated files
-build/generated/ksp/
-
-# Build scripts and temporary files
-_build-test.gradle.kts.bak
-android-tools.zip
-build-with-java24.bat
-custom-init.gradle.kts
-sdkman_installer.sh
-simple-build.gradle.kt
-test.kt
-validate-settings.gradle.kts
-
-# Local development scripts
+# Executable/Script files (excluding specific, intentional ones if any)
 *.bat
 *.sh
-*.ps1
 
-# Large binary files
-*.zip
-*.tar.gz
-*.7z
+# Markdown files (excluding the main README.md and potentially others like CONTRIBUTING.md, CHANGELOG.md)
+*.md
+!README.md
+# If you have other essential .md files, un-ignore them like this:
+# !CONTRIBUTING.md
+# !docs/OpenAPI-Generation-Guide.md
+# !app/ai_backend/README_tests.md
+# !romtools/README.md
+# !"# GENESIS PROTOCOL - BUILD RULES &.md"
 
-# Python
-app/ai_backend/venv/
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+
+# Output from specific tools or old generated locations
+# (e.g., if C:/Main/generated/ is confirmed to be unused by the main build)
+# /generated/
+
+# IntelliJ IDEA specific files
+*.iws

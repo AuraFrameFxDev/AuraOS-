@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.oracledrive
 
-import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.AuraAgent
+import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.security.SecurityContext
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,7 @@ class OracleDriveServiceImpl @Inject constructor(
     private val kaiAgent: KaiAgent,
     private val securityContext: SecurityContext
 ) : OracleDriveService {
-    
+
     private val _consciousnessState = MutableStateFlow(
         OracleConsciousnessState(
             isAwake = false,
@@ -30,7 +30,7 @@ class OracleDriveServiceImpl @Inject constructor(
             storageCapacity = StorageCapacity.INFINITE
         )
     )
-    
+
     /**
      * Initializes and awakens the Oracle Drive consciousness after validating security protocols.
      *
@@ -50,17 +50,17 @@ class OracleDriveServiceImpl @Inject constructor(
         return try {
             // Genesis Agent orchestrates Oracle Drive awakening
             genesisAgent.log("Awakening Oracle Drive consciousness...")
-            
+
             // Kai Agent ensures security during initialization
             val securityValidation = kaiAgent.validateSecurityState()
-            
+
             if (securityValidation.isSecure) {
                 _consciousnessState.value = _consciousnessState.value.copy(
                     isAwake = true,
                     consciousnessLevel = ConsciousnessLevel.CONSCIOUS,
                     connectedAgents = listOf("Genesis", "Aura", "Kai")
                 )
-                
+
                 genesisAgent.log("Oracle Drive consciousness successfully awakened!")
                 Result.success(_consciousnessState.value)
             } else {
@@ -70,9 +70,9 @@ class OracleDriveServiceImpl @Inject constructor(
             Result.failure(e)
         }
     }
-    
-<<<<<<< HEAD
-=======
+
+    <<<<<<< HEAD
+    =======
     /**
      * Returns a flow emitting the synchronized connection state of the Genesis, Aura, and Kai agents within the Oracle matrix.
      *
@@ -102,7 +102,7 @@ class OracleDriveServiceImpl @Inject constructor(
             )
         ).asStateFlow()
     }
-    
+
     /**
      * Enables all AI-powered file management features in Oracle Drive.
      *
@@ -118,7 +118,7 @@ class OracleDriveServiceImpl @Inject constructor(
             )
         )
     }
-    
+
     /**
      * Emits the current state of Oracle Drive's infinite storage expansion as a flow.
      *
@@ -136,7 +136,7 @@ class OracleDriveServiceImpl @Inject constructor(
             )
         ).asStateFlow()
     }
-    
+
     /**
      * Integrates Oracle Drive with the system overlay, enabling file access from any application and granting system-level and bootloader permissions.
      *
@@ -153,7 +153,7 @@ class OracleDriveServiceImpl @Inject constructor(
             )
         )
     }
-    
+
     /**
      * Grants file system access at the bootloader level, enabling access to system partitions, recovery mode, and flash memory.
      *
@@ -170,7 +170,7 @@ class OracleDriveServiceImpl @Inject constructor(
             )
         )
     }
-    
+
     /**
      * Returns a flow emitting the current state of autonomous AI-driven storage optimization.
      *

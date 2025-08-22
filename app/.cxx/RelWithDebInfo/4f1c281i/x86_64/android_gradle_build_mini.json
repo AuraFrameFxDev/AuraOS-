@@ -1,0 +1,29 @@
+{
+  "buildFiles": [
+    "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\Wehtt\\Studio\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-v",
+      "-C",
+      "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\.cxx\\RelWithDebInfo\\4f1c281i\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\Wehtt\\Studio\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-v",
+    "-C",
+    "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\.cxx\\RelWithDebInfo\\4f1c281i\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "auraframefx::@6890427a1f51a3e7e1df": {
+      "artifactName": "auraframefx",
+      "abi": "x86_64",
+      "output": "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\build\\intermediates\\cxx\\RelWithDebInfo\\4f1c281i\\obj\\x86_64\\libauraframefx.so",
+      "runtimeFiles": []
+    }
+  }
+}

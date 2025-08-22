@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.task.HistoricalTask
 import dev.aurakai.auraframefx.model.AgentPriority
 import dev.aurakai.auraframefx.model.AgentRole
@@ -19,6 +20,7 @@ import javax.inject.Inject
 
 // import javax.inject.Singleton // ViewModels should use @HiltViewModel
 
+@HiltViewModel
 class GenesisAgentViewModel @Inject constructor(
     // private val genesisAgent: GenesisAgent
 ) : ViewModel() {
@@ -74,7 +76,7 @@ class GenesisAgentViewModel @Inject constructor(
         )
         _agents.value = defaultAgents
 
-        // Initialize agent statuses  
+        // Initialize agent statuses
         val initialStatuses = mutableMapOf<AgentType, String>()
         val agentTypeMap = mapOf(
             "Genesis" to AgentType.GENESIS,

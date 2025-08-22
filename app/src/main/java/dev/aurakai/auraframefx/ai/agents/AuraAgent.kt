@@ -1,14 +1,15 @@
 package dev.aurakai.auraframefx.ai.agents
 
 import dev.aurakai.auraframefx.ai.clients.VertexAIClient
+import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.services.AuraAIService
-import dev.aurakai.auraframefx.context.ContextManager
 import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.model.AgentType
 import dev.aurakai.auraframefx.model.AiRequest
 import dev.aurakai.auraframefx.model.EnhancedInteractionData
 import dev.aurakai.auraframefx.model.InteractionResponse
-import dev.aurakai.auraframefx.model.ProcessingState
-import dev.aurakai.auraframefx.model.VisionState
+import dev.aurakai.auraframefx.model.agent_states.ProcessingState
+import dev.aurakai.auraframefx.model.agent_states.VisionState
 import dev.aurakai.auraframefx.security.SecurityContext
 import dev.aurakai.auraframefx.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,8 +44,12 @@ class AuraAgent @Inject constructor(
     private val auraAIService: AuraAIService,
     private val contextManager: ContextManager,
     private val securityContext: SecurityContext,
-    private val logger: AuraFxLogger
-) : BaseAgent("AuraAgent", "AURA") {
+    private val logger: AuraFxLogger,
+) : BaseAgent(
+    agentName = "AuraAgent",
+    agentType = AgentType.CREATIVE,
+    contextManager = contextManager
+) {
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -164,7 +170,7 @@ class AuraAgent @Inject constructor(
                 content = creativeResponse,
                 agent = "AURA",
                 confidence = 0.9f,
-                timestamp = kotlinx.datetime.Clock.System.now().toString(),
+                timestamp = Clock.System.now().toString(),
                 metadata = mapOf(
                     "creative_intent" to creativeIntent.name,
                     "mood_influence" to _currentMood.value,
@@ -179,7 +185,7 @@ class AuraAgent @Inject constructor(
                 content = "My creative energies are temporarily scattered. Let me refocus and try again.",
                 agent = "AURA",
                 confidence = 0.3f,
-                timestamp = kotlinx.datetime.Clock.System.now().toString(),
+                timestamp = Clock.System.now().toString(),
                 metadata = mapOf("error" to (e.message ?: "unknown"))
             )
         }
@@ -281,7 +287,7 @@ class AuraAgent @Inject constructor(
      * @return A map with keys: "animation_code" (the generated Kotlin code), "timing_curves" (timing curve information), "interaction_states" (interaction state mappings), and "performance_optimization" (suggested optimization strategies).
      */
     private suspend fun handleAnimationDesign(request: AiRequest): Map<String, Any> {
-        val animationType = request.context["type"] ?: "transition"
+        val animationType = request.context?.get("type") ?: "transition"
         val duration = 300 // Default duration
 
         logger.info("AuraAgent", "Designing mesmerizing $animationType animation")
@@ -837,7 +843,7 @@ class AuraAgent @Inject constructor(
      */
     override suspend fun processRequest(
         request: AiRequest,
-        context: String
+        context: String,
     ): AgentResponse {
         return AgentResponse(
             content = "Aura's response to '${request.query}' with context: $context",

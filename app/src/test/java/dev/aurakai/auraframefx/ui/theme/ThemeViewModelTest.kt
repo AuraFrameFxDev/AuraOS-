@@ -3,8 +3,8 @@ package dev.aurakai.auraframefx.ui.theme
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 class ThemeViewModelTest {
@@ -12,7 +12,7 @@ class ThemeViewModelTest {
     private lateinit var viewModel: ThemeViewModel
     private lateinit var themeService: ThemeService
 
-    @Before
+    @BeforeEach
     fun setup() {
         themeService = ThemeService()
         viewModel = ThemeViewModel(themeService)

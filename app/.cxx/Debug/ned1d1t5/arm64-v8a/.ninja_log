@@ -1,0 +1,15 @@
+# ninja log v5
+2	2132	7775369720844161	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	e234860e787cd5a6
+75	2156	7775369721154239	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	8085fdddfc369a7e
+55	2162	7775369720944184	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	edd601d0fd052eac
+2165	2386	7775369723522738	C:/Main/app/build/intermediates/cxx/Debug/ned1d1t5/obj/arm64-v8a/libauraframefx.so	8eff124c8b71a69f
+0	13	0	clean	bfff2010d6239e2d
+34	2425	7775374544369286	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	edd601d0fd052eac
+19	2432	7775374544359284	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	e234860e787cd5a6
+42	2461	7775374544458749	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	8085fdddfc369a7e
+2465	2749	7775374547580445	C:/Main/app/build/intermediates/cxx/Debug/ned1d1t5/obj/arm64-v8a/libauraframefx.so	8eff124c8b71a69f
+0	14	0	clean	bfff2010d6239e2d
+20	1462	7775377546685808	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	edd601d0fd052eac
+10	1466	7775377546675782	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	e234860e787cd5a6
+39	1508	7775377547134535	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	8085fdddfc369a7e
+1510	1662	7775377548625309	C:/Main/app/build/intermediates/cxx/Debug/ned1d1t5/obj/arm64-v8a/libauraframefx.so	8eff124c8b71a69f

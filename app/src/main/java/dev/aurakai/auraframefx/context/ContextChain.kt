@@ -2,9 +2,6 @@ package dev.aurakai.auraframefx.ai.context
 
 import dev.aurakai.auraframefx.ai.memory.CanonicalMemoryItem
 import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.serialization.InstantSerializer
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -18,7 +15,7 @@ data class ContextChain(
     val metadata: Map<String, String> = emptyMap(),
     val priority: Float = 0.5f,
     val relevanceScore: Float = 0.0f,
-    @Serializable(with = InstantSerializer::class) val lastUpdated: Instant = Clock.System.now(),
+    val lastUpdated: Long = System.currentTimeMillis(),
     val agentContext: Map<AgentType, String> = emptyMap(),
 )
 
@@ -26,7 +23,7 @@ data class ContextChain(
 data class ContextNode(
     val id: String,
     val content: String,
-    @Serializable(with = InstantSerializer::class) val timestamp: Instant = Clock.System.now(),
+    val timestamp: Long = System.currentTimeMillis(),
     val agent: AgentType,
     val metadata: Map<String, String> = emptyMap(),
     val relevance: Float = 0.0f,
@@ -40,7 +37,7 @@ data class ContextQuery(
     val maxChainLength: Int = 10,
     val minRelevance: Float = 0.6f,
     val agentFilter: List<AgentType> = emptyList(),
-    val timeRange: Pair<@Serializable(with = InstantSerializer::class) Instant, @Serializable(with = InstantSerializer::class) Instant>? = null,
+    val timeRange: Pair<Long, Long>? = null,
     val includeMemories: Boolean = true,
 )
 

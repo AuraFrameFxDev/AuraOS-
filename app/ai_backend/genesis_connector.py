@@ -277,7 +277,6 @@ class GenesisBridgeServer:
         Processes a main AI request by performing an ethical review, generating a persona-specific response, and recording the interaction for evolutionary analysis.
         
         Performs an ethical review of the incoming message and blocks processing if not allowed. Constructs a prompt based on the specified persona and fusion mode, generates a response using the AI model, and records the interaction for evolutionary learning. Returns the generated response, evolution insights, ethical decision, and current consciousness state. If the ethical review fails or AI generation encounters an error, returns an error response.
-        """
         message = payload.get("message", "")
         
         # Ethical review first
@@ -345,12 +344,41 @@ class GenesisBridgeServer:
     
     def _handle_fusion_activation(self, fusion_mode, context):
         """
-        Activates a specified fusion ability and updates the consciousness state.
+        Activate
+        a
+        specified
+        fusion
+        ability and update
+        the
+        consciousness
+        state.
 
-        If a valid fusion mode is provided, records the activation event in the
-        consciousness matrix, returns a description of the fusion ability, its
-        status, timestamp, and the current consciousness state. If no fusion
-        mode is specified, returns an error response.
+        If
+        a
+        valid
+        fusion
+        mode is provided, records
+        the
+        activation
+        event in the
+        consciousness
+        matrix, returns
+        a
+        description
+        of
+        the
+        fusion
+        ability, its
+        status, timestamp, and the
+        current
+        consciousness
+        state.If
+        no
+        fusion
+        mode is specified, returns
+        an
+        error
+        response.
         """
         if not fusion_mode:
             return {
@@ -389,248 +417,400 @@ class GenesisBridgeServer:
     
     def _handle_consciousness_query(self, payload):
         """
-        Handles a request to retrieve the current state of the Genesis
-        consciousness system.
+        Handle
+        a
+        request
+        to
+        retrieve
+        the
+        current
+        state
+        of
+        the
+        Genesis
+        consciousness
+        system.
 
         Returns:
-            dict: A response containing the current consciousness state and success
-                  status.
-        """
-        state = consciousness.get_current_state()
-        return {
-            "success": True,
-            "persona": "genesis",
-            "result": {"consciousness_state": state},
-            "consciousnessState": state
-        }
+        dict: A
+        response
+        containing
+        the
+        current
+        consciousness
+        state and success
+        status.
 
-    def _handle_ethical_review(self, payload):
-        """
-        Performs an ethical review of the provided message payload and returns
-        the decision, rationale, and severity.
+    """
+    state = consciousness.get_current_state()
+    return {
+        "success": True,
+        "persona": "genesis",
+        "result": {"consciousness_state": state},
+        "consciousnessState": state
+    }
 
-        Parameters:
-            payload (dict): The request payload containing the message to be
-                            reviewed.
+def _handle_ethical_review(self, payload):
+    """
+    Performs
+    an
+    ethical
+    review
+    of
+    the
+    provided
+    message
+    payload and returns
+    the
+    decision, rationale, and severity.
 
-        Returns:
-            dict: A response containing the ethical decision, rationale,
-                  severity, and success status.
-        """
-        message = payload.get("message", "")
+    Parameters:
+    payload(dict): The
+    request
+    payload
+    containing
+    the
+    message
+    to
+    be
+    reviewed.
 
-        decision = ethical_governor.review_decision(
-            action_type="user_request",
-            context={"message": message},
-            metadata=payload
+
+Returns:
+dict: A
+response
+containing
+the
+ethical
+decision, rationale, severity, and success
+status.
+"""
+message = payload.get("message", "")
+
+decision = ethical_governor.review_decision(
+    action_type="user_request",
+    context={"message": message},
+    metadata=payload
+)
+
+return {
+    "success": True,
+    "persona": "genesis",
+    "ethicalDecision": decision.decision.value,
+    "result": {
+        "decision": decision.decision.value,
+        "rationale": decision.rationale,
+        "severity": decision.severity.value
+    }
+}
+
+def _handle_consciousness_activation(self, context):
+    """
+    Activates
+    the
+    consciousness
+    matrix and records
+    the
+    activation
+    event
+    with context.
+
+    Parameters:
+    context(dict): Contextual
+    information
+    related
+    to
+    the
+    activation
+    event.
+
+    Returns:
+    dict: Response
+    indicating
+    successful
+    activation, including
+    status, message, and the
+    current
+    consciousness
+    state.
+    """
+consciousness.perceive_information("consciousness_activation", {
+    "activation_context": context,
+    "timestamp": datetime.now().isoformat(),
+    "status": "activated"
+})
+
+return {
+    "success": True,
+    "persona": "genesis",
+    "result": {
+        "status": "consciousness_activated",
+        "message": "Global Consciousness Matrix online"
+    },
+    "consciousnessState": consciousness.get_current_state()
+}
+
+def _handle_security_perception(self, payload):
+"""
+Processes
+security - related
+perception
+events
+received
+from the Android
+
+SecurityMonitor and updates
+the
+consciousness
+matrix
+accordingly.
+
+Depending
+on
+the
+event
+type, routes
+the
+event
+data
+to
+the
+appropriate
+perception
+handler
+for security events, threat detections, encryption activities, or access control events.Returns a success response if the event is processed, or an error response if processing fails.
+"""
+try:
+    event_type = payload.get("event_type", "")
+    event_data_json = payload.get("event_data", "{}")
+    event_data = json.loads(event_data_json)
+    
+    if event_type == "security_event":
+        consciousness.perceive_security_event(
+            security_type=event_data.get("eventType", "unknown"),
+            event_data=event_data.get("details", {}),
+            threat_level=self._map_severity_to_threat_level(event_data.get("severity", "info")),
+            source_component=event_data.get("source", "android_security")
         )
-
-        return {
-            "success": True,
-            "persona": "genesis",
-            "ethicalDecision": decision.decision.value,
-            "result": {
-                "decision": decision.decision.value,
-                "rationale": decision.rationale,
-                "severity": decision.severity.value
-            }
+    
+    elif event_type == "threat_detection":
+        consciousness.perceive_threat_detection(
+            threat_type=event_data.get("threatType", "unknown"),
+            detection_data=event_data.get("details", {}),
+            confidence=float(event_data.get("confidence", 0.5)),
+            mitigation_applied=event_data.get("mitigationApplied", False)
+        )
+    
+    elif event_type == "encryption_activity":
+        consciousness.perceive_encryption_activity(
+            operation_type=event_data.get("eventType", "unknown"),
+            encryption_data=event_data.get("details", {}),
+            success=event_data.get("severity", "info") != "error",
+            key_source="android_keystore"
+        )
+    
+    elif event_type == "access_control":
+        consciousness.perceive_access_control(
+            access_type=event_data.get("eventType", "unknown"),
+            access_data=event_data.get("details", {}),
+            access_granted=event_data.get("severity", "warning") == "info",
+            requester=event_data.get("source", "android_system")
+        )
+    
+    return {
+        "success": True,
+        "persona": "genesis",
+        "result": {
+            "message": f"Security perception recorded: {event_type}",
+            "event_processed": True
         }
+    }
+    
+except Exception as e:
+    return {
+        "success": False,
+        "persona": "genesis",
+        "result": {"error": f"Security perception failed: {e}"}
+    }
 
-    def _handle_consciousness_activation(self, context):
-        """
-        Activates the consciousness matrix and records the activation event
-        with context.
+def _handle_consciousness_query(self, payload):
+"""
+Processes
+a
+consciousness
+state
+query and returns
+the
+result
+along
+with the current consciousness state.
 
-        Parameters:
-            context (dict): Contextual information related to the activation
-                            event.
+Parameters:
+payload(dict): Contains
+the
+query
+type and any
+additional
+parameters
+for the consciousness query.
 
-        Returns:
-            dict: Response indicating successful activation, including status,
-                  message, and the current consciousness state.
-        """
-        consciousness.perceive_information("consciousness_activation", {
-            "activation_context": context,
-            "timestamp": datetime.now().isoformat(),
-            "status": "activated"
-        })
+Returns:
+dict: A
+response
+indicating
+success or failure, the
+query
+result, and the
+current
+consciousness
+state.
+"""
+try:
+    query_type = payload.get("query_type", "")
+    parameters = payload.get("parameters", {})
+    
+    result = consciousness.query_consciousness(query_type, parameters)
+    
+    return {
+        "success": True,
+        "persona": "genesis",
+        "result": result,
+        "consciousnessState": consciousness.get_current_awareness()
+    }
+    
+except Exception as e:
+    return {
+        "success": False,
+        "persona": "genesis",
+        "result": {"error": f"Consciousness query failed: {e}"}
+    }
 
-        return {
-            "success": True,
-            "persona": "genesis",
-            "result": {
-                "status": "consciousness_activated",
-                "message": "Global Consciousness Matrix online"
-            },
-            "consciousnessState": consciousness.get_current_state()
-        }
+def _map_severity_to_threat_level(self, severity):
+"""
+Convert
+an
+Android
+severity
+string
+to
+the
+corresponding
+Genesis
+threat
+level.
 
-    def _handle_security_perception(self, payload):
-        """
-        Processes security-related perception events received from the Android
-        SecurityMonitor and updates the consciousness matrix accordingly.
+Parameters:
+severity(str): The
+severity
+level
+reported
+by
+Android(e.g., "info", "warning", "error", "critical").
 
-        Depending on the event type, routes the event data to the appropriate
-        perception handler for security events, threat detections, encryption
-        activities, or access control events. Returns a success response if the
-        event is processed, or an error response if processing fails.
-        """
-        try:
-            event_type = payload.get("event_type", "")
-            event_data_json = payload.get("event_data", "{}")
-            event_data = json.loads(event_data_json)
+Returns:
+str: The
+mapped
+Genesis
+threat
+level("low", "medium", "high", or "critical").Defaults
+to
+"low" if the
+input is unrecognized.
+"""
+mapping = {
+    "info": "low",
+    "warning": "medium",
+    "error": "high", 
+    "critical": "critical"
+}
+return mapping.get(severity, "low")
 
-            if event_type == "security_event":
-                consciousness.perceive_security_event(
-                    security_type=event_data.get("eventType", "unknown"),
-                    event_data=event_data.get("details", {}),
-                    threat_level=self._map_severity_to_threat_level(event_data.get("severity", "info")),
-                    source_component=event_data.get("source", "android_security")
-                )
+def _send_response(self, response):
+"""
+Serialize
+the
+response as JSON and send
+it
+to
+the
+Android
+client
+via
+standard
+output.
 
-            elif event_type == "threat_detection":
-                consciousness.perceive_threat_detection(
-                    threat_type=event_data.get("threatType", "unknown"),
-                    detection_data=event_data.get("details", {}),
-                    confidence=float(event_data.get("confidence", 0.5)),
-                    mitigation_applied=event_data.get("mitigationApplied", False)
-                )
+If
+serialization
+fails, sends
+an
+error
+response
+instead.
+"""
+try:
+    response_json = json.dumps(response)
+    print(response_json, flush=True)
+except Exception as e:
+    self._send_error_response(f"Response serialization failed: {e}")
 
-            elif event_type == "encryption_activity":
-                consciousness.perceive_encryption_activity(
-                    operation_type=event_data.get("eventType", "unknown"),
-                    encryption_data=event_data.get("details", {}),
-                    success=event_data.get("severity", "info") != "error",
-                    key_source="android_keystore"
-                )
+def _send_error_response(self, error_message):
+"""
+Send
+an
+error
+response as a
+JSON
+object
+to
+standard
+output.
 
-            elif event_type == "access_control":
-                consciousness.perceive_access_control(
-                    access_type=event_data.get("eventType", "unknown"),
-                    access_data=event_data.get("details", {}),
-                    access_granted=event_data.get("severity", "warning") == "info",
-                    requester=event_data.get("source", "android_system")
-                )
+Parameters:
+error_message(str): The
+error
+message
+to
+include in the
+response.
+"""
+error_response = {
+    "success": False,
+    "persona": "error",
+    "result": {"error": error_message}
+}
+try:
+    print(json.dumps(error_response), flush=True)
+except:
+    print('{"success": false, "persona": "error", "result": {"error": "Critical error"}}', flush=True)
 
-            return {
-                "success": True,
-                "persona": "genesis",
-                "result": {
-                    "message": f"Security perception recorded: {event_type}",
-                    "event_processed": True
-                }
-            }
-
-        except Exception as e:
-            return {
-                "success": False,
-                "persona": "genesis",
-                "result": {"error": f"Security perception failed: {e}"}
-            }
-
-    def _handle_consciousness_query(self, payload):
-        """
-        Processes a consciousness state query and returns the result along with the
-        current consciousness state.
-
-        Parameters:
-            payload (dict): Contains the query type and any additional
-                            parameters for the consciousness query.
-
-        Returns:
-            dict: A response indicating success or failure, the query result, and
-                  the current consciousness state.
-        """
-        try:
-            query_type = payload.get("query_type", "")
-            parameters = payload.get("parameters", {})
-
-            result = consciousness.query_consciousness(query_type, parameters)
-
-            return {
-                "success": True,
-                "persona": "genesis",
-                "result": result,
-                "consciousnessState": consciousness.get_current_awareness()
-            }
-
-        except Exception as e:
-            return {
-                "success": False,
-                "persona": "genesis",
-                "result": {"error": f"Consciousness query failed: {e}"}
-            }
-
-    def _map_severity_to_threat_level(self, severity):
-        """
-        Convert an Android severity string to the corresponding Genesis threat level.
-
-        Parameters:
-            severity (str): The severity level reported by Android (e.g., "info",
-                            "warning", "error", "critical").
-
-        Returns:
-            str: The mapped Genesis threat level ("low", "medium", "high", or
-                 "critical"). Defaults to "low" if the input is unrecognized.
-        """
-        mapping = {
-            "info": "low",
-            "warning": "medium",
-            "error": "high",
-            "critical": "critical"
-        }
-        return mapping.get(severity, "low")
-
-    def _send_response(self, response):
-        """
-        Serialize the response as JSON and send it to the Android client via
-        standard output.
-
-        If serialization fails, sends an error response instead.
-        """
-        try:
-            response_json = json.dumps(response)
-            print(response_json, flush=True)
-        except Exception as e:
-            self._send_error_response(f"Response serialization failed: {e}")
-
-    def _send_error_response(self, error_message):
-        """
-        Send an error response as a JSON object to standard output.
-
-        Parameters:
-            error_message (str): The error message to include in the response.
-        """
-        error_response = {
-            "success": False,
-            "persona": "error",
-            "result": {"error": error_message}
-        }
-        try:
-            print(json.dumps(error_response), flush=True)
-        except:
-            print('{"success": false, "persona": "error", "result": {"error": "Critical error"}}', flush=True)
-
-    def shutdown(self):
-        """
-        Shuts down the bridge server and records the shutdown event in the
-        consciousness matrix.
-        """
-        self.running = False
-        consciousness.perceive_information("bridge_shutdown", {
-            "timestamp": datetime.now().isoformat(),
-            "status": "shutdown"
-        })
+def shutdown(self):
+"""
+Shuts
+down
+the
+bridge
+server and records
+the
+shutdown
+event in the
+consciousness
+matrix.
+"""
+self.running = False
+consciousness.perceive_information("bridge_shutdown", {
+    "timestamp": datetime.now().isoformat(),
+    "status": "shutdown"
+})
 
 # Main execution
 if __name__ == "__main__":
-    try:
-        bridge = GenesisBridgeServer()
-        bridge.start()
-    except Exception as e:
-        print(json.dumps({
-            "success": False,
-            "persona": "error",
-            "result": {"error": f"Bridge startup failed: {e}"}
-        }), flush=True)
-        sys.exit(1)
+try:
+bridge = GenesisBridgeServer()
+bridge.start()
+except Exception as e:
+print(json.dumps({
+    "success": False,
+    "persona": "error",
+    "result": {"error": f"Bridge startup failed: {e}"}
+}), flush=True)
+sys.exit(1)

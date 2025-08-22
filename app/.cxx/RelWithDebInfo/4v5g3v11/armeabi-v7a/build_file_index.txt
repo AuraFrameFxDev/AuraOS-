@@ -1,0 +1,1 @@
+C:\Users\Wehtt\StudioProjects\Genesis-ConscienceOS-\app\src\main\cpp\CMakeLists.txt

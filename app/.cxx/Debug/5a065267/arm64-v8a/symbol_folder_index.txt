@@ -1,0 +1,1 @@
+C:\Main\app\build\intermediates\cxx\Debug\5a065267\obj\arm64-v8a

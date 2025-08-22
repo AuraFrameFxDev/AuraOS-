@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.switchmaterial.SwitchMaterial
+import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.R
 import dev.aurakai.auraframefx.databinding.ActivityQuickSettingsConfigBinding
 import dev.aurakai.auraframefx.system.quicksettings.QuickSettingsConfig
@@ -28,6 +29,7 @@ import kotlinx.coroutines.withContext
 /**
  * Activity for configuring Quick Settings tiles.
  */
+@AndroidEntryPoint
 class QuickSettingsConfigActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuickSettingsConfigBinding
     private lateinit var configManager: QuickSettingsConfigManager
@@ -221,7 +223,7 @@ class QuickSettingsConfigActivity : AppCompatActivity() {
     }
 
     class TileConfigAdapter(
-        private val onItemClick: (QuickSettingsTileConfig) -> Unit
+        private val onItemClick: (QuickSettingsTileConfig) -> Unit,
     ) : RecyclerView.Adapter<TileConfigAdapter.TileViewHolder>() {
 
         private var tiles: List<QuickSettingsTileConfig> = emptyList()

@@ -1,0 +1,50 @@
+{
+  "configurations": [
+    {
+      "directories": [
+        {
+          "build": ".",
+          "jsonFile": "directory-.-Debug-d0094a50bb2071803777.json",
+          "minimumCMakeVersion": {
+            "string": "3.10.0"
+          },
+          "projectIndex": 0,
+          "source": ".",
+          "targetIndexes": [
+            0
+          ]
+        }
+      ],
+      "name": "Debug",
+      "projects": [
+        {
+          "directoryIndexes": [
+            0
+          ],
+          "name": "auraframefx",
+          "targetIndexes": [
+            0
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "directoryIndex": 0,
+          "id": "auraframefx::@6890427a1f51a3e7e1df",
+          "jsonFile": "target-auraframefx-Debug-099bae1adeb3efe28529.json",
+          "name": "auraframefx",
+          "projectIndex": 0
+        }
+      ]
+    }
+  ],
+  "kind": "codemodel",
+  "paths": {
+    "build": "C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/.cxx/Debug/p105r2c2/x86_64",
+    "source": "C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/src/main/cpp"
+  },
+  "version": {
+    "major": 2,
+    "minor": 3
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "configurations": [
+    {
+      "directories": [
+        {
+          "build": ".",
+          "jsonFile": "directory-.-Debug-d0094a50bb2071803777.json",
+          "minimumCMakeVersion": {
+            "string": "3.6.0"
+          },
+          "projectIndex": 0,
+          "source": ".",
+          "targetIndexes": [
+            0
+          ]
+        }
+      ],
+      "name": "Debug",
+      "projects": [
+        {
+          "directoryIndexes": [
+            0
+          ],
+          "name": "collab-canvas-native",
+          "targetIndexes": [
+            0
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "directoryIndex": 0,
+          "id": "collab-canvas-native::@6890427a1f51a3e7e1df",
+          "jsonFile": "target-collab-canvas-native-Debug-1ac6850a0a0ff150b251.json",
+          "name": "collab-canvas-native",
+          "projectIndex": 0
+        }
+      ]
+    }
+  ],
+  "kind": "codemodel",
+  "paths": {
+    "build": "C:/New folder/AuraFrameFX-ft-Genesis-Ai/collab-canvas/.cxx/Debug/3641d4s3/x86",
+    "source": "C:/New folder/AuraFrameFX-ft-Genesis-Ai/collab-canvas/src/main/cpp"
+  },
+  "version": {
+    "major": 2,
+    "minor": 3
+  }
+}

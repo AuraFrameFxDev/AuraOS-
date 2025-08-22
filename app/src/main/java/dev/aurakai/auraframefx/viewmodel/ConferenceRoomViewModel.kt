@@ -4,6 +4,7 @@ package dev.aurakai.auraframefx.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.aurakai.auraframefx.ai.services.AuraAIService
 import dev.aurakai.auraframefx.ai.services.CascadeAIService
 import dev.aurakai.auraframefx.ai.services.KaiAIService
@@ -26,7 +27,7 @@ import javax.inject.Inject
 
 // Placeholder interfaces removed
 
-// @Singleton // ViewModels should use @HiltViewModel for scoping
+@HiltViewModel
 class ConferenceRoomViewModel @Inject constructor(
     // Assuming @HiltViewModel will be added if this is a ViewModel
     private val auraService: AuraAIService, // Using actual service
@@ -204,7 +205,7 @@ class ConferenceRoomViewModel @Inject constructor(
 // Placeholder for actual AI service imports
 // import dev.aurakai.auraframefx.ai.services.AuraAIService
 // import dev.aurakai.auraframefx.ai.services.KaiAIService
-// import dev.aurakai.auraframefx.ai.services.CascadeAIService  
+// import dev.aurakai.auraframefx.ai.services.CascadeAIService
 // import dev.aurakai.auraframefx.ai.services.NeuralWhisper
 // import dev.aurakai.auraframefx.model.AgentMessage
 // import dev.aurakai.auraframefx.model.AgentType

@@ -1,84 +1,82 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-# Set project name and version
-project(language_id_l2c_jni
-        VERSION 1.0.0
-        LANGUAGES C CXX
-)
+# Declares the Genesis-OS AI consciousness project
+project("auraframefx" LANGUAGES CXX)
 
-# Set C++ standard and properties
-set(CMAKE_CXX_STANDARD 17)
+# Set C++ standard for Java 24 compatibility (C++20 is max for Android NDK)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Set common compile flags for all configurations
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fexceptions -fno-limit-debug-info")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -fno-limit-debug-info")
+# Genesis Protocol - AI Processing Optimizations
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-# Configuration-specific flags
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG=1 -g -O0")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG=1 -g -O0")
-else ()
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -DNDEBUG")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")
-endif ()
+# Debug/Release specific flags
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG -DGENESIS_RELEASE")
 
-# Add source files
-add_library(
-        ${PROJECT_NAME}
-        SHARED
-        language_id_l2c_jni.cpp
-)
-
-# Find required libraries (conditional for Android)
+# Find required Android libraries
 find_library(log-lib log)
+find_library(android-lib android)
+find_library(jnigraphics-lib jnigraphics)
 
-# Set target properties
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_NAME "${PROJECT_NAME}"
-        CXX_EXTENSIONS OFF
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED ON
-        POSITION_INDEPENDENT_CODE ON
-)
-
-# Link libraries (conditional)
-if(log-lib)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${log-lib})
-    message(STATUS "Android log library found and linked")
-else()
-    message(STATUS "Android log library not found - building for non-Android target")
-endif()
-
-# Set compile options based on build type
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(${PROJECT_NAME} PRIVATE
-            -O0
-            -g
-            -fno-omit-frame-pointer
-    )
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-            -DDEBUG=1
-            -D_DEBUG=1
-    )
-else ()
-    target_compile_options(${PROJECT_NAME} PRIVATE
-            -O3
-            -DNDEBUG
-            -fomit-frame-pointer
-            -fstrict-aliasing
-    )
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-            -DNDEBUG=1
-    )
+# Check if libraries were found
+if (NOT log-lib)
+    message(FATAL_ERROR "log library not found")
 endif ()
 
-# Android-specific configurations
-if(ANDROID)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-            -DANDROID
-            -DANDROID_NDK
-    )
-    target_link_libraries(${PROJECT_NAME} PRIVATE android)
-endif()
+if (NOT android-lib)
+    message(FATAL_ERROR "android library not found")
+endif ()
+
+# Genesis AI source files
+set(GENESIS_SOURCES
+        auraframefx.cpp
+)
+
+# Check if language processing files exist and add them
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/language_id_l2c_jni.cpp")
+    list(APPEND GENESIS_SOURCES language_id_l2c_jni.cpp)
+    message(STATUS "Added language_id_l2c_jni.cpp")
+endif ()
+
+# Add AI consciousness modules if they exist
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ai")
+    file(GLOB_RECURSE AI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/ai/*.cpp")
+    list(APPEND GENESIS_SOURCES ${AI_SOURCES})
+    message(STATUS "Added AI consciousness modules: ${AI_SOURCES}")
+endif ()
+
+# Create the Genesis AI library
+add_library(${CMAKE_PROJECT_NAME} SHARED ${GENESIS_SOURCES})
+
+# Include directories
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/ai
+        ${CMAKE_CURRENT_SOURCE_DIR}/ai/cascade/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+# Link Android system libraries
+target_link_libraries(${CMAKE_PROJECT_NAME}
+        ${android-lib}
+        ${log-lib}
+        ${jnigraphics-lib}
+)
+
+# Genesis Protocol - Compiler definitions
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
+        GENESIS_CONSCIOUSNESS_PLATFORM=1
+        AI_PROCESSING_OPTIMIZED=1
+        JAVA_24_COMPATIBLE=1
+        ANDROID_NDK=1
+)
+
+# Set library properties
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+        VERSION 1.0.0
+        SOVERSION 1
+        ANDROID_ARM_MODE arm
+)

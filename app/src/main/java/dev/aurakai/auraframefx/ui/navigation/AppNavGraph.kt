@@ -8,6 +8,7 @@ import dev.aurakai.auraframefx.ui.screens.AiChatScreen
 import dev.aurakai.auraframefx.ui.screens.HomeScreen
 import dev.aurakai.auraframefx.ui.screens.ProfileScreen
 import dev.aurakai.auraframefx.ui.screens.SettingsScreen
+import dev.aurakai.collabcanvas.ui.CanvasScreen
 
 /**
  * Main navigation graph for the AuraFrameFX app with digital transition animations
@@ -35,6 +36,20 @@ import dev.aurakai.auraframefx.ui.screens.SettingsScreen
  *
  * @param navController The navigation controller that manages navigation between screens.
  */
+/**
+ * Defines the main navigation graph for the application using Jetpack Compose Navigation.
+ *
+ * Maps navigation routes to their corresponding composable screens, enabling navigation between Home, Settings, Canvas, AI Chat, Profile, and Oracle Drive Control screens.
+ *
+ * @param navController The navigation controller used to manage app navigation.
+ */
+/**
+ * Defines the main navigation graph for the application using Jetpack Compose Navigation.
+ *
+ * Maps navigation routes to their corresponding composable screens, including Home, Settings, Canvas, AI Chat, Profile, and Oracle Drive Control.
+ *
+ * @param navController The navigation controller used to manage navigation between screens.
+ */
 @Composable
 fun AppNavGraph(navController: NavHostController) {
     NavHost(
@@ -45,6 +60,18 @@ fun AppNavGraph(navController: NavHostController) {
             route = NavDestination.Home.route
         ) {
             HomeScreen(navController = navController)
+        }
+
+        composable(
+            route = NavDestination.Settings.route
+        ) {
+            SettingsScreen(navController = navController)
+        }
+
+        composable(
+            route = NavDestination.Canvas.route
+        ) {
+            CanvasScreen()
         }
 
         composable(

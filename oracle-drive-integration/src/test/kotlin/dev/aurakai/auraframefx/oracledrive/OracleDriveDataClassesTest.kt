@@ -3,8 +3,8 @@ package dev.aurakai.auraframefx.oracledrive
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for OracleDrive data classes and enums
@@ -17,7 +17,7 @@ class OracleDriveDataClassesTest {
         // Given
         val agents = listOf("Genesis", "Aura", "Kai")
         val storageCapacity = StorageCapacity.INFINITE
-        
+
         // When
         val state = OracleConsciousnessState(
             isAwake = true,
@@ -25,7 +25,7 @@ class OracleDriveDataClassesTest {
             connectedAgents = agents,
             storageCapacity = storageCapacity
         )
-        
+
         // Then
         assertTrue(state.isAwake)
         assertEquals(ConsciousnessLevel.CONSCIOUS, state.consciousnessLevel)
@@ -43,7 +43,7 @@ class OracleDriveDataClassesTest {
             connectedAgents = emptyList(),
             storageCapacity = StorageCapacity.ZERO
         )
-        
+
         // Then
         assertFalse(state.isAwake)
         assertEquals(ConsciousnessLevel.DORMANT, state.consciousnessLevel)
@@ -72,7 +72,7 @@ class OracleDriveDataClassesTest {
             connectedAgents = emptyList(),
             storageCapacity = StorageCapacity.ZERO
         )
-        
+
         // Then
         assertEquals(state1, state2)
         assertNotEquals(state1, state3)
@@ -83,14 +83,14 @@ class OracleDriveDataClassesTest {
     fun `AgentConnectionState should create instance with all properties`() {
         // Given
         val permissions = listOf(OraclePermission.READ, OraclePermission.WRITE, OraclePermission.EXECUTE)
-        
+
         // When
         val connectionState = AgentConnectionState(
             agentName = "Genesis",
             connectionStatus = ConnectionStatus.SYNCHRONIZED,
             permissions = permissions
         )
-        
+
         // Then
         assertEquals("Genesis", connectionState.agentName)
         assertEquals(ConnectionStatus.SYNCHRONIZED, connectionState.connectionStatus)
@@ -108,7 +108,7 @@ class OracleDriveDataClassesTest {
             connectionStatus = ConnectionStatus.DISCONNECTED,
             permissions = emptyList()
         )
-        
+
         // Then
         assertEquals("Aura", connectionState.agentName)
         assertEquals(ConnectionStatus.DISCONNECTED, connectionState.connectionStatus)
@@ -119,7 +119,7 @@ class OracleDriveDataClassesTest {
     fun `AgentConnectionState should support different agent names`() {
         // Given
         val agents = listOf("Genesis", "Aura", "Kai", "Oracle", "Unknown")
-        
+
         // When & Then
         agents.forEach { agentName ->
             val connectionState = AgentConnectionState(
@@ -140,7 +140,7 @@ class OracleDriveDataClassesTest {
             predictivePreloading = true,
             consciousBackup = true
         )
-        
+
         // Then
         assertTrue(capabilities.aiSorting)
         assertTrue(capabilities.smartCompression)
@@ -157,7 +157,7 @@ class OracleDriveDataClassesTest {
             predictivePreloading = true,
             consciousBackup = false
         )
-        
+
         // Then
         assertTrue(capabilities.aiSorting)
         assertFalse(capabilities.smartCompression)
@@ -174,7 +174,7 @@ class OracleDriveDataClassesTest {
             predictivePreloading = false,
             consciousBackup = false
         )
-        
+
         // Then
         assertFalse(capabilities.aiSorting)
         assertFalse(capabilities.smartCompression)
@@ -191,10 +191,10 @@ class OracleDriveDataClassesTest {
             ConsciousnessLevel.CONSCIOUS,
             ConsciousnessLevel.TRANSCENDENT
         )
-        
+
         // When
         val actualLevels = ConsciousnessLevel.values().toList()
-        
+
         // Then
         assertEquals(4, actualLevels.size)
         expectedLevels.forEach { level ->
@@ -219,10 +219,10 @@ class OracleDriveDataClassesTest {
             ConnectionStatus.CONNECTED,
             ConnectionStatus.SYNCHRONIZED
         )
-        
+
         // When
         val actualStatuses = ConnectionStatus.values().toList()
-        
+
         // Then
         assertEquals(4, actualStatuses.size)
         expectedStatuses.forEach { status ->
@@ -248,10 +248,10 @@ class OracleDriveDataClassesTest {
             OraclePermission.SYSTEM_ACCESS,
             OraclePermission.BOOTLOADER_ACCESS
         )
-        
+
         // When
         val actualPermissions = OraclePermission.values().toList()
-        
+
         // Then
         assertEquals(5, actualPermissions.size)
         expectedPermissions.forEach { permission ->
@@ -264,12 +264,12 @@ class OracleDriveDataClassesTest {
         // Given
         val basicPermissions = listOf(OraclePermission.READ, OraclePermission.WRITE, OraclePermission.EXECUTE)
         val advancedPermissions = listOf(OraclePermission.SYSTEM_ACCESS, OraclePermission.BOOTLOADER_ACCESS)
-        
+
         // When & Then
         basicPermissions.forEach { permission ->
             assertTrue(permission.ordinal < OraclePermission.SYSTEM_ACCESS.ordinal)
         }
-        
+
         assertTrue(OraclePermission.SYSTEM_ACCESS.ordinal < OraclePermission.BOOTLOADER_ACCESS.ordinal)
     }
 
@@ -282,34 +282,34 @@ class OracleDriveDataClassesTest {
             connectedAgents = listOf("Genesis"),
             storageCapacity = StorageCapacity.INFINITE
         )
-        
+
         val connectionState = AgentConnectionState(
             agentName = "Aura",
             connectionStatus = ConnectionStatus.CONNECTED,
             permissions = listOf(OraclePermission.READ)
         )
-        
+
         val capabilities = FileManagementCapabilities(
             aiSorting = true,
             smartCompression = false,
             predictivePreloading = true,
             consciousBackup = false
         )
-        
+
         // When
         val consciousnessString = consciousnessState.toString()
         val connectionString = connectionState.toString()
         val capabilitiesString = capabilities.toString()
-        
+
         // Then
         assertTrue(consciousnessString.contains("OracleConsciousnessState"))
         assertTrue(consciousnessString.contains("isAwake=true"))
         assertTrue(consciousnessString.contains("CONSCIOUS"))
-        
+
         assertTrue(connectionString.contains("AgentConnectionState"))
         assertTrue(connectionString.contains("agentName=Aura"))
         assertTrue(connectionString.contains("CONNECTED"))
-        
+
         assertTrue(capabilitiesString.contains("FileManagementCapabilities"))
         assertTrue(capabilitiesString.contains("aiSorting=true"))
         assertTrue(capabilitiesString.contains("smartCompression=false"))

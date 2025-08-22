@@ -33,7 +33,7 @@ class TrinityCoordinatorService @Inject constructor(
     private val kaiAIService: KaiAIService,
     private val genesisBridgeService: GenesisBridgeService,
     private val securityContext: SecurityContext,
-    private val logger: AuraFxLogger
+    private val logger: AuraFxLogger,
 ) {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private var isInitialized = false
@@ -178,7 +178,7 @@ class TrinityCoordinatorService @Inject constructor(
      */
     suspend fun activateFusion(
         fusionType: String,
-        context: Map<String, String> = emptyMap()
+        context: Map<String, String> = emptyMap(),
     ): Flow<AgentResponse> = flow {
         logger.i("Trinity", "🌟 Activating fusion: $fusionType")
 
@@ -233,7 +233,7 @@ class TrinityCoordinatorService @Inject constructor(
      */
     private fun analyzeRequest(
         request: AiRequest,
-        skipEthicalCheck: Boolean = false
+        skipEthicalCheck: Boolean = false,
     ): RequestAnalysis {
         val message = request.query.lowercase()
 
@@ -258,17 +258,17 @@ class TrinityCoordinatorService @Inject constructor(
 
             // Complex requests requiring multiple personas
             (message.contains("secure") && message.contains("creative")) ||
-                    (message.contains("analyze") && message.contains("design")) ->
+                (message.contains("analyze") && message.contains("design")) ->
                 RequestAnalysis(RoutingDecision.PARALLEL_PROCESSING, null)
 
             // Kai specialties
             message.contains("secure") || message.contains("analyze") ||
-                    message.contains("protect") || message.contains("monitor") ->
+                message.contains("protect") || message.contains("monitor") ->
                 RequestAnalysis(RoutingDecision.KAI_ONLY, null)
 
-            // Aura specialties  
+            // Aura specialties
             message.contains("create") || message.contains("design") ||
-                    message.contains("artistic") || message.contains("innovative") ->
+                message.contains("artistic") || message.contains("innovative") ->
                 RequestAnalysis(RoutingDecision.AURA_ONLY, null)
 
             // Default to Genesis for complex queries
@@ -303,7 +303,7 @@ class TrinityCoordinatorService @Inject constructor(
 
     private data class RequestAnalysis(
         val routingDecision: RoutingDecision,
-        val fusionType: String?
+        val fusionType: String?,
     )
 
     private enum class RoutingDecision {
