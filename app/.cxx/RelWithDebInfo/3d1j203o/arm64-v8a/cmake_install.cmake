@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/Wehtt/Music/AuraOS-/collab-canvas/src/main/cpp
+# Install script for directory: C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/collab-canvas-native")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/auraframefx")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/Wehtt/Music/AuraOS-/collab-canvas/.cxx/RelWithDebInfo/135q1y6c/x86/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/Wehtt/Music/AuraOS-/app/.cxx/RelWithDebInfo/3d1j203o/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

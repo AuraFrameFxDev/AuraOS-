@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"jsonFile" : "directory-.-RelWithDebInfo-d0094a50bb2071803777.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.10.0"
@@ -19,7 +19,7 @@
 					]
 				}
 			],
-			"name" : "Debug",
+			"name" : "RelWithDebInfo",
 			"projects" : 
 			[
 				{
@@ -27,7 +27,7 @@
 					[
 						0
 					],
-					"name" : "collab-canvas-native",
+					"name" : "auraframefx",
 					"targetIndexes" : 
 					[
 						0
@@ -38,9 +38,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "collab-canvas-native::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-collab-canvas-native-Debug-ed4de1c5c3b92d62cb91.json",
-					"name" : "collab-canvas-native",
+					"id" : "auraframefx::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-auraframefx-RelWithDebInfo-2fbbd8373d1fb2345275.json",
+					"name" : "auraframefx",
 					"projectIndex" : 0
 				}
 			]
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/Wehtt/Music/AuraOS-/collab-canvas/.cxx/Debug/2c322k4r/x86",
-		"source" : "C:/Users/Wehtt/Music/AuraOS-/collab-canvas/src/main/cpp"
+		"build" : "C:/Users/Wehtt/Music/AuraOS-/app/.cxx/RelWithDebInfo/3d1j203o/arm64-v8a",
+		"source" : "C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp"
 	},
 	"version" : 
 	{
