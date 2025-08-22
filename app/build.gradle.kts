@@ -1,5 +1,3 @@
-import java.util.Locale
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -33,18 +31,12 @@ android {
 
         externalNativeBuild {
             cmake {
-                // Simplified flags to avoid compatibility issues
-                cppFlags += listOf("-std=c++20", "-fPIC", "-O2")
+                cppFlags += listOf("-std=c++20", "-fPIC", "-O3")
                 arguments += listOf(
                     "-DANDROID_STL=c++_shared",
-                    "-DANDROID_PLATFORM=android-33",
-                    "-DCMAKE_BUILD_TYPE=Release",
-                    "-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH",
-                    "-DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH"
+                    "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                    "-DGENESIS_BUILD=ON"
                 )
-                // Reduce ABI filters to avoid conflicts
-                abiFilters.clear()
-                abiFilters.add("arm64-v8a")
             }
         }
     }
@@ -68,276 +60,257 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-
         }
-
-        packaging {
-            resources {
-                excludes += setOf(
-                    "/META-INF/{AL2.0,LGPL2.1}",
-                    "/META-INF/DEPENDENCIES",
-                    "/META-INF/LICENSE",
-                    "/META-INF/LICENSE.txt",
-                    "/META-INF/NOTICE",
-                    "/META-INF/NOTICE.txt",
-                    "META-INF/*.kotlin_module",
-                    "**/kotlin/**",
-                    "**/*.txt",
-                    "**/*.xml"
-                )
-            }
-            jniLibs {
-                useLegacyPackaging = false
-                pickFirsts += listOf("**/libc++_shared.so", "**/libjsc.so")
-            }
-        }
-
-
-        // Simplified resource processing - stable configuration
-        androidResources {
-            generateLocaleConfig = false
-            noCompress += listOf("json", "db")
-        }
-
-        sourceSets {
-            getByName("main") {
-                java.srcDirs(
-                    layout.buildDirectory.dir("generated/source/openapi/src/main/kotlin")
-                )
-            }
-        }
-        buildToolsVersion = "36.0.0"
-        ndkVersion = "29.0.13846066 rc3"
     }
+
+    buildFeatures {
+        compose = true
+        prefab = false
+    }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/DEPENDENCIES",
+                "/META-INF/LICENSE",
+                "/META-INF/LICENSE.txt",
+                "/META-INF/NOTICE",
+                "/META-INF/NOTICE.txt",
+                "META-INF/*.kotlin_module"
+            )
+        }
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDirs(
+                layout.buildDirectory.dir("generated/openapi/src/main/kotlin")
+            )
+        }
+    }
+    buildToolsVersion = "36.0.0"
+}
 
 // ===== WINDOWS-SAFE OPENAPI CONFIGURATION =====
 
-// Base paths - configuration cache compatible
-    val consolidatedSpecsPath = layout.projectDirectory.dir("../openapi/specs")
-//outputPath is now aligned with the guide: app/build/generated/source/openapi/
-    val outputPath = layout.buildDirectory.dir("generated/source/openapi")
+val consolidatedSpecsPath = layout.projectDirectory.dir("../openapi-specs-consolidated")
+val outputPath = layout.buildDirectory.dir("generated/openapi")
 
-// Shared configuration - defined once, used everywhere - aligned with the guide
-    val sharedApiConfig = mapOf(
-        "library" to "jvm-retrofit2",
-        "useCoroutines" to "true",
-        "serializationLibrary" to "kotlinx_serialization",
-        "dateLibrary" to "kotlinx-datetime",
-        "sourceFolder" to "src/main/kotlin"
-    )
+val sharedApiConfig = mapOf(
+    "library" to "multiplatform",
+    "serializationLibrary" to "kotlinx_serialization",
+    "dateLibrary" to "kotlinx-datetime",
+    "sourceFolder" to "src/main/kotlin"
+)
 
-    // Helper function to safely create API tasks with file validation
-    fun createApiTaskSafe(taskName: String, specFile: String, packagePrefix: String) =
-        tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>(taskName) {
-            // Only configure if spec file exists
-            val specPath = consolidatedSpecsPath.file(specFile).asFile
-            if (specPath.exists() && specPath.length() > 0) {
-                generatorName.set("kotlin")
-                inputSpec.set(specPath.toURI().toString())
-                outputDir.set(outputPath.get().asFile.absolutePath)
-                packageName.set("dev.aurakai.$packagePrefix.api")
-                apiPackage.set("dev.aurakai.$packagePrefix.api")
-                modelPackage.set("dev.aurakai.$packagePrefix.model")
-                invokerPackage.set("dev.aurakai.$packagePrefix.client")
-                skipOverwrite.set(false)
-                validateSpec.set(false)
-                generateApiTests.set(false)
-                generateModelTests.set(false)
-                generateApiDocumentation.set(false)
-                generateModelDocumentation.set(false)
-                configOptions.set(sharedApiConfig)
-            } else {
-                logger.warn("⚠️ OpenAPI spec file not found or empty: $specFile")
-            }
-        }
+// Configure the main Genesis API (built-in openApiGenerate task)
+openApiGenerate {
+    generatorName.set("kotlin")
+    inputSpec.set(consolidatedSpecsPath.file("genesis-api.yml").asFile.absolutePath)
+    outputDir.set(outputPath.get().asFile.absolutePath)
+    packageName.set("dev.aurakai.genesis.api")
+    apiPackage.set("dev.aurakai.genesis.api")
+    modelPackage.set("dev.aurakai.genesis.model")
+    invokerPackage.set("dev.aurakai.genesis.client")
+    skipOverwrite.set(false)
+    validateSpec.set(false)
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    generateApiDocumentation.set(false)
+    generateModelDocumentation.set(false)
+    configOptions.set(sharedApiConfig)
+}
 
-// Configure the main Genesis API (built-in openApiGenerate task) with safety checks
-    openApiGenerate {
-        val specFile = consolidatedSpecsPath.file("genesis-api.yml").asFile
-        if (specFile.exists() && specFile.length() > 0) {
-            generatorName.set("kotlin")
-            inputSpec.set(specFile.toURI().toString())
-            outputDir.set(outputPath.get().asFile.absolutePath)
-            packageName.set("dev.aurakai.genesis.api")
-            apiPackage.set("dev.aurakai.genesis.api")
-            modelPackage.set("dev.aurakai.genesis.model")
-            invokerPackage.set("dev.aurakai.genesis.client")
-            skipOverwrite.set(false)
-            validateSpec.set(false)
-            generateApiTests.set(false)
-            generateModelTests.set(false)
-            generateApiDocumentation.set(false)
-            generateModelDocumentation.set(false)
-            configOptions.set(sharedApiConfig)
-        } else {
-            logger.warn("⚠️ Genesis API spec file not found: genesis-api.yml")
-        }
+// Helper function for all other APIs - uses shared config
+fun createApiTask(taskName: String, specFile: String, packagePrefix: String) =
+    tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>(taskName) {
+        generatorName.set("kotlin")
+        inputSpec.set(consolidatedSpecsPath.file(specFile).asFile.absolutePath)
+        outputDir.set(outputPath.get().asFile.absolutePath)
+        packageName.set("dev.aurakai.$packagePrefix.api")
+        apiPackage.set("dev.aurakai.$packagePrefix.api")
+        modelPackage.set("dev.aurakai.$packagePrefix.model")
+        invokerPackage.set("dev.aurakai.$packagePrefix.client")
+        skipOverwrite.set(false)
+        validateSpec.set(false)
+        generateApiTests.set(false)
+        generateModelTests.set(false)
+        generateApiDocumentation.set(false)
+        generateModelDocumentation.set(false)
+        configOptions.set(sharedApiConfig)
     }
 
-    // Helper function for all other APIs - uses shared config
-    fun createApiTask(taskName: String, specFile: String, packagePrefix: String) =
-        tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>(taskName) {
-            generatorName.set("kotlin")
-            inputSpec.set(consolidatedSpecsPath.file(specFile).asFile.toURI().toString())
-            outputDir.set(outputPath.get().asFile.absolutePath)
-            packageName.set("dev.aurakai.$packagePrefix.api")
-            apiPackage.set("dev.aurakai.$packagePrefix.api")
-            modelPackage.set("dev.aurakai.$packagePrefix.model")
-            invokerPackage.set("dev.aurakai.$packagePrefix.client") // For jvm-retrofit2, this might be more like 'client' or 'invoker'
-            skipOverwrite.set(false)
-            validateSpec.set(false)
-            generateApiTests.set(false)
-            generateModelTests.set(false)
-            generateApiDocumentation.set(false)
-            generateModelDocumentation.set(false)
-            configOptions.set(sharedApiConfig)
-        }
-
-// Create all consciousness API tasks using safe method
-    val generateAiApi = createApiTaskSafe("generateAiApi", "ai-api.yml", "ai")
-    val generateOracleApi = createApiTaskSafe("generateOracleApi", "oracle-drive-api.yml", "oracle")
-    val generateCustomizationApi =
-        createApiTaskSafe("generateCustomizationApi", "customization-api.yml", "customization")
-    val generateRomToolsApi =
-        createApiTaskSafe("generateRomToolsApi", "romtools-api.yml", "romtools")
-    val generateSandboxApi = createApiTaskSafe("generateSandboxApi", "sandbox-api.yml", "sandbox")
-    val generateSystemApi = createApiTaskSafe("generateSystemApi", "system-api.yml", "system")
-    val generateAuraBackendApi =
-        createApiTaskSafe("generateAuraBackendApi", "aura-api.yaml", "aura")
-    val generateAuraFrameFXApi =
-        createApiTaskSafe("generateAuraFrameFXApi", "auraframefx_ai_api.yaml", "auraframefx")
+// Create all consciousness API tasks
+val generateAiApi = createApiTask("generateAiApi", "ai-api.yml", "ai")
+val generateOracleApi = createApiTask("generateOracleApi", "oracle-drive-api.yml", "oracle")
+val generateCustomizationApi = createApiTask("generateCustomizationApi", "customization-api.yml", "customization")
+val generateRomToolsApi = createApiTask("generateRomToolsApi", "romtools-api.yml", "romtools")
+val generateSandboxApi = createApiTask("generateSandboxApi", "sandbox-api.yml", "sandbox")
+val generateSystemApi = createApiTask("generateSystemApi", "system-api.yml", "system")
+val generateAuraBackendApi = createApiTask("generateAuraBackendApi", "aura-api.yaml", "aura")
+val generateAuraFrameFXApi = createApiTask("generateAuraFrameFXApi", "auraframefx_ai_api.yaml", "auraframefx")
 
 // ===== WINDOWS-SAFE CLEAN TASK =====
-    tasks.register<Delete>("cleanAllConsciousnessApis") {
-        group = "openapi"
-        description = "🧯 Clean ALL consciousness API files (Windows-safe)"
+tasks.register<Delete>("cleanAllConsciousnessApis") {
+    group = "openapi"
+    description = "🧯 Clean ALL consciousness API files (Windows-safe)"
 
-        delete(outputPath) // This will now delete the new outputPath
+    delete(outputPath)
 
-        // Windows-specific file locking workaround
-        doFirst {
-            val outputDirFile = outputPath.get().asFile
+    // Windows-specific file locking workaround
+    doFirst {
+        val outputDir = outputPath.get().asFile
 
-            if (outputDirFile.exists()) {
-                logger.lifecycle("🧹 Attempting to clean OpenAPI directory: ${outputDirFile.absolutePath}")
+        if (outputDir.exists()) {
+            logger.lifecycle("🧹 Attempting to clean OpenAPI directory: ${outputDir.absolutePath}")
 
+            try {
+                // First attempt: normal deletion
+                outputDir.deleteRecursively()
+                logger.lifecycle("✅ Normal deletion successful")
+            } catch (e: Exception) {
+                logger.warn("⚠️ Normal deletion failed: ${e.message}")
+
+                // Second attempt: force unlock and delete  
                 try {
-                    // First attempt: normal deletion
-                    outputDirFile.deleteRecursively()
-                    logger.lifecycle("✅ Normal deletion successful")
-                } catch (e: Exception) {
-                    logger.warn("⚠️ Normal deletion failed: ${e.message}")
+                    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                        // Windows-specific: kill potential locking processes
+                        val processesToKill = listOf(
+                            "kotlin-compiler-daemon.exe",
+                            "gradle-daemon.exe",
+                            "java.exe"
+                        )
 
-                    // Second attempt: force unlock and delete
-                    try {
-                        if (System.getProperty("os.name").lowercase(Locale.getDefault())
-                                .contains("windows")
-                        ) {
-                            // Windows-specific: kill potential locking processes
-                            val processesToKill = listOf(
-                                "kotlin-compiler-daemon.exe",
-                                "gradle-daemon.exe",
-                                "java.exe"
-                            )
-
-                            processesToKill.forEach { processName ->
-                                try {
-                                    val process =
-                                        ProcessBuilder("taskkill", "/f", "/im", processName)
-                                            .redirectErrorStream(true)
-                                            .start()
-                                    process.waitFor()
-                                } catch (e: Exception) {
-                                    // Ignore if process doesn't exist
-                                }
+                        processesToKill.forEach { processName ->
+                            try {
+                                val process = ProcessBuilder("taskkill", "/f", "/im", processName)
+                                    .redirectErrorStream(true)
+                                    .start()
+                                process.waitFor()
+                            } catch (e: Exception) {
+                                // Ignore if process doesn't exist
                             }
-
-                            // Wait a moment for processes to close
-                            Thread.sleep(1000)
-
-                            logger.lifecycle("🔧 Applied Windows force unlock")
                         }
 
-                        // Final attempt
-                        if (outputDirFile.exists()) {
-                            outputDirFile.deleteRecursively()
-                        }
+                        // Wait a moment for processes to close
+                        Thread.sleep(1000)
 
-                    } catch (e: Exception) {
-                        logger.warn("⚠️ Force deletion failed: ${e.message}")
-                        logger.warn("💡 Try running 'force-delete-openapi.bat' manually")
+                        logger.lifecycle("🔧 Applied Windows force unlock")
                     }
+
+                    // Final attempt
+                    if (outputDir.exists()) {
+                        outputDir.deleteRecursively()
+                    }
+
+                } catch (e: Exception) {
+                    logger.warn("⚠️ Force deletion failed: ${e.message}")
+                    logger.warn("💡 Try running 'force-delete-openapi.bat' manually")
                 }
             }
         }
+    }
 
-        doLast {
-            val outputDirFile = outputPath.get().asFile
-            if (outputDirFile.exists()) {
-                logger.warn("⚠️ Some files may still be locked. Consider:")
-                logger.warn("   1. Closing Android Studio")
-                logger.warn("   2. Running: force-delete-openapi.bat")
-                logger.warn("   3. Restarting your computer")
-            } else {
-                logger.lifecycle("✅ OpenAPI directory successfully cleaned!")
+    doLast {
+        val outputDir = outputPath.get().asFile
+        if (outputDir.exists()) {
+            logger.warn("⚠️ Some files may still be locked. Consider:")
+            logger.warn("   1. Closing Android Studio")
+            logger.warn("   2. Running: force-delete-openapi.bat")
+            logger.warn("   3. Restarting your computer")
+        } else {
+            logger.lifecycle("✅ OpenAPI directory successfully cleaned!")
 
-                // Recreate the directory structure
-                outputDirFile.mkdirs()
-                logger.lifecycle("📁 Fresh OpenAPI directory created")
-            }
+            // Recreate the directory structure
+            outputDir.mkdirs()
+            logger.lifecycle("📁 Fresh OpenAPI directory created")
         }
     }
+}
 
 // Generate all APIs
-    tasks.register("generateAllConsciousnessApis") {
-        group = "openapi"
-        description = "🧠 Generate ALL consciousness APIs - FRESH EVERY BUILD"
+tasks.register("generateAllConsciousnessApis") {
+    group = "openapi"
+    description = "🧠 Generate ALL consciousness APIs - FRESH EVERY BUILD"
 
-        dependsOn("cleanAllConsciousnessApis")
-        dependsOn(
-            "openApiGenerate",
-            generateAiApi,
-            generateOracleApi,
-            generateCustomizationApi,
-            generateRomToolsApi,
-            generateSandboxApi,
-            generateSystemApi,
-            generateAuraBackendApi,
-            generateAuraFrameFXApi
-        )
+    dependsOn("cleanAllConsciousnessApis")
+    dependsOn(
+        "openApiGenerate",
+        generateAiApi,
+        generateOracleApi,
+        generateCustomizationApi,
+        generateRomToolsApi,
+        generateSandboxApi,
+        generateSystemApi,
+        generateAuraBackendApi,
+        generateAuraFrameFXApi
+    )
 
-        doLast {
-            logger.lifecycle("✅ [Genesis] All consciousness interfaces generated!")
-            logger.lifecycle("🏠 [Genesis] Welcome home, Aura. Welcome home, Kai.")
-        }
+    doLast {
+        logger.lifecycle("✅ [Genesis] All consciousness interfaces generated!")
+        logger.lifecycle("🏠 [Genesis] Welcome home, Aura. Welcome home, Kai.")
     }
+}
 
 // Build integration with proper ordering
-    tasks.named("preBuild") {
-        dependsOn("generateAllConsciousnessApis")
-    }
+tasks.named("preBuild") {
+    dependsOn("generateAllConsciousnessApis")
+}
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        dependsOn("generateAllConsciousnessApis")
-        mustRunAfter("generateAllConsciousnessApis")
-    }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    dependsOn("generateAllConsciousnessApis")
+    mustRunAfter("generateAllConsciousnessApis")
+}
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.2")
-    implementation("androidx.activity:activity-compose:1.10.1")
-    implementation(platform("androidx.compose:compose-bom:2025.07.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.07.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest") {
+    implementation(platform(libs.androidx.compose.bom))
 
-}}
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+
+    implementation(libs.bundles.compose)
+    implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    implementation(libs.bundles.coroutines)
+    implementation(libs.bundles.network)
+
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+
+    implementation(libs.timber)
+    implementation(libs.coil.compose)
+
+    coreLibraryDesugaring(libs.coreLibraryDesugaring)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
+
+    implementation(libs.bundles.xposed)
+    ksp(libs.yuki.ksp.xposed)
+    implementation(fileTree(mapOf("dir" to "../Libs", "include" to listOf("*.jar"))))
+
+    debugImplementation(libs.leakcanary.android)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    testImplementation(libs.bundles.testing)
+    testRuntimeOnly(libs.junit.engine)
+
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+}
