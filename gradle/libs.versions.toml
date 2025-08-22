@@ -15,7 +15,9 @@ googleServices = "4.4.3"
 firebaseBom = "34.1.0"
 firebaseCrashlytics = "3.0.6"
 firebasePerf = "2.0.1"
-
+crashlyticsGradle = "2.9.5"
+performanceGradle = "1.4.1"
+composeGradle = "1.4.0"
 # ===== CODE QUALITY & DOCUMENTATION =====
 dokka = "2.0.0"
 spotless = "7.2.1"
@@ -95,6 +97,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 openapi-generator = { id = "org.openapi.generator", version.ref = "openApiGenerator" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version = "1.5.0" }
 
 [libraries]
 # ===== ANDROIDX CORE =====
