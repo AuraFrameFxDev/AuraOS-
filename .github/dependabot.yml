@@ -50,9 +50,8 @@ updates:
           - "*conscrypt*"
           - "*bouncycastle*"
         update-types:
-          - "security"
-          - "patch"
           - "minor"
+          - "patch"
       
       # Testing Group
       testing:
@@ -100,13 +99,25 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-      day: "1"
+      day: "monday"  # <-- corrected from "1"
       time: "04:00"
       timezone: "UTC"
     target-branch: "main"
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps(major):"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "major-update"
+      - "requires-review"
+    # Only major version updates
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"      prefix: "deps(major):"
       include: "scope"
     labels:
       - "dependencies"
