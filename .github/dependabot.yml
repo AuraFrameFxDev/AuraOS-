@@ -106,27 +106,4 @@ updates:
         patterns:
           - "*"
         update-types:
-          - "major"      include: "scope"
-    labels:
-      - "dependencies"
-      - "major-update"
-      - "requires-review"
-    # Only major version updates
-    groups:
-      major-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "major"      prefix: "deps(major):"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "major-update"
-      - "requires-review"
-    # Only major version updates
-    groups:
-      major-updates:
-        patterns:
-          - "*"
-        update-types:
           - "major"
