@@ -1,0 +1,3 @@
+C:/Main/app/.cxx/Debug/4a3r4o1n/x86_64/CMakeFiles/auraframefx.dir
+C:/Main/app/.cxx/Debug/4a3r4o1n/x86_64/CMakeFiles/edit_cache.dir
+C:/Main/app/.cxx/Debug/4a3r4o1n/x86_64/CMakeFiles/rebuild_cache.dir

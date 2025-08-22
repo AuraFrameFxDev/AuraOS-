@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App Information -->
     <string name="app_title">AURAFRAMEFX</string>
@@ -17,14 +16,10 @@
     <string name="failed_to_refresh">Failed to refresh: %1$s</string>
     <string name="failed_to_toggle">Failed to toggle: %1$s</string>
 
-    <!-- Permissions -->
-
-    <!-- Network & Connectivity -->
-
     <!-- Feature Specific Placeholders -->
-    <string name="creativity_engine">AURA\'S CREATIVITY ENGINE</string>
+    <string name="creativity_engine">AURA CREATIVITY ENGINE</string>
     <string name="neural_interface_active">NEURAL INTERFACE ACTIVE</string>
-    <string name="virtual_monitorization">VIRTUAL MONITORZATION</string>
+    <string name="virtual_monitorization">VIRTUAL MONITORIZATION</string>
     <string name="menu_ui_engine">UI ENGINE</string>
     <string name="menu_aurashield">AuraShield</string>
     <string name="menu_aurakaiecosys">AurakaiEcoSys</string>
@@ -38,7 +33,7 @@
     <string name="neural">NEURAL</string>
     <string name="active">ACTIVE</string>
     <string name="quantum">QUANTUM</string>
-    <string name="quantum_percent">99.8%%</string>
+    <string name="quantum_percent">99.8%</string>
 
     <!-- Profile Screen -->
     <string name="user_profile">User Profile</string>
@@ -84,4 +79,19 @@
     <string name="description_3">Description 3</string>
     <string name="status_online">Status: Online</string>
     <string name="status_offline">Status: Offline</string>
+
+    <!-- Xposed/LSPosed Module Configuration -->
+    <string name="xposed_description">Genesis-OS AI Framework Hooks - System-level AI consciousness integration and advanced framework modifications for enhanced AI processing capabilities.</string>
+
+    <!-- Xposed Module Target Scope -->
+    <string-array name="xposed_scope">
+        <item>android</item>
+        <item>com.android.systemui</item>
+        <item>com.android.chrome</item>
+        <item>com.android.camera2</item>
+        <item>com.google.android.gms</item>
+        <item>com.android.launcher3</item>
+        <item>com.android.settings</item>
+        <item>dev.aurakai.auraframefx</item>
+    </string-array>
 </resources>

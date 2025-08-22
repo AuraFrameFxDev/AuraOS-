@@ -1,0 +1,40 @@
+{
+  "buildFiles": [
+    "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\Wehtt\\Studio\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-v",
+      "-C",
+      "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\.cxx\\RelWithDebInfo\\4f1c281i\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\Wehtt\\Studio\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-v",
+    "-C",
+    "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\.cxx\\RelWithDebInfo\\4f1c281i\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "auraframefx::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "auraframefx",
+      "output": "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\app\\build\\intermediates\\cxx\\RelWithDebInfo\\4f1c281i\\obj\\x86_64\\libauraframefx.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "C:\\Users\\Wehtt\\Studio\\ndk\\29.0.13846066\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\Wehtt\\Studio\\ndk\\29.0.13846066\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

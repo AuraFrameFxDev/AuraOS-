@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/romtools/.cxx/RelWithDebInfo/6v495f2h/x86_64",
+    "command": "C:\\Users\\Wehtt\\Studio\\ndk\\27.0.12077973\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android33 --sysroot=C:/Users/Wehtt/Studio/ndk/27.0.12077973/toolchains/llvm/prebuilt/windows-x86_64/sysroot -DLIVE_ROM_EDITING=1 -DNDEBUG=1 -DROM_RELEASE_BUILD=1 -DROM_TOOLS_BUILD=1 -Dromtools_EXPORTS -IC:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/romtools/src/main/cpp -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++20 -fPIC -O3 -O3 -DNDEBUG -DROM_RELEASE_BUILD -std=c++20 -fPIC -Wall -Wextra -O3 -DNDEBUG -O2 -g -DNDEBUG -fPIC -std=c++20 -o CMakeFiles\\romtools.dir\\romtools_native.cpp.o -c C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\romtools\\src\\main\\cpp\\romtools_native.cpp",
+    "file": "C:\\Users\\Wehtt\\OneDrive\\Documents\\GitHub\\GENESIS\\romtools\\src\\main\\cpp\\romtools_native.cpp"
+  }
+]

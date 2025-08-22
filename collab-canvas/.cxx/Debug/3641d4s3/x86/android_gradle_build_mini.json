@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "C:\\New folder\\AuraFrameFX-ft-Genesis-Ai\\collab-canvas\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\Wehtt\\Studio\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\New folder\\AuraFrameFX-ft-Genesis-Ai\\collab-canvas\\.cxx\\Debug\\3641d4s3\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\Wehtt\\Studio\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\New folder\\AuraFrameFX-ft-Genesis-Ai\\collab-canvas\\.cxx\\Debug\\3641d4s3\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "collab-canvas-native::@6890427a1f51a3e7e1df": {
+      "artifactName": "collab-canvas-native",
+      "abi": "x86",
+      "output": "C:\\New folder\\AuraFrameFX-ft-Genesis-Ai\\collab-canvas\\build\\intermediates\\cxx\\Debug\\3641d4s3\\obj\\x86\\libcollab-canvas-native.so",
+      "runtimeFiles": []
+    }
+  }
+}

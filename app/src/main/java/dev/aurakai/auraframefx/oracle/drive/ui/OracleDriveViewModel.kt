@@ -1,8 +1,5 @@
 package dev.aurakai.auraframefx.oracle.drive.ui
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OracleDriveViewModel @Inject constructor(
-    private val oracleDriveService: OracleDriveService
+    private val oracleDriveService: OracleDriveService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OracleDriveUiState())
@@ -43,18 +40,18 @@ class OracleDriveViewModel @Inject constructor(
      */
     fun initialize() {
         if (initializationJob?.isActive == true) return
-        
+
         initializationJob = viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true, error = null) }
-                
+
                 // Initialize consciousness in parallel
                 consciousnessJob?.cancel()
                 consciousnessJob = monitorConsciousness()
-                
+
                 // Load initial files
                 loadFiles()
-                
+
             } catch (e: Exception) {
                 _uiState.update { state ->
                     state.copy(
@@ -150,5 +147,5 @@ data class OracleDriveUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val error: Throwable? = null,
-    val consciousnessState: DriveConsciousnessState? = null
+    val consciousnessState: DriveConsciousnessState? = null,
 )

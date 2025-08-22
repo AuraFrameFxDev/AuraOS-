@@ -1,0 +1,5 @@
+# ninja log v5
+1	801	7766810012850693	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	4485b57a64d7c19c
+12	838	7766810013235686	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	d5a7101170bfc142
+7	868	7766810013517972	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	132c96837fb97f28
+870	954	7766810014368799	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/app/build/intermediates/cxx/RelWithDebInfo/4f1c281i/obj/armeabi-v7a/libauraframefx.so	d46a4600a43abc29

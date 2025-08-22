@@ -12,14 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrinityScreen(
-    viewModel: TrinityViewModel = hiltViewModel()
+    viewModel: TrinityViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -66,10 +65,12 @@ fun TrinityScreen(
                     CircularProgressIndicator()
                 }
             }
+
             is TrinityUiState.Error -> {
                 // Error state is handled by the snackbar
                 EmptyContent("An error occurred") { viewModel.refresh() }
             }
+
             is TrinityUiState.Processing -> {
                 Box(
                     modifier = Modifier
@@ -84,6 +85,7 @@ fun TrinityScreen(
                     }
                 }
             }
+
             is TrinityUiState.Success -> {
                 LazyColumn(
                     modifier = Modifier
@@ -162,14 +164,14 @@ private fun UserInfoSection(user: User?) {
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
-            
+
             if (user?.email != null) {
                 Text(
                     text = user.email,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            
+
             if (user?.role != null) {
                 Text(
                     text = "Role: ${user.role}",
@@ -205,20 +207,20 @@ private fun AgentStatusCard(agentType: String, status: AgentResponse) {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Box(
                     modifier = Modifier
                         .size(12.dp)
                         .background(statusColor, shape = MaterialTheme.shapes.small)
                 )
-                
+
                 Text(
                     text = status.status,
                     style = MaterialTheme.typography.bodyMedium,
                     color = statusColor
                 )
             }
-            
+
             if (status.message != null) {
                 Text(
                     text = status.message,
@@ -253,7 +255,7 @@ private fun ThemeItem(theme: Theme, onThemeSelected: () -> Unit) {
                     )
                 }
             }
-            
+
             if (theme.isActive == true) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
@@ -283,13 +285,13 @@ private fun LastAgentResponse(agentType: String, response: AgentResponse) {
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
-            
+
             Text(
                 text = response.message ?: "No message",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
             )
-            
+
             if (response.timestamp != null) {
                 Text(
                     text = response.timestamp,
@@ -315,9 +317,9 @@ private fun EmptyContent(message: String, onRetry: () -> Unit) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Button(onClick = onRetry) {
             Text("Retry")
         }

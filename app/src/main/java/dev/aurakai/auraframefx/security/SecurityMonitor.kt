@@ -23,7 +23,7 @@ import javax.inject.Singleton
 class SecurityMonitor @Inject constructor(
     private val securityContext: SecurityContext,
     private val genesisBridgeService: GenesisBridgeService,
-    private val logger: AuraFxLogger
+    private val logger: AuraFxLogger,
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isMonitoring = false
@@ -34,7 +34,7 @@ class SecurityMonitor @Inject constructor(
         val severity: String,
         val source: String,
         val timestamp: Long,
-        val details: Map<String, String>
+        val details: Map<String, String>,
     )
 
     @Serializable
@@ -43,7 +43,7 @@ class SecurityMonitor @Inject constructor(
         val confidence: Double,
         val source: String,
         val mitigationApplied: Boolean,
-        val details: Map<String, String>
+        val details: Map<String, String>,
     )
 
     /**
@@ -103,10 +103,12 @@ class SecurityMonitor @Inject constructor(
                     details = mapOf(
                         "error_state" to state.errorState.toString(),
                         "error_message" to (state.errorMessage ?: ""),
-                        // TODO: Fix missing properties
-                        // "threat_level" to state.currentThreatLevel.toString(),
-                        // "permissions_granted" to state.permissionsState.values.count { it }.toString(),
-                        // "total_permissions" to state.permissionsState.size.toString()
+                        "threat_level" to determineCurrentThreatLevel().toString(),
+                        "permissions_granted" to securityContext.permissionsState.value.values.count { it }
+                            .toString(),
+                        "total_permissions" to securityContext.permissionsState.value.size.toString(),
+                        "encryption_status" to securityContext.encryptionStatus.value.toString(),
+                        "threat_detection_active" to securityContext.threatDetectionActive.value.toString()
                     )
                 )
 
@@ -408,4 +410,332 @@ class SecurityMonitor @Inject constructor(
         scope.cancel()
         logger.i("SecurityMonitor", "🛡️ Security monitoring stopped")
     }
+
+    // === ADDITIONAL SECURITY MONITORING METHODS ===
+
+    /**
+     * Determines the current overall threat level based on system state
+     */
+    private fun determineCurrentThreatLevel(): String {
+        val encryptionStatus = securityContext.encryptionStatus.value
+        val deniedPermissions = securityContext.permissionsState.value.values.count { !it }
+        val totalPermissions = securityContext.permissionsState.value.size
+        val errorState = securityContext.securityState.value.errorState
+
+        return when {
+            errorState || encryptionStatus == EncryptionStatus.ERROR -> "HIGH"
+            encryptionStatus == EncryptionStatus.DISABLED ||
+                    deniedPermissions > totalPermissions / 2 -> "MEDIUM"
+
+            deniedPermissions > 0 -> "LOW"
+            else -> "MINIMAL"
+        }
+    }
+
+    /**
+     * Performs comprehensive security health check
+     */
+    suspend fun performSecurityHealthCheck(): SecurityHealthReport {
+        return try {
+            val encryptionHealth = checkEncryptionHealth()
+            val permissionHealth = checkPermissionHealth()
+            val threatHealth = checkThreatDetectionHealth()
+            val systemHealth = checkSystemHealth()
+
+            SecurityHealthReport(
+                overallScore = calculateOverallScore(
+                    encryptionHealth,
+                    permissionHealth,
+                    threatHealth,
+                    systemHealth
+                ),
+                encryptionHealth = encryptionHealth,
+                permissionHealth = permissionHealth,
+                threatDetectionHealth = threatHealth,
+                systemHealth = systemHealth,
+                recommendations = generateSecurityRecommendations(),
+                timestamp = System.currentTimeMillis()
+            )
+        } catch (e: Exception) {
+            logger.e("SecurityMonitor", "Security health check failed", e)
+            SecurityHealthReport(
+                overallScore = 0.0,
+                encryptionHealth = 0.0,
+                permissionHealth = 0.0,
+                threatDetectionHealth = 0.0,
+                systemHealth = 0.0,
+                recommendations = listOf("System health check failed - manual inspection required"),
+                timestamp = System.currentTimeMillis()
+            )
+        }
+    }
+
+    private fun checkEncryptionHealth(): Double {
+        return when (securityContext.encryptionStatus.value) {
+            EncryptionStatus.ACTIVE -> 1.0
+            EncryptionStatus.NOT_INITIALIZED -> 0.5
+            EncryptionStatus.DISABLED -> 0.2
+            EncryptionStatus.ERROR -> 0.0
+        }
+    }
+
+    private fun checkPermissionHealth(): Double {
+        val permissions = securityContext.permissionsState.value
+        val grantedCount = permissions.values.count { it }
+        return if (permissions.isNotEmpty()) {
+            grantedCount.toDouble() / permissions.size
+        } else {
+            1.0 // No permissions required
+        }
+    }
+
+    private fun checkThreatDetectionHealth(): Double {
+        return if (securityContext.threatDetectionActive.value) {
+            val threatLevel = determineCurrentThreatLevel()
+            when (threatLevel) {
+                "MINIMAL" -> 1.0
+                "LOW" -> 0.8
+                "MEDIUM" -> 0.6
+                "HIGH" -> 0.3
+                else -> 0.5
+            }
+        } else {
+            0.4 // Threat detection not active
+        }
+    }
+
+    private fun checkSystemHealth(): Double {
+        val securityState = securityContext.securityState.value
+        return if (securityState.errorState) {
+            0.2 // System has errors
+        } else {
+            0.9 // System appears healthy
+        }
+    }
+
+    private fun calculateOverallScore(
+        encryption: Double,
+        permissions: Double,
+        threats: Double,
+        system: Double
+    ): Double {
+        // Weighted average with encryption and system health being most important
+        return (encryption * 0.3 + permissions * 0.2 + threats * 0.3 + system * 0.2)
+    }
+
+    private fun generateSecurityRecommendations(): List<String> {
+        val recommendations = mutableListOf<String>()
+
+        when (securityContext.encryptionStatus.value) {
+            EncryptionStatus.ERROR -> recommendations.add("Critical: Fix encryption system immediately")
+            EncryptionStatus.DISABLED -> recommendations.add("Enable encryption for data protection")
+            EncryptionStatus.NOT_INITIALIZED -> recommendations.add("Initialize encryption system")
+            EncryptionStatus.ACTIVE -> recommendations.add("Encryption: Operating optimally")
+        }
+
+        if (!securityContext.threatDetectionActive.value) {
+            recommendations.add("Activate threat detection monitoring")
+        }
+
+        val deniedPermissions = securityContext.permissionsState.value.filterValues { !it }
+        if (deniedPermissions.isNotEmpty()) {
+            recommendations.add("Review ${deniedPermissions.size} denied permissions for security impact")
+        }
+
+        if (securityContext.securityState.value.errorState) {
+            recommendations.add("Critical: Resolve system security errors")
+        }
+
+        val threatLevel = determineCurrentThreatLevel()
+        when (threatLevel) {
+            "HIGH" -> recommendations.add("Immediate action required: High threat level detected")
+            "MEDIUM" -> recommendations.add("Moderate security concerns detected - review system")
+            "LOW" -> recommendations.add("Minor security improvements available")
+        }
+
+        if (recommendations.isEmpty()) {
+            recommendations.add("Security posture is optimal")
+        }
+
+        return recommendations
+    }
+
+    /**
+     * Analyzes security trends over time
+     */
+    suspend fun getSecurityTrends(): SecurityTrends {
+        return try {
+            // In a real implementation, this would analyze historical data
+            // For now, provide current state analysis
+            SecurityTrends(
+                threatLevelTrend = "stable",
+                encryptionStabilityTrend = if (securityContext.encryptionStatus.value == EncryptionStatus.ACTIVE) "stable" else "declining",
+                permissionsTrend = "stable",
+                overallSecurityTrend = determineOverallTrend(),
+                riskFactors = identifyRiskFactors(),
+                timestamp = System.currentTimeMillis()
+            )
+        } catch (e: Exception) {
+            logger.e("SecurityMonitor", "Failed to analyze security trends", e)
+            SecurityTrends(
+                threatLevelTrend = "unknown",
+                encryptionStabilityTrend = "unknown",
+                permissionsTrend = "unknown",
+                overallSecurityTrend = "unknown",
+                riskFactors = listOf("Analysis failed"),
+                timestamp = System.currentTimeMillis()
+            )
+        }
+    }
+
+    private fun determineOverallTrend(): String {
+        val threatLevel = determineCurrentThreatLevel()
+        val encryptionActive = securityContext.encryptionStatus.value == EncryptionStatus.ACTIVE
+        val systemHealthy = !securityContext.securityState.value.errorState
+
+        return when {
+            threatLevel == "HIGH" || !systemHealthy -> "declining"
+            threatLevel == "MINIMAL" && encryptionActive -> "improving"
+            else -> "stable"
+        }
+    }
+
+    private fun identifyRiskFactors(): List<String> {
+        val riskFactors = mutableListOf<String>()
+
+        if (securityContext.encryptionStatus.value != EncryptionStatus.ACTIVE) {
+            riskFactors.add("Encryption not fully active")
+        }
+
+        if (!securityContext.threatDetectionActive.value) {
+            riskFactors.add("Threat detection disabled")
+        }
+
+        val deniedPermissions = securityContext.permissionsState.value.filterValues { !it }
+        if (deniedPermissions.size > 2) {
+            riskFactors.add("Multiple permissions denied")
+        }
+
+        if (securityContext.securityState.value.errorState) {
+            riskFactors.add("System security errors present")
+        }
+
+        if (riskFactors.isEmpty()) {
+            riskFactors.add("No significant risk factors identified")
+        }
+
+        return riskFactors
+    }
+
+    /**
+     * Emergency security lockdown
+     */
+    suspend fun emergencyLockdown(reason: String) {
+        try {
+            logger.e("SecurityMonitor", "🚨 EMERGENCY LOCKDOWN INITIATED: $reason")
+
+            // Stop threat detection to prevent further alerts
+            securityContext.stopThreatDetection()
+
+            // Report emergency to Genesis
+            val emergencyEvent = SecurityEvent(
+                eventType = "emergency_lockdown",
+                severity = "critical",
+                source = "kai_emergency_protocol",
+                timestamp = System.currentTimeMillis(),
+                details = mapOf(
+                    "reason" to reason,
+                    "initiated_by" to "security_monitor",
+                    "system_state" to "lockdown"
+                )
+            )
+
+            reportToGenesis("emergency_security", emergencyEvent)
+
+            // Additional lockdown procedures would be implemented here
+            logger.e("SecurityMonitor", "Emergency lockdown procedures completed")
+
+        } catch (e: Exception) {
+            logger.e("SecurityMonitor", "Emergency lockdown failed", e)
+        }
+    }
+
+    /**
+     * Gets comprehensive security dashboard data
+     */
+    suspend fun getSecurityDashboard(): SecurityDashboard {
+        return try {
+            val healthReport = performSecurityHealthCheck()
+            val trends = getSecurityTrends()
+            val assessment = getSecurityAssessment()
+            val threatStatus = getThreatStatus()
+
+            SecurityDashboard(
+                healthReport = healthReport,
+                trends = trends,
+                genesisAssessment = assessment,
+                threatStatus = threatStatus,
+                currentThreatLevel = determineCurrentThreatLevel(),
+                isMonitoring = isMonitoring,
+                lastUpdate = System.currentTimeMillis()
+            )
+        } catch (e: Exception) {
+            logger.e("SecurityMonitor", "Failed to generate security dashboard", e)
+            SecurityDashboard(
+                healthReport = SecurityHealthReport(
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    emptyList(),
+                    System.currentTimeMillis()
+                ),
+                trends = SecurityTrends(
+                    "unknown",
+                    "unknown",
+                    "unknown",
+                    "unknown",
+                    emptyList(),
+                    System.currentTimeMillis()
+                ),
+                genesisAssessment = mapOf("error" to "dashboard_generation_failed"),
+                threatStatus = mapOf("error" to "status_unavailable"),
+                currentThreatLevel = "UNKNOWN",
+                isMonitoring = false,
+                lastUpdate = System.currentTimeMillis()
+            )
+        }
+    }
+
+    // === DATA CLASSES FOR ENHANCED FUNCTIONALITY ===
+
+    data class SecurityHealthReport(
+        val overallScore: Double,
+        val encryptionHealth: Double,
+        val permissionHealth: Double,
+        val threatDetectionHealth: Double,
+        val systemHealth: Double,
+        val recommendations: List<String>,
+        val timestamp: Long
+    )
+
+    data class SecurityTrends(
+        val threatLevelTrend: String,
+        val encryptionStabilityTrend: String,
+        val permissionsTrend: String,
+        val overallSecurityTrend: String,
+        val riskFactors: List<String>,
+        val timestamp: Long
+    )
+
+    data class SecurityDashboard(
+        val healthReport: SecurityHealthReport,
+        val trends: SecurityTrends,
+        val genesisAssessment: Map<String, Any>,
+        val threatStatus: Map<String, Any>,
+        val currentThreatLevel: String,
+        val isMonitoring: Boolean,
+        val lastUpdate: Long
+    )
 }

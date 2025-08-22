@@ -8,9 +8,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -22,7 +22,7 @@ class AppNavGraphTest {
     private lateinit var navController: NavHostController
     private lateinit var mockNavController: NavHostController
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mockNavController = mockk<NavHostController>(relaxed = true)
         clearAllMocks()

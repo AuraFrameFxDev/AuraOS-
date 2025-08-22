@@ -1,438 +1,194 @@
-#include <gtest/gtest.h>
+
 #include <jni.h>
 #include <string>
-#include <vector>
-#include <memory>
+#include <android/log.h>
 
-// Mock JNI environment for testing
-class MockJNIEnv {
-public:
-    MockJNIEnv() = default;
+#define LOG_TAG "LanguageIdJNI"
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
-    ~MockJNIEnv() = default;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    // Mock methods that would normally be provided by JNI
-    jstring NewStringUTF(const char *utf) {
-        return reinterpret_cast<jstring>(const_cast<char *>(utf));
+/**
+ * @brief Initializes the native language identifier using the specified model path.
+ *
+ * Converts the provided Java string model path to a UTF-8 C string, logs the initialization path, and returns the native library version as a string. If the model path is null, returns an empty string.
+ *
+ * @return jstring Native library version string, or an empty string if the model path is null.
+ */
+JNIEXPORT jstring
+
+JNICALL
+Java_com_example_app_language_LanguageIdentifier_nativeInitialize(
+        JNIEnv *env,
+        jobject /* this */,
+        jstring modelPath) {
+    const char *path = env->GetStringUTFChars(modelPath, nullptr);
+    if (path == nullptr) {
+        return env->NewStringUTF("");
     }
 
-    const char *GetStringUTFChars(jstring str, jboolean *isCopy) {
-        return reinterpret_cast<const char *>(str);
+    LOGI("Initializing with model path: %s", path);
+
+    // Initialize language identification with basic patterns
+    // This implementation uses character frequency analysis and common word patterns
+    // for basic language detection without external model dependencies.
+    // Currently, the rule-based nativeDetectLanguage does not require this model path,
+    // but it's logged for potential future use with a model-based approach.
+
+    env->ReleaseStringUTFChars(modelPath, path);
+    return env->NewStringUTF("1.2.0"); // Updated version to reflect improvements
+}
+
+/**
+ * @brief Identifies the language of the input text using heuristic pattern matching.
+ *
+ * Examines the input string for language-specific words and character patterns to determine if the text is in Spanish ("es"), French ("fr"), German ("de"), Italian ("it"), Portuguese ("pt"), or defaults to English ("en"). If the text contains a high proportion of non-ASCII (accented) characters without a clear language match, returns "mul" for multiple or unknown accented languages. Returns "und" if the input is null or cannot be processed.
+ *
+ * @param text The input text to analyze.
+ * @return jstring The detected language code: "en", "es", "fr", "de", "it", "pt", "mul", or "und".
+ */
+JNIEXPORT jstring
+
+JNICALL
+Java_com_example_app_language_LanguageIdentifier_nativeDetectLanguage(
+        JNIEnv *env,
+        jobject /* this */,
+        jlong handle,
+        jstring text) {
+    if (text == nullptr) {
+        return env->NewStringUTF("und");
     }
 
-    void ReleaseStringUTFChars(jstring str, const char *chars) {
-        // Mock implementation
+    const char *nativeText = env->GetStringUTFChars(text, nullptr);
+    if (nativeText == nullptr) {
+        return env->NewStringUTF("und");
     }
 
-    jsize GetStringUTFLength(jstring str) {
-        return strlen(reinterpret_cast<const char *>(str));
+    LOGI("Detecting language for text: %s", nativeText);
+
+    // Enhanced language detection using multiple heuristics
+    std::string textStr(nativeText);
+    std::string result = "en"; // Default to English
+
+    // Convert to lowercase for case-insensitive matching
+    std::transform(textStr.begin(), textStr.end(), textStr.begin(), ::tolower);
+
+    // Language detection based on common words, articles, and patterns
+    // Keywords are checked with spaces around them to avoid matching substrings within words.
+    if (textStr.find(" el ") != std::string::npos ||
+        textStr.find(" la ") != std::string::npos ||
+        textStr.find(" de ") != std::string::npos ||
+        // Also in Portuguese, but more prominent in Spanish start
+        textStr.find(" que ") != std::string::npos || // Also in French/Portuguese
+        textStr.find(" es ") != std::string::npos ||
+        textStr.find(" con ") != std::string::npos || // Also in Italian
+        textStr.find(" y ") != std::string::npos ||
+        textStr.find(" en ") != std::string::npos ||
+        textStr.find(" un ") != std::string::npos || // Also in French/Italian
+        textStr.find(" una ") != std::string::npos) { // Also in Italian
+        result = "es"; // Spanish
+    } else if (textStr.find(" le ") != std::string::npos ||
+               textStr.find(" la ") != std::string::npos || // Also in Spanish/Italian
+               textStr.find(" et ") != std::string::npos ||
+               textStr.find(" ce ") != std::string::npos ||
+               textStr.find(" qui ") != std::string::npos ||
+               textStr.find(" avec ") != std::string::npos ||
+               textStr.find(" est ") != std::string::npos ||
+               textStr.find(" dans ") != std::string::npos ||
+               textStr.find(" pour ") != std::string::npos ||
+               textStr.find(" un ") != std::string::npos) { // Also in Spanish/Italian
+        result = "fr"; // French
+    } else if (textStr.find(" und ") != std::string::npos ||
+               textStr.find(" der ") != std::string::npos ||
+               textStr.find(" die ") != std::string::npos ||
+               textStr.find(" das ") != std::string::npos ||
+               textStr.find(" mit ") != std::string::npos ||
+               textStr.find(" ist ") != std::string::npos ||
+               textStr.find(" ein ") != std::string::npos ||
+               textStr.find(" eine ") != std::string::npos ||
+               textStr.find(" auf ") != std::string::npos ||
+               textStr.find(" von ") != std::string::npos) {
+        result = "de"; // German
+    } else if (textStr.find(" il ") != std::string::npos ||
+               textStr.find(" che ") != std::string::npos ||
+               textStr.find(" con ") != std::string::npos || // Also in Spanish
+               textStr.find(" per ") != std::string::npos ||
+               textStr.find(" sono ") != std::string::npos ||
+               textStr.find(" e ") != std::string::npos || // Also in Portuguese
+               textStr.find(" in ") != std::string::npos ||
+               textStr.find(" un ") != std::string::npos || // Also in Spanish/French
+               textStr.find(" una ") != std::string::npos || // Also in Spanish
+               textStr.find(" non ") != std::string::npos) {
+        result = "it"; // Italian
+    } else if (textStr.find(" o ") != std::string::npos || // Common words, 'o' and 'a' are articles
+               textStr.find(" a ") != std::string::npos ||
+               textStr.find(" que ") != std::string::npos || // Also in Spanish/French
+               textStr.find(" para ") != std::string::npos ||
+               textStr.find(" com ") != std::string::npos || // Also in Spanish
+               textStr.find(" e ") != std::string::npos || // Also in Italian
+               textStr.find(" em ") != std::string::npos ||
+               textStr.find(" um ") != std::string::npos ||
+               textStr.find(" uma ") != std::string::npos ||
+               textStr.find(" de ") != std::string::npos) { // Also in Spanish
+        result = "pt"; // Portuguese
     }
-};
 
-// Test fixture for Language ID L2C JNI functionality
-class LanguageIdL2cJniTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        mock_env = std::make_unique<MockJNIEnv>();
-        // Initialize any test data or mock objects
+    // Additional character frequency analysis for better accuracy
+    int accentCount = 0;
+    for (char c: textStr) {
+        // Basic check for non-ASCII characters. A more sophisticated approach might
+        // involve checking specific Unicode ranges for common accented characters.
+        if (c < 0 || c > 127) accentCount++; // Non-ASCII characters
     }
 
-    void TearDown() override {
-        // Clean up resources
-        mock_env.reset();
+    // If a significant portion of the text contains non-ASCII characters (potential accents)
+    // and no specific language was detected via keywords (still "en"), classify as "mul".
+    if (accentCount > textStr.length() * 0.1 && result == "en") {
+        result = "mul"; // Multiple/unknown with accents
     }
 
-    std::unique_ptr<MockJNIEnv> mock_env;
+    env->ReleaseStringUTFChars(text, nativeText);
+    return env->NewStringUTF(result.c_str());
+}
 
-    // Helper method to create test strings
-    std::string createTestString(const std::string &content) {
-        return content;
+/**
+ * @brief Logs cleanup of language identifier resources for the given handle.
+ *
+ * If the handle is non-zero, logs that resources have been cleaned up. No actual resource deallocation is performed.
+ *
+ * @param handle Native handle for the language identifier instance.
+ */
+JNIEXPORT void JNICALL
+Java_com_example_app_language_LanguageIdentifier_nativeRelease(
+        JNIEnv
+        *env,
+        jobject /* this */,
+        jlong handle
+) {
+// Clean up resources if needed.
+// In the current implementation, nativeInitialize does not allocate any specific resources
+// tied to the handle, as detection is stateless and rule-based.
+// This function serves as a placeholder for potential future enhancements
+// where dynamic resources might be managed.
+    if (handle != 0) {
+// Resource cleanup completed - handle closed
+        LOGI("Language identifier resources cleaned up for handle: %lld (Placeholder - no specific resources allocated)",
+             (long long) handle);
     }
-
-    // Helper method to validate language detection results
-    bool isValidLanguageCode(const std::string &code) {
-        return !code.empty() && code.length() >= 2 && code.length() <= 3;
-    }
-};
-
-// Test basic language detection functionality
-TEST_F(LanguageIdL2cJniTest, BasicLanguageDetection
-) {
-// Test English text
-std::string englishText = "Hello world, this is a test in English language.";
-// Mock the JNI function call result
-std::string result = "en";
-
-EXPECT_TRUE(isValidLanguageCode(result)
-);
-EXPECT_EQ(result,
-"en");
 }
 
-// Test multiple language detection scenarios
-TEST_F(LanguageIdL2cJniTest, MultipleLanguageDetection
-) {
-struct TestCase {
-    std::string text;
-    std::string expected_language;
-    std::string description;
-};
+JNIEXPORT jstring
 
-std::vector<TestCase> testCases = {
-        {"Hello world",      "en", "Simple English text"},
-        {"Bonjour le monde", "fr", "Simple French text"},
-        {"Hola mundo",       "es", "Simple Spanish text"},
-        {"Hallo Welt",       "de", "Simple German text"},
-        {"Ciao mondo",       "it", "Simple Italian text"},
-        {"Olá mundo",        "pt", "Simple Portuguese text"},
-        {"Привет мир",       "ru", "Simple Russian text"},
-        {"你好世界",         "zh", "Simple Chinese text"},
-        {"こんにちは世界",   "ja", "Simple Japanese text"},
-        {"안녕 세계",            "ko", "Simple Korean text"}
-};
-
-for (
-const auto &testCase
-: testCases) {
-// Mock language detection result
-std::string result = testCase.expected_language;
-
-EXPECT_TRUE(isValidLanguageCode(result)
-)
-<< "Invalid language code for: " << testCase.
-description;
-EXPECT_EQ(result, testCase
-.expected_language)
-<< "Wrong language detected for: " << testCase.
-description;
-}
+JNICALL
+Java_com_example_app_language_LanguageIdentifier_nativeGetVersion(
+        JNIEnv *env,
+        jclass /* clazz */) {
+    return env->NewStringUTF("1.2.0"); // Standardized version
 }
 
-// Test edge cases and boundary conditions
-TEST_F(LanguageIdL2cJniTest, EdgeCases
-) {
-// Test empty string
-std::string emptyText = "";
-std::string result = "und"; // undefined language code
-EXPECT_EQ(result,
-"und");
-
-// Test single character
-std::string singleChar = "a";
-result = "und";
-EXPECT_EQ(result,
-"und");
-
-// Test whitespace only
-std::string whitespaceOnly = "   \t\n  ";
-result = "und";
-EXPECT_EQ(result,
-"und");
-
-// Test numbers only
-std::string numbersOnly = "123456789";
-result = "und";
-EXPECT_EQ(result,
-"und");
-
-// Test special characters only
-std::string specialCharsOnly = "!@#$%^&*()";
-result = "und";
-EXPECT_EQ(result,
-"und");
+#ifdef __cplusplus
 }
-
-// Test long text handling
-TEST_F(LanguageIdL2cJniTest, LongTextHandling
-) {
-// Test very long text
-std::string longText = "";
-for (
-int i = 0;
-i < 1000; i++) {
-longText += "This is a very long English text that should be detected correctly. ";
-}
-
-std::string result = "en";
-EXPECT_TRUE(isValidLanguageCode(result)
-);
-EXPECT_EQ(result,
-"en");
-}
-
-// Test mixed language text
-TEST_F(LanguageIdL2cJniTest, MixedLanguageText
-) {
-std::string mixedText = "Hello world Bonjour le monde Hola mundo";
-std::string result = "en"; // Assuming it detects the most prominent language
-
-EXPECT_TRUE(isValidLanguageCode(result)
-);
-// The result should be one of the languages present in the text
-EXPECT_TRUE(result
-== "en" || result == "fr" || result == "es");
-}
-
-// Test Unicode handling
-TEST_F(LanguageIdL2cJniTest, UnicodeHandling
-) {
-std::string unicodeText = "🌍 Hello 世界 मुझे";
-std::string result = "en"; // Mock result
-
-EXPECT_TRUE(isValidLanguageCode(result)
-);
-}
-
-// Test malformed input handling
-TEST_F(LanguageIdL2cJniTest, MalformedInputHandling
-) {
-// Test with malformed UTF-8 sequences
-std::string malformedText = "\xFF\xFE\xFD";
-std::string result = "und";
-
-EXPECT_EQ(result,
-"und");
-}
-
-// Test JNI string conversion functionality
-TEST_F(LanguageIdL2cJniTest, JNIStringConversion
-) {
-const char *testString = "Test string for JNI conversion";
-
-// Test string creation
-jstring jstr = mock_env->NewStringUTF(testString);
-EXPECT_NE(jstr,
-nullptr
-);
-
-// Test string retrieval
-const char *retrievedString = mock_env->GetStringUTFChars(jstr, nullptr);
-EXPECT_STREQ(retrievedString, testString
-);
-
-// Test string length
-jsize length = mock_env->GetStringUTFLength(jstr);
-EXPECT_EQ(length, strlen(testString)
-);
-
-// Test string release
-mock_env->
-ReleaseStringUTFChars(jstr, retrievedString
-);
-}
-
-// Test confidence scoring
-TEST_F(LanguageIdL2cJniTest, ConfidenceScoring
-) {
-struct ConfidenceTestCase {
-    std::string text;
-    double expected_min_confidence;
-    std::string description;
-};
-
-std::vector<ConfidenceTestCase> testCases = {
-        {"This is a very clear English sentence with many words.", 0.8, "High confidence English"},
-        {"Yes",                                                    0.3, "Low confidence due to short text"},
-        {"123 !@# $%^",                                            0.1, "Very low confidence for non-linguistic text"}
-};
-
-for (
-const auto &testCase
-: testCases) {
-// Mock confidence score
-double confidence = testCase.expected_min_confidence;
-
-EXPECT_GE(confidence,
-0.0) << "Confidence should be non-negative for: " << testCase.
-description;
-EXPECT_LE(confidence,
-1.0) << "Confidence should not exceed 1.0 for: " << testCase.
-description;
-EXPECT_GE(confidence, testCase
-.expected_min_confidence)
-<< "Confidence too low for: " << testCase.
-description;
-}
-}
-
-// Test thread safety
-TEST_F(LanguageIdL2cJniTest, ThreadSafety
-) {
-const int numThreads = 4;
-const int iterationsPerThread = 100;
-std::vector<std::thread> threads;
-std::atomic<int> successCount(0);
-
-for (
-int i = 0;
-i<numThreads;
-i++) {
-threads.emplace_back([&, i]() {
-for (
-int j = 0;
-j<iterationsPerThread;
-j++) {
-std::string text = "Thread " + std::to_string(i) + " iteration " + std::to_string(j);
-std::string result = "en"; // Mock result
-
-if (
-isValidLanguageCode(result)
-) {
-successCount++;
-}
-}
-});
-}
-
-for (
-auto &thread
-: threads) {
-thread.
-
-join();
-
-}
-
-EXPECT_EQ(successCount
-.
-
-load(), numThreads
-
-* iterationsPerThread);
-}
-
-// Test performance characteristics
-TEST_F(LanguageIdL2cJniTest, PerformanceCharacteristics
-) {
-std::string text = "This is a performance test for language detection functionality.";
-
-auto start = std::chrono::high_resolution_clock::now();
-
-// Run detection multiple times
-for (
-int i = 0;
-i < 1000; i++) {
-std::string result = "en"; // Mock result
-EXPECT_TRUE(isValidLanguageCode(result)
-);
-}
-
-auto end = std::chrono::high_resolution_clock::now();
-auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-// Should complete 1000 detections within a reasonable time (e.g., 10 seconds)
-EXPECT_LT(duration
-.
-
-count(),
-
-10000) << "Performance test took too long: " << duration.
-
-count()
-
-<< "ms";
-}
-
-// Test memory management
-TEST_F(LanguageIdL2cJniTest, MemoryManagement
-) {
-// Test that creating and destroying many strings doesn't cause memory leaks
-for (
-int i = 0;
-i < 1000; i++) {
-std::string text = "Memory test iteration " + std::to_string(i);
-jstring jstr = mock_env->NewStringUTF(text.c_str());
-
-const char *chars = mock_env->GetStringUTFChars(jstr, nullptr);
-EXPECT_NE(chars,
-nullptr
-);
-
-mock_env->
-ReleaseStringUTFChars(jstr, chars
-);
-}
-}
-
-// Test error handling
-TEST_F(LanguageIdL2cJniTest, ErrorHandling
-) {
-// Test null pointer handling
-jstring nullStr = nullptr;
-
-// The function should handle null inputs gracefully
-// Mock error handling behavior
-std::string result = "und";
-EXPECT_EQ(result,
-"und");
-}
-
-// Test supported languages enumeration
-TEST_F(LanguageIdL2cJniTest, SupportedLanguages
-) {
-// Test that common languages are supported
-std::vector<std::string> commonLanguages = {
-        "en", "es", "fr", "de", "it", "pt", "ru", "zh", "ja", "ko",
-        "ar", "hi", "th", "vi", "tr", "pl", "nl", "sv", "da", "no"
-};
-
-for (
-const auto &lang
-: commonLanguages) {
-EXPECT_TRUE(isValidLanguageCode(lang)
-)
-<< "Language code should be valid: " <<
-lang;
-}
-}
-
-// Test batch processing
-TEST_F(LanguageIdL2cJniTest, BatchProcessing
-) {
-std::vector<std::string> texts = {
-        "English text",
-        "Texto en español",
-        "Texte en français",
-        "Deutscher Text",
-        "Testo italiano"
-};
-
-std::vector<std::string> expectedLanguages = {"en", "es", "fr", "de", "it"};
-
-for (
-size_t i = 0;
-i<texts.
-
-size();
-
-i++) {
-std::string result = expectedLanguages[i]; // Mock result
-
-EXPECT_TRUE(isValidLanguageCode(result)
-);
-EXPECT_EQ(result, expectedLanguages[i]
-);
-}
-}
-
-// Test configuration and options
-TEST_F(LanguageIdL2cJniTest, ConfigurationOptions
-) {
-// Test different configuration options if available
-std::string text = "This is a test for configuration options.";
-
-// Test with different thresholds or parameters
-std::string result1 = "en"; // High confidence threshold
-std::string result2 = "en"; // Low confidence threshold
-
-EXPECT_TRUE(isValidLanguageCode(result1)
-);
-EXPECT_TRUE(isValidLanguageCode(result2)
-);
-}
-
-// Main test runner
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif

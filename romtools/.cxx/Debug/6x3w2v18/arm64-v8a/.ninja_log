@@ -1,0 +1,7 @@
+# ninja log v5
+1	124	7767658857857976	CMakeFiles/romtools.dir/romtools_native.cpp.o	21e7616cb8ab37b0
+126	233	7767658858911408	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/romtools/build/intermediates/cxx/Debug/6x3w2v18/obj/arm64-v8a/libromtools.so	a3698072ff0a1d6c
+0	9	0	clean	ca252f5c3449f1cb
+0	8	0	clean	ca252f5c3449f1cb
+5	177	7767717716142235	CMakeFiles/romtools.dir/romtools_native.cpp.o	21e7616cb8ab37b0
+180	285	7767717717190448	C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/romtools/build/intermediates/cxx/Debug/6x3w2v18/obj/arm64-v8a/libromtools.so	a3698072ff0a1d6c

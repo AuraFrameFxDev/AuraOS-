@@ -2,13 +2,7 @@ package dev.aurakai.auraframefx.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
@@ -16,9 +10,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import dev.aurakai.auraframefx.R
-import dev.aurakai.auraframefx.network.model.ThemeColors
 import dev.aurakai.auraframefx.network.model.Theme
+import dev.aurakai.auraframefx.network.model.ThemeColors
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +20,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class ThemeManager @Inject constructor(
-    private val context: Context
+    private val context: Context,
 ) {
     /**
      * The current theme applied to the application.
@@ -112,15 +105,16 @@ class ThemeManager @Inject constructor(
         )
 
         // Set system UI appearance
-        @Suppress("DEPRECATION")
-        val systemUiVisibility = when {
+        when {
             darkTheme -> {
                 window.decorView.systemUiVisibility = 0
                 true
             }
+
             else -> {
-                window.decorView.systemUiVisibility = android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
-                        android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                window.decorView.systemUiVisibility =
+                    android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
+                            android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                 false
             }
         }
@@ -142,24 +136,24 @@ class ThemeManager @Inject constructor(
 fun SystemUiThemeUpdater(darkTheme: Boolean) {
     val context = LocalContext.current
     val view = LocalView.current
-    
+
     SideEffect {
         val window = (context as? Activity)?.window ?: return@SideEffect
-        
+
         // Set status bar color
         window.statusBarColor = if (darkTheme) {
             Color.Black.copy(alpha = 0.87f).toArgb()
         } else {
             Color.White.toArgb()
         }
-        
+
         // Set navigation bar color
         window.navigationBarColor = if (darkTheme) {
             Color.Black.copy(alpha = 0.8f).toArgb()
         } else {
             Color.White.copy(alpha = 0.95f).toArgb()
         }
-        
+
         // Set system UI appearance
         WindowCompat.getInsetsController(window, view).apply {
             isAppearanceLightStatusBars = !darkTheme

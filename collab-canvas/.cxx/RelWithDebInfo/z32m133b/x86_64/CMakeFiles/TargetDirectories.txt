@@ -1,0 +1,3 @@
+C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/collab-canvas/.cxx/RelWithDebInfo/z32m133b/x86_64/CMakeFiles/collab-canvas-native.dir
+C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/collab-canvas/.cxx/RelWithDebInfo/z32m133b/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/collab-canvas/.cxx/RelWithDebInfo/z32m133b/x86_64/CMakeFiles/rebuild_cache.dir

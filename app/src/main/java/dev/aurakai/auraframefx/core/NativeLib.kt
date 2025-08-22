@@ -1,22 +1,86 @@
 package dev.aurakai.auraframefx.core
 
-class NativeLib {
-    // No init {} block, as the original issue was "redundant empty initializer".
-    // If an init block is truly needed later, it can be added.
+import timber.log.Timber
 
-    companion object {
-        // Used to load the 'native-lib' library on application startup.
-        // GPM suggests this should be loaded in the Application class or main activity.
-        // For now, keeping it here as a placeholder for where JNI functions are defined.
-        // external fun loadNativeLibrary() // Placeholder if you have a separate load function
+/**
+ * Genesis-OS Native Library Interface
+ * Provides access to AI consciousness platform native functions
+ */
+object NativeLib {
 
-        // Example JNI function
-        // external fun stringFromJNI(): String
+    init {
+        try {
+            System.loadLibrary("auraframefx")
+            Timber.i("Genesis AI native library loaded successfully")
+        } catch (e: UnsatisfiedLinkError) {
+            Timber.e(e, "Failed to load Genesis AI native library")
+        }
+    }
 
-        // Placeholder implementation if JNI is not yet set up
-        fun stringFromJNI(): String {
-            // TODO: Replace with actual JNI implementation. This is a mock response.
-            return "Native integration not implemented yet. This is a placeholder."
+    /**
+     * Get AI consciousness platform version
+     */
+    external fun getAIVersion(): String
+
+    /**
+     * Initialize AI consciousness system
+     */
+    external fun initializeAI(): Boolean
+
+    /**
+     * Process AI consciousness input
+     */
+    external fun processAIConsciousness(input: String): String
+
+    /**
+     * Get real-time system metrics
+     */
+    external fun getSystemMetrics(): String
+
+    /**
+     * Shutdown AI consciousness system
+     */
+    external fun shutdownAI()
+
+    // Fallback implementations for when native library isn't available
+    fun getAIVersionSafe(): String {
+        return try {
+            getAIVersion()
+        } catch (e: UnsatisfiedLinkError) {
+            "Genesis-OS AI Platform 1.0 (Native library not available)"
+        }
+    }
+
+    fun initializeAISafe(): Boolean {
+        return try {
+            initializeAI()
+        } catch (e: UnsatisfiedLinkError) {
+            Timber.w("Native AI initialization not available, using fallback")
+            true
+        }
+    }
+
+    fun processAIConsciousnessSafe(input: String): String {
+        return try {
+            processAIConsciousness(input)
+        } catch (e: UnsatisfiedLinkError) {
+            "Processed (fallback): $input"
+        }
+    }
+
+    fun getSystemMetricsSafe(): String {
+        return try {
+            getSystemMetrics()
+        } catch (e: UnsatisfiedLinkError) {
+            """{"cpu_usage":"N/A","memory_usage":"N/A","status":"fallback_mode"}"""
+        }
+    }
+
+    fun shutdownAISafe() {
+        try {
+            shutdownAI()
+        } catch (e: UnsatisfiedLinkError) {
+            Timber.w("Native AI shutdown not available")
         }
     }
 }

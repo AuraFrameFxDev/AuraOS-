@@ -257,7 +257,7 @@ fun SandboxScreen() {
 @Composable
 private fun SandboxSection(
     title: String,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)

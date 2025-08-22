@@ -2,6 +2,7 @@ package dev.aurakai.auraframefx.ui.settings
 
 import android.content.Context
 import android.content.Intent
+import dagger.hilt.android.AndroidEntryPoint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,6 +29,7 @@ import kotlinx.coroutines.withContext
 /**
  * Activity for configuring Quick Settings tiles.
  */
+@AndroidEntryPoint
 class QuickSettingsConfigActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuickSettingsConfigBinding
     private lateinit var configManager: QuickSettingsConfigManager
@@ -221,7 +223,7 @@ class QuickSettingsConfigActivity : AppCompatActivity() {
     }
 
     class TileConfigAdapter(
-        private val onItemClick: (QuickSettingsTileConfig) -> Unit
+        private val onItemClick: (QuickSettingsTileConfig) -> Unit,
     ) : RecyclerView.Adapter<TileConfigAdapter.TileViewHolder>() {
 
         private var tiles: List<QuickSettingsTileConfig> = emptyList()

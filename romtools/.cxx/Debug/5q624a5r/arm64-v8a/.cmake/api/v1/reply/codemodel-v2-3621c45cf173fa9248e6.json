@@ -1,0 +1,51 @@
+{
+  "configurations": [
+    {
+      "directories": [
+        {
+          "build": ".",
+          "hasInstallRule": true,
+          "jsonFile": "directory-.-Debug-adbbddcbee8f6f0bfc97.json",
+          "minimumCMakeVersion": {
+            "string": "3.6.0"
+          },
+          "projectIndex": 0,
+          "source": ".",
+          "targetIndexes": [
+            0
+          ]
+        }
+      ],
+      "name": "Debug",
+      "projects": [
+        {
+          "directoryIndexes": [
+            0
+          ],
+          "name": "romtools",
+          "targetIndexes": [
+            0
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "directoryIndex": 0,
+          "id": "romtools::@6890427a1f51a3e7e1df",
+          "jsonFile": "target-romtools-Debug-78e3ffc10949c5309215.json",
+          "name": "romtools",
+          "projectIndex": 0
+        }
+      ]
+    }
+  ],
+  "kind": "codemodel",
+  "paths": {
+    "build": "C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/romtools/.cxx/Debug/5q624a5r/arm64-v8a",
+    "source": "C:/Users/Wehtt/OneDrive/Documents/GitHub/GENESIS/romtools/src/main/cpp"
+  },
+  "version": {
+    "major": 2,
+    "minor": 3
+  }
+}

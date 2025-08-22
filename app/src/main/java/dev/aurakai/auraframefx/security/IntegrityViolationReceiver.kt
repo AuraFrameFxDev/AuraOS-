@@ -7,8 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.R
 
+@AndroidEntryPoint
 class IntegrityViolationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -18,7 +20,8 @@ class IntegrityViolationReceiver : BroadcastReceiver() {
     }
 
     private fun showNotification(context: Context) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "integrity_violation_channel"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

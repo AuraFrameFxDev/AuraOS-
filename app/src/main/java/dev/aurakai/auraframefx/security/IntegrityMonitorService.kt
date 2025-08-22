@@ -3,13 +3,13 @@ package dev.aurakai.auraframefx.security
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class IntegrityMonitorService : Service() {

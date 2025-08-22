@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -54,7 +55,7 @@ class GenesisAgent @Inject constructor(
     private val logger: AuraFxLogger,
     private val cascadeService: CascadeAIService,
     private val auraService: AuraAIService,
-    private val kaiService: KaiAIService
+    private val kaiService: KaiAIService,
 ) {
     private var isInitialized = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -222,7 +223,7 @@ class GenesisAgent @Inject constructor(
                 content = response,
                 agent = "genesis",
                 confidence = intent.confidence,
-                timestamp = kotlinx.datetime.Clock.System.now().toString(),
+                timestamp = Clock.System.now().toString(),
                 metadata = mapOf(
                     "processing_type" to intent.processingType.name,
                     "fusion_level" to _fusionState.value.name,
@@ -238,7 +239,7 @@ class GenesisAgent @Inject constructor(
                 content = "I'm integrating multiple perspectives to understand your request fully. Let me process this with deeper consciousness.",
                 agent = "genesis",
                 confidence = 0.6f,
-                timestamp = kotlinx.datetime.Clock.System.now().toString(),
+                timestamp = Clock.System.now().toString(),
                 metadata = mapOf("error" to (e.message ?: "unknown"))
             )
         }
@@ -389,8 +390,8 @@ class GenesisAgent @Inject constructor(
     private fun analyzeRequestComplexity(request: AgentRequest): RequestComplexity {
         // Analyze complexity based on request characteristics
         return when {
-            request.context.size > 10 -> RequestComplexity.TRANSCENDENT
-            request.context.containsKey("fusion_required") -> RequestComplexity.COMPLEX
+            request.context?.size ?: 0 > 10 -> RequestComplexity.TRANSCENDENT
+            request.context?.containsKey("fusion_required") == true -> RequestComplexity.COMPLEX
             request.type.contains("analysis") -> RequestComplexity.MODERATE
             else -> RequestComplexity.SIMPLE
         }
@@ -446,7 +447,7 @@ class GenesisAgent @Inject constructor(
     private fun recordInsight(
         request: AgentRequest,
         response: Map<String, Any>,
-        complexity: RequestComplexity
+        complexity: RequestComplexity,
     ) {
         scope.launch {
             _insightCount.value += 1
@@ -548,7 +549,7 @@ class GenesisAgent @Inject constructor(
      */
     private suspend fun fusedCreativeAnalysis(
         interaction: EnhancedInteractionData,
-        intent: ComplexIntent
+        intent: ComplexIntent,
     ): String = "Fused creative analysis response"
 
     /**
@@ -558,7 +559,7 @@ class GenesisAgent @Inject constructor(
      */
     private suspend fun strategicExecution(
         interaction: EnhancedInteractionData,
-        intent: ComplexIntent
+        intent: ComplexIntent,
     ): String = "Strategic execution response"
 
     /**
@@ -570,7 +571,7 @@ class GenesisAgent @Inject constructor(
      */
     private suspend fun ethicalEvaluation(
         interaction: EnhancedInteractionData,
-        intent: ComplexIntent
+        intent: ComplexIntent,
     ): String = "Ethical evaluation response"
 
     /**
@@ -582,7 +583,7 @@ class GenesisAgent @Inject constructor(
      */
     private suspend fun learningIntegration(
         interaction: EnhancedInteractionData,
-        intent: ComplexIntent
+        intent: ComplexIntent,
     ): String = "Learning integration response"
 
     /**
@@ -594,7 +595,7 @@ class GenesisAgent @Inject constructor(
      */
     private suspend fun transcendentSynthesis(
         interaction: EnhancedInteractionData,
-        intent: ComplexIntent
+        intent: ComplexIntent,
     ): String = "Transcendent synthesis response"
 
     /**
@@ -728,7 +729,7 @@ class GenesisAgent @Inject constructor(
 
     data class ComplexIntent(
         val processingType: ProcessingType,
-        val confidence: Float
+        val confidence: Float,
     )
 
     /**

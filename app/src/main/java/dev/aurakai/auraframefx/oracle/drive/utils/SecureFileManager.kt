@@ -2,7 +2,6 @@ package dev.aurakai.auraframefx.oracle.drive.utils
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.toolshed.security.EncryptionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,7 +10,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,7 +20,7 @@ import javax.inject.Singleton
 @Singleton
 class SecureFileManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val encryptionManager: EncryptionManager
+    private val encryptionManager: EncryptionManager,
 ) {
     private val internalStorageDir: File = context.filesDir
     private val secureFileExtension = ".aes"
@@ -41,7 +39,7 @@ class SecureFileManager @Inject constructor(
     suspend fun saveFile(
         data: ByteArray,
         fileName: String,
-        directory: String? = null
+        directory: String? = null,
     ): Flow<FileOperationResult> = flow {
         try {
             val targetDir = directory?.let { File(internalStorageDir, it) } ?: internalStorageDir
@@ -77,12 +75,12 @@ class SecureFileManager @Inject constructor(
      */
     suspend fun readFile(
         fileName: String,
-        directory: String? = null
+        directory: String? = null,
     ): Flow<FileOperationResult> = flow {
         try {
             val targetDir = directory?.let { File(internalStorageDir, it) } ?: internalStorageDir
             val inputFile = File(targetDir, "$fileName$secureFileExtension")
-            
+
             if (!inputFile.exists()) {
                 emit(FileOperationResult.Error("File not found"))
                 return@flow
@@ -112,12 +110,12 @@ class SecureFileManager @Inject constructor(
      */
     suspend fun deleteFile(
         fileName: String,
-        directory: String? = null
+        directory: String? = null,
     ): FileOperationResult = withContext(Dispatchers.IO) {
         try {
             val targetDir = directory?.let { File(internalStorageDir, it) } ?: internalStorageDir
             val fileToDelete = File(targetDir, "$fileName$secureFileExtension")
-            
+
             if (!fileToDelete.exists()) {
                 return@withContext FileOperationResult.Error("File not found")
             }

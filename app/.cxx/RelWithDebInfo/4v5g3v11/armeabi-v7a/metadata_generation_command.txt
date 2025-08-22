@@ -1,0 +1,22 @@
+                        -HC:\Users\Wehtt\StudioProjects\Genesis-ConscienceOS-\app\src\main\cpp
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=33
+-DANDROID_PLATFORM=android-33
+-DANDROID_ABI=armeabi-v7a
+-DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a
+-DANDROID_NDK=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\29.0.13846066
+-DCMAKE_ANDROID_NDK=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\29.0.13846066
+-DCMAKE_TOOLCHAIN_FILE=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\29.0.13846066\build\cmake\android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=C:\Users\Wehtt\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe
+-DCMAKE_CXX_FLAGS=-std=c++20 -fPIC -O3
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\Wehtt\StudioProjects\Genesis-ConscienceOS-\app\build\intermediates\cxx\RelWithDebInfo\4v5g3v11\obj\armeabi-v7a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\Users\Wehtt\StudioProjects\Genesis-ConscienceOS-\app\build\intermediates\cxx\RelWithDebInfo\4v5g3v11\obj\armeabi-v7a
+-DCMAKE_BUILD_TYPE=RelWithDebInfo
+-BC:\Users\Wehtt\StudioProjects\Genesis-ConscienceOS-\app\.cxx\RelWithDebInfo\4v5g3v11\armeabi-v7a
+-GNinja
+-DANDROID_STL=c++_shared
+-DCMAKE_VERBOSE_MAKEFILE=ON
+-DGENESIS_BUILD=ON
+                        Build command args: [-v]
+                        Version: 2

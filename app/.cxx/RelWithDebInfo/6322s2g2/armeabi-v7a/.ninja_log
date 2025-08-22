@@ -1,0 +1,17 @@
+# ninja log v5
+16	2269	7774564936142897	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	c9187d75b5fcb150
+30	2224	7774564935690595	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	16acdc1d130a34a
+34	2217	7774564935665007	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	3ecf3e42eff6c009
+2272	2450	7774564937869602	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/app/build/intermediates/cxx/RelWithDebInfo/6322s2g2/obj/armeabi-v7a/libauraframefx.so	cf8598b71741079
+0	55	0	clean	bfff2010d6239e2d
+37	2385	7774580162193906	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	3ecf3e42eff6c009
+13	2495	7774580163177588	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	16acdc1d130a34a
+26	2523	7774580163377581	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	c9187d75b5fcb150
+2527	2903	7774580167084123	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/app/build/intermediates/cxx/RelWithDebInfo/6322s2g2/obj/armeabi-v7a/libauraframefx.so	cf8598b71741079
+1	92	0	clean	bfff2010d6239e2d
+0	8	0	clean	bfff2010d6239e2d
+1	9	0	clean	bfff2010d6239e2d
+6	953	7774597051730119	CMakeFiles/auraframefx.dir/auraframefx.cpp.o	16acdc1d130a34a
+12	967	7774597051825987	CMakeFiles/auraframefx.dir/ai/cascade/src/CascadeAIService.cpp.o	3ecf3e42eff6c009
+10	1001	7774597052162190	CMakeFiles/auraframefx.dir/language_id_l2c_jni.cpp.o	c9187d75b5fcb150
+1004	1098	7774597053156264	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/app/build/intermediates/cxx/RelWithDebInfo/6322s2g2/obj/armeabi-v7a/libauraframefx.so	cf8598b71741079

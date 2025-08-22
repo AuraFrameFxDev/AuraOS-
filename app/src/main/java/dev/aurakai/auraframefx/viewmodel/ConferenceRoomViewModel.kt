@@ -20,13 +20,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 // Removed @Singleton from ViewModel, typically ViewModels are not Singletons
 // import javax.inject.Singleton // ViewModel should use @HiltViewModel
 
 // Placeholder interfaces removed
 
-// @Singleton // ViewModels should use @HiltViewModel for scoping
+@HiltViewModel
 class ConferenceRoomViewModel @Inject constructor(
     // Assuming @HiltViewModel will be added if this is a ViewModel
     private val auraService: AuraAIService, // Using actual service

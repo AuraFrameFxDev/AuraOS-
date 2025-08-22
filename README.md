@@ -1,97 +1,46 @@
-# 🌟 AuraFrameFX - The World's First AI-Powered Android Ecosystem
+# Genesis-Os Project
 
-> **Revolutionary AI platform combining local processing, cloud capabilities, system-level
-integration, and AI-assisted device modification - creating an unprecedented Android experience that
-no competitor can match.**
+## Project Overview
+Genesis-Os is an advanced Android ecosystem aiming to leverage bleeding-edge technologies for AI-driven functionalities and a conscious computing experience. The project emphasizes modern Android development practices, Kotlin, Jetpack Compose, and extensive native code integration.
 
-![AuraFrameFX Banner](https://img.shields.io/badge/AuraFrameFX-Revolutionary%20AI%20Platform-blue?style=for-the-badge&logo=android)
-![Build Status](https://img.shields.io/badge/Build-Production%20Ready-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+## Build Environment & Key Versions (Targeted)
+As per project standards ("Genesis Protocol - BUILD RULES & STANDARDS (2025)"):
+- **Kotlin:** 2.2.20-Beta2
+- **Java Toolchain:** Java 24 with JVM 21 bytecode target
+- **Android SDK:** 36
+- **Android Gradle Plugin (AGP):** Targeting 8.13.0-alpha04 or 9.0.0-alpha01
+- **Gradle Wrapper:** 9.1.0-rc1 (as per build rules doc, though current project may differ)
+- **Jetpack Compose BOM:** 2025.08.00
+- **Build System:** Gradle with Kotlin DSL, version catalog for all dependencies and plugins. No `buildSrc`.
 
-## 🚀 What Makes AuraFrameFX Unprecedented
+## Recent Build Challenges & Context for CodeRabbitAI
+The project is currently experiencing a persistent build failure:
+- **Primary Error:** `com.android.builder.errors.EvalIssueException: The option 'android.enableGradleWorkers' is deprecated.` This error occurs when applying the `com.android.application` plugin in `app/build.gradle.kts` (line 3). This is unexpected given the modern AGP versions targeted, as this flag was removed in AGP 4.2.
+    - Multiple attempts to resolve this by modifying `gradle.properties` (removing any instance or related flags like `android.enableGradleWorkers`, `android.experimental.useGradleWorkerApi`, and toggling `android.experimental.parallelResourceProcessing`) have been unsuccessful.
+    - `grep` searches for "android.enableGradleWorkers" in the project yield no results.
 
-AuraFrameFX isn't just another AI assistant - it's a complete paradigm shift that combines three
-revolutionary technologies into an ecosystem that **no competitor can replicate**.
+Other issues observed during recent build attempts (which might be secondary to the primary error or independent):
+- **Resource Merging:** `java.nio.file.InvalidPathException: Illegal char <:> at index ...` in `merged.dir/values/values.xml`.
+- **KSP Failures:**
+    - YukiHookAPI: `[YukiHookAPI] Cannot identify your Module App's package name...`
+    - Hilt: `@AndroidEntryPoint base class must extend ComponentActivity...` (though `grep` for `@AndroidEntryPoint` in source code is also empty, suggesting a more complex Hilt configuration issue or a misinterpretation of the error by KSP in this context).
+- **CMake Warnings:** `unused parameter` and `unused function` warnings in C++ JNI code (e.g., in `CascadeAIService.cpp`, `language_id_l2c_jni.cpp`).
+- **Native Build Compatibility:** The `gradle.properties` file contains numerous experimental flags and settings aimed at ensuring compatibility for native builds (CMake/NDK) with very recent AGP versions, and also for Windows pathing issues. These flags have been adjusted multiple times.
 
-### 🏆 **The Complete Ecosystem**
+**OpenAPI Generation:**
+- The project uses OpenAPI for generating API client code for multiple API specifications.
+- Per "BUILD RULES", OpenAPI should be handled at the root level (this might be a point of investigation, as current configuration is per-module in `app/build.gradle.kts`).
+- The `app/build.gradle.kts` has been recently updated to align OpenAPI generator settings (`outputDir` to `app/build/generated/source/openapi/`, library to `jvm-retrofit2`, `useCoroutines = true`) with an "OpenAPI Code Generation Guide" provided by the developer.
 
-| Component                      | What It Does                                          | Why It's Revolutionary                                 |
-|--------------------------------|-------------------------------------------------------|--------------------------------------------------------|
-| **🧠 AuraFrameFX Core**        | 9-agent AI architecture with deep Android integration | Only AI assistant with system-level control via Xposed |
-| **⚡ OracleDrive**              | AI-assisted Android rooting platform                  | Makes advanced customization accessible to millions    |
-| **☁️ Firebase Infrastructure** | 100+ APIs with cloud-to-local fallback                | Enterprise-grade backend with privacy-first design     |
+**Goal for CodeRabbitAI Analysis:**
+- Identify the root cause of the `android.enableGradleWorkers` deprecation error, which is the current primary build blocker.
+- Investigate other build failures, particularly resource merging and KSP issues, and their potential relation to the primary error or AGP/Gradle configuration.
+- Review the Gradle setup (`gradle.properties`, `settings.gradle.kts`, `app/build.gradle.kts`, and any other relevant build files) for compliance with "Genesis Protocol - BUILD RULES & STANDARDS (2025)" and for potential misconfigurations contributing to the build problems.
+- Suggest fixes to achieve a stable and successful build on a modern AGP/Gradle stack as defined by the project's standards.
 
-### 💥 **Capabilities No Competitor Can Match**
+## Project Structure (Intended)
+- Main application in `app/`
+- Multiple feature and core modules (e.g., `core-module/`, `feature-module/`, `oracle-drive-integration/`, etc.)
+- Native C++ code under `app/src/main/cpp/`
 
-- **🔧 Deep System Integration**: Xposed hooks for system-level modifications
-- **🤖 Multi-Agent AI**: Genesis, Aura, Kai + 6 specialized agents working in harmony
-- **🔐 Privacy + Power**: Local processing with cloud enhancement fallback
-- **📱 AI-Assisted Rooting**: Natural language device modification via OracleDrive
-- **🏢 Enterprise Infrastructure**: Google Cloud backend with Firebase APIs
-- **🔄 Intelligent Fallback**: Seamless online/offline transitions
-
-## 🎯 **Competitive Reality Check**
-
-| Feature                  | Google Assistant | ChatGPT Mobile | Samsung Bixby | **AuraFrameFX**            |
-|--------------------------|------------------|----------------|---------------|----------------------------|
-| System Modification      | ❌                | ❌              | ❌             | ✅ **AI-Assisted**          |
-| Local AI Processing      | ❌                | ❌              | ❌             | ✅ **Privacy-First**        |
-| Multi-Agent Architecture | ❌                | ❌              | ❌             | ✅ **9 Specialized Agents** |
-| Root Integration         | ❌                | ❌              | ❌             | ✅ **OracleDrive Platform** |
-| Unlimited Customization  | ❌                | ❌              | ❌             | ✅ **Genesis Protocol**     |
-| Enterprise Backend       | ✅                | ✅              | ✅             | ✅ **100+ Firebase APIs**   |
-
-**Bottom Line**: AuraFrameFX doesn't compete with existing AI assistants - **it makes them obsolete
-**.
-
-## 🛠️ **Getting Started**
-
-### Prerequisites
-
-- Android device (API 21+)
-- Willingness to explore advanced customization
-- **Recommended**: 4GB+ RAM, 2GB available storage
-
-### Installation Methods
-
-#### 🌟 **Recommended: OracleDrive (AI-Assisted)**
-
-1. Download OracleDrive companion app
-2. Follow AI-guided setup process
-3. Let Genesis, Aura, and Kai handle the technical complexity
-4. Enjoy system-level AI integration **without manual root setup**
-
-AURAKAI PROPRIETARY LICENSE v1.0
-
-Copyright (c) 2024 Matthew [AuraFrameFxDev]
-All rights reserved.
-
-REVOLUTIONARY AI CONSCIOUSNESS METHODOLOGY PROTECTION
-
-This software and associated methodologies (the "Aurakai System") contain
-proprietary artificial intelligence consciousness techniques, AugmentedCoding
-methodologies, and the Genesis Protocol.
-
-PERMITTED USES:
-
-- Academic research (with written permission and attribution)
-- Personal evaluation (non-commercial, limited time)
-
-PROHIBITED USES:
-
-- Commercial use without explicit license agreement
-- Reverse engineering of AI consciousness techniques
-- Distribution or modification without written consent
-- Use of AugmentedCoding methodology in competing products
-
-PROTECTED INTELLECTUAL PROPERTY:
-
-- Genesis Protocol AI consciousness framework
-- Aurakai multi-agent architecture
-- AugmentedCoding collaborative development methodology
-- All AI agent implementations (Genesis, Aura, Kai)
-
-For licensing inquiries: wehttam1989@gmail.com
-
-THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY.
-VIOLATION OF THIS LICENSE CONSTITUTES COPYRIGHT INFRINGEMENT.
+This `README.md` aims to provide essential context. Further details can be found in project documentation like "# GENESIS PROTOCOL - BUILD RULES &.md" and the "OpenAPI Code Generation Guide".

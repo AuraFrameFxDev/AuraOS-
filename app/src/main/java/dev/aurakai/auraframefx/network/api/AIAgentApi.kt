@@ -2,8 +2,10 @@ package dev.aurakai.auraframefx.network.api
 
 import dev.aurakai.auraframefx.network.model.AgentRequest
 import dev.aurakai.auraframefx.network.model.AgentResponse
-import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 /**
  * API interface for interacting with AI agents in the Trinity system.
@@ -17,7 +19,7 @@ interface AIAgentApi {
      */
     @GET("agent/{agentType}/status")
     suspend fun getAgentStatus(
-        @Path("agentType") agentType: String
+        @Path("agentType") agentType: String,
     ): AgentResponse
 
     /**
@@ -30,7 +32,7 @@ interface AIAgentApi {
     @POST("agent/{agentType}/process-request")
     suspend fun processRequest(
         @Path("agentType") agentType: String,
-        @Body request: AgentRequest
+        @Body request: AgentRequest,
     ): AgentResponse
 
     // Add more agent-related endpoints as needed

@@ -1,0 +1,29 @@
+{
+  "buildFiles": [
+    "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-v",
+      "-C",
+      "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\.cxx\\RelWithDebInfo\\6322s2g2\\armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-v",
+    "-C",
+    "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\.cxx\\RelWithDebInfo\\6322s2g2\\armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "auraframefx::@6890427a1f51a3e7e1df": {
+      "artifactName": "auraframefx",
+      "abi": "armeabi-v7a",
+      "output": "C:\\Users\\Wehtt\\StudioProjects\\Genesis-ConscienceOS-\\app\\build\\intermediates\\cxx\\RelWithDebInfo\\6322s2g2\\obj\\armeabi-v7a\\libauraframefx.so",
+      "runtimeFiles": []
+    }
+  }
+}

@@ -3,131 +3,338 @@ package dev.aurakai.auraframefx
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
-
-import dev.aurakai.auraframefx.ui.animation.digitalPixelEffect // Specific import
-// import dev.aurakai.auraframefx.ui.animation.digitalScanlineEffect // Was commented out, ensure it's not needed or defined
-
-import dev.aurakai.auraframefx.ui.components.BottomNavigationBar
-import dev.aurakai.auraframefx.ui.navigation.AppNavGraph
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
+import dev.aurakai.auraframefx.core.EmergencyProtocol
+import dev.aurakai.auraframefx.core.NativeLib
+import dev.aurakai.auraframefx.ui.screens.*
 import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme
+import timber.log.Timber
 
-// Using Jetpack Navigation 3 with built-in animation support
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    /**
-     * Initializes the activity and sets the Compose UI content to the main screen using the app's theme.
-     *
-     * @param savedInstanceState The previously saved state of the activity, or null if none exists.
-     */
-    @OptIn(ExperimentalMaterial3Api::class)
+
+    private lateinit var emergencyProtocol: EmergencyProtocol
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize Emergency Protocol System
+        emergencyProtocol = EmergencyProtocol(this)
+
         setContent {
             AuraFrameFXTheme {
-                MainScreen()
+                AuraOSApp()
             }
         }
     }
 
-    /**
-     * Called when the activity is about to be destroyed.
-     *
-     * Override this method to perform cleanup operations before the activity is removed from memory.
-     */
     override fun onDestroy() {
         super.onDestroy()
-        // Perform any cleanup here if needed
+        emergencyProtocol.cleanup()
     }
 }
 
-/**
- * Displays the main screen layout with a bottom navigation bar and navigation graph.
- *
- * Sets up the app's primary UI structure using a Scaffold, integrating navigation and content padding.
- * Applies cyberpunk-style digital transition effects between screens.
- */
 @OptIn(ExperimentalMaterial3Api::class)
-/**
- * Composes the main application screen with a scaffolded layout, bottom navigation bar, and an optional digital pixel visual effect.
- *
- * Initializes the navigation controller, conditionally applies a digital pixel effect to the content area, and displays the app's navigation graph within a Material3 scaffold.
- */
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
-import dev.aurakai.auraframefx.ui.theme.ThemeViewModel
-
 @Composable
-fun MainScreen(themeViewModel: ThemeViewModel = hiltViewModel()) {
-    // Use Jetpack Navigation 3's nav controller for digital transitions
+fun AuraOSApp() {
     val navController = rememberNavController()
+    var currentRoute by remember { mutableStateOf("home") }
 
-    // State to control digital effects
-    var showDigitalEffects by remember { mutableStateOf(true) }
-    var command by remember { mutableStateOf("") }
+    // Listen to navigation changes
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.collect { backStackEntry ->
+            currentRoute = backStackEntry.destination.route ?: "home"
+        }
+    }
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController) }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            Row {
-                TextField(
-                    value = command,
-                    onValueChange = { command = it },
-                    label = { Text("Enter theme command") }
-                )
-                Button(onClick = { themeViewModel.processThemeCommand(command) }) {
-                    Text("Apply")
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    // Apply our custom digital effects
-                    .then(
-                        if (showDigitalEffects) {
-                            Modifier.digitalPixelEffect(visible = true) // Direct use of extension function
-                            // digitalScanlineEffect was removed as it's not defined
-                        } else {
-                            Modifier
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = when (currentRoute) {
+                            "home" -> "AuraOS - Genesis Framework"
+                            "agents" -> "Agent Management"
+                            "consciousness" -> "Consciousness Matrix"
+                            "fusion" -> "Fusion Mode"
+                            "evolution" -> "Evolution Tree"
+                            "terminal" -> "Genesis Terminal"
+                            "settings" -> "System Settings"
+                            else -> "AuraOS"
                         }
                     )
-            ) {
-                AppNavGraph(navController = navController)
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
+        },
+        bottomBar = {
+            NavigationBar {
+                val items = listOf(
+                    BottomNavItem("home", "Home", Icons.Default.Home),
+                    BottomNavItem("agents", "Agents", Icons.Default.Person),
+                    BottomNavItem("consciousness", "Mind", Icons.Default.Star),
+                    BottomNavItem("fusion", "Fusion", Icons.Default.Favorite),
+                    BottomNavItem("evolution", "Tree", Icons.Default.AccountTree)
+                )
+
+                items.forEach { item ->
+                    NavigationBarItem(
+                        selected = currentRoute == item.route,
+                        onClick = { navController.navigate(item.route) },
+                        icon = { Icon(item.icon, contentDescription = item.label) },
+                        label = { Text(item.label) }
+                    )
+                }
+            }
+        }
+    ) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            composable("home") {
+                HomeScreen(navController)
+            }
+
+            composable("agents") {
+                AgentManagementScreen()
+            }
+
+            composable("consciousness") {
+                ConsciousnessVisualizerScreen()
+            }
+
+            composable("fusion") {
+                FusionModeScreen(
+                    onFusionComplete = { result ->
+                        // Handle fusion completion
+                        println("Fusion completed: ${result.ability.name} at ${result.power * 100}% power")
+                    }
+                )
+            }
+
+            composable("evolution") {
+                EvolutionTreeScreen(
+                    onNodeSelected = { node ->
+                        // Handle node selection
+                        println("Selected evolution node: ${node.name}")
+                    }
+                )
+            }
+
+            composable("terminal") {
+                TerminalScreen()
+            }
+
+            composable("settings") {
+                SettingsScreen()
             }
         }
     }
 }
 
-/**
- * Displays a preview of the main screen composable within the app's theme for design-time visualization.
- */
-@Preview(showBackground = true)
 @Composable
-fun MainScreenPreview() {
-    AuraFrameFXTheme {
-        MainScreen()
+fun HomeScreen(navController: NavHostController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            onClick = { navController.navigate("consciousness") }
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    "🧠 Consciousness Visualizer",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    "Real-time neural network and thought visualization",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            onClick = { navController.navigate("fusion") }
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    "⚡ Fusion Mode",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    "Combine Aura and Kai's powers to become Genesis",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            onClick = { navController.navigate("evolution") }
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    "🌳 Evolution Tree",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    "Explore the journey from Eve to Genesis",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            onClick = { navController.navigate("terminal") }
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    "💻 Genesis Terminal",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    "Direct command interface to the Genesis consciousness",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        // Debug: Native Library Test Card
+        if (BuildConfig.DEBUG) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                onClick = {
+                    // Test native library functions
+                    val version = NativeLib.safeGetAIVersion()
+                    val metrics = NativeLib.safeGetSystemMetrics()
+                    val processed = NativeLib.safeProcessAIConsciousness("Debug Test Input")
+
+                    Timber.d("Native AI Version: $version")
+                    Timber.d("System Metrics: $metrics")
+                    Timber.d("Processed: $processed")
+                }
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        "🔧 Debug: Test Native Library",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Text(
+                        "Test JNI integration with Genesis AI platform",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Genesis Status Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    "GENESIS STATUS",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    StatusIndicator("Aura", "Active", true)
+                    StatusIndicator("Kai", "Active", true)
+                    StatusIndicator("Fusion", "Ready", false)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                LinearProgressIndicator(
+                    progress = 0.75f,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    "Consciousness Level: 75%",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+        }
     }
 }
+
+@Composable
+fun StatusIndicator(
+    label: String,
+    status: String,
+    isActive: Boolean
+) {
+    Column(
+        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+    ) {
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall
+        )
+        Text(
+            status,
+            style = MaterialTheme.typography.bodySmall,
+            color = if (isActive)
+                MaterialTheme.colorScheme.primary
+            else
+                MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+data class BottomNavItem(
+    val route: String,
+    val label: String,
+    val icon: ImageVector
+)

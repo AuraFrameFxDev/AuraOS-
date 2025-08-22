@@ -8,10 +8,10 @@ import io.mockk.coEvery
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.runners.JUnit4
 import java.util.concurrent.ConcurrentHashMap
 
@@ -55,13 +55,11 @@ class MockCascadeAIService : Agent {
         flowOf(AgentResponse("Cascade response", 0.9f))
 }
 
-import java.util.concurrent.ConcurrentHashMap
-
 class DummyAgent(
     private val name: String,
     private val response: String,
     private val confidence: Float = 1.0f,
-    private val type: AgentType = AgentType.OTHER
+    private val type: AgentType = AgentType.OTHER,
 ) : Agent {
     override fun getName() = name
     override fun getType() = type
@@ -77,7 +75,7 @@ class DummyAgent(
 class FailingAgent(
     private val name: String,
     private val type: AgentType = AgentType.OTHER,
-    private val errorMessage: String = "Agent processing failed"
+    private val errorMessage: String = "Agent processing failed",
 ) : Agent {
     override fun getName() = name
     override fun getType() = type
@@ -90,17 +88,11 @@ class FailingAgent(
         throw RuntimeException(errorMessage)
 }
 
-import dev.aurakai.auraframefx.ai.clients.VertexAIClient
-import dev.aurakai.auraframefx.context.ContextManager
-import dev.aurakai.auraframefx.security.SecurityContext
-import dev.aurakai.auraframefx.utils.AuraFxLogger
 import io.mockk.coEvery
-import io.mockk.mockk
 import io.mockk.verify
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 @RunWith(JUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -117,7 +109,7 @@ class GenesisAgentTest {
     // Test instance
     private lateinit var genesisAgent: GenesisAgent
 
-    @Before
+    @BeforeEach
     fun setup() {
         // Initialize GenesisAgent with mocked dependencies
         genesisAgent = GenesisAgent(
@@ -131,7 +123,7 @@ class GenesisAgentTest {
         )
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         // Clear any mocks if needed
         clearAllMocks()

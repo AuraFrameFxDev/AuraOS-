@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:35417750637:android:761ddf042a53df1c2a1364",
         "android_client_info": {
-          "package_name": "dev.aurakai.auraframefx"
+          "package_name": "com.aurafm.aurafmefx"
         }
       },
       "oauth_client": [
@@ -41,7 +41,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:35417750637:android:8d81ac6a7c1fbf762a1364",
         "android_client_info": {
-          "package_name": "dev.aurakai.auraframefx"
+          "package_name": "com.aurafm.aurafmefx.debug"
         }
       },
       "oauth_client": [
