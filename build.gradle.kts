@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.openapi.generator) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.kotlin.compose) apply false
 }
 
 // ==== GENESIS PROTOCOL 2025 - VERSION INFO ====

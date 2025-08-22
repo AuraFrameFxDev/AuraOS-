@@ -6,6 +6,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id("org.openapi.generator") version "7.14.0"
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
