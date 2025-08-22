@@ -1,8 +1,7 @@
 plugins {
-    // APP MODULE - Only plugins THIS module needs (inherit versions from root)
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlin.plugin.compose") version "1.5.11" // <-- Specify the latest Compose plugin version here
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
@@ -98,11 +97,9 @@ android {
 
 // ===== WINDOWS-SAFE OPENAPI CONFIGURATION =====
 
-// Base paths - configuration cache compatible
 val consolidatedSpecsPath = layout.projectDirectory.dir("../openapi-specs-consolidated")
 val outputPath = layout.buildDirectory.dir("generated/openapi")
 
-// Shared configuration - defined once, used everywhere
 val sharedApiConfig = mapOf(
     "library" to "multiplatform",
     "serializationLibrary" to "kotlinx_serialization",
@@ -150,14 +147,12 @@ fun createApiTask(taskName: String, specFile: String, packagePrefix: String) =
 // Create all consciousness API tasks
 val generateAiApi = createApiTask("generateAiApi", "ai-api.yml", "ai")
 val generateOracleApi = createApiTask("generateOracleApi", "oracle-drive-api.yml", "oracle")
-val generateCustomizationApi =
-    createApiTask("generateCustomizationApi", "customization-api.yml", "customization")
+val generateCustomizationApi = createApiTask("generateCustomizationApi", "customization-api.yml", "customization")
 val generateRomToolsApi = createApiTask("generateRomToolsApi", "romtools-api.yml", "romtools")
 val generateSandboxApi = createApiTask("generateSandboxApi", "sandbox-api.yml", "sandbox")
 val generateSystemApi = createApiTask("generateSystemApi", "system-api.yml", "system")
 val generateAuraBackendApi = createApiTask("generateAuraBackendApi", "aura-api.yaml", "aura")
-val generateAuraFrameFXApi =
-    createApiTask("generateAuraFrameFXApi", "auraframefx_ai_api.yaml", "auraframefx")
+val generateAuraFrameFXApi = createApiTask("generateAuraFrameFXApi", "auraframefx_ai_api.yaml", "auraframefx")
 
 // ===== WINDOWS-SAFE CLEAN TASK =====
 tasks.register<Delete>("cleanAllConsciousnessApis") {
