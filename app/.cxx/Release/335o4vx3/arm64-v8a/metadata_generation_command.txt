@@ -1,4 +1,4 @@
-                        -HC:\Main\app\src\main\cpp
+                        -HC:\Users\Wehtt\Music\AuraOS-\app\src\main\cpp
 -DCMAKE_SYSTEM_NAME=Android
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 -DCMAKE_SYSTEM_VERSION=33
@@ -9,9 +9,9 @@
 -DCMAKE_TOOLCHAIN_FILE=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\29.0.13846066\build\cmake\android.toolchain.cmake
 -DCMAKE_MAKE_PROGRAM=C:\Users\Wehtt\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe
 -DCMAKE_CXX_FLAGS=-std=c++20 -fPIC -O2
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Main\app\build\intermediates\cxx\Release\335o4vx3\obj\arm64-v8a
--DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\Main\app\build\intermediates\cxx\Release\335o4vx3\obj\arm64-v8a
--BC:\Main\app\.cxx\Release\335o4vx3\arm64-v8a
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\Wehtt\Music\AuraOS-\app\build\intermediates\cxx\Release\335o4vx3\obj\arm64-v8a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\Users\Wehtt\Music\AuraOS-\app\build\intermediates\cxx\Release\335o4vx3\obj\arm64-v8a
+-BC:\Users\Wehtt\Music\AuraOS-\app\.cxx\Release\335o4vx3\arm64-v8a
 -GNinja
 -DANDROID_STL=c++_shared
 -DANDROID_PLATFORM=android-33

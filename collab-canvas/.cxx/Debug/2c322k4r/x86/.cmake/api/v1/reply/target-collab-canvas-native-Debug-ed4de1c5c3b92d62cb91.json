@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "C:/Main/collab-canvas/build/intermediates/cxx/Debug/2c322k4r/obj/x86/libcollab-canvas-native.so"
+			"path" : "C:/Users/Wehtt/Music/AuraOS-/collab-canvas/build/intermediates/cxx/Debug/2c322k4r/obj/x86/libcollab-canvas-native.so"
 		}
 	],
 	"backtrace" : 1,
@@ -65,7 +65,7 @@
 			[
 				{
 					"backtrace" : 3,
-					"path" : "C:/Main/collab-canvas/src/main/cpp"
+					"path" : "C:/Users/Wehtt/Music/AuraOS-/collab-canvas/src/main/cpp"
 				}
 			],
 			"language" : "CXX",

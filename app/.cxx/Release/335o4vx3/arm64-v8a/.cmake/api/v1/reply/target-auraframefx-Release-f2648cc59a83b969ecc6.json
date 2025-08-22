@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "C:/Main/app/build/intermediates/cxx/Release/335o4vx3/obj/arm64-v8a/libauraframefx.so"
+			"path" : "C:/Users/Wehtt/Music/AuraOS-/app/build/intermediates/cxx/Release/335o4vx3/obj/arm64-v8a/libauraframefx.so"
 		}
 	],
 	"backtrace" : 1,
@@ -88,19 +88,19 @@
 			[
 				{
 					"backtrace" : 4,
-					"path" : "C:/Main/app/src/main/cpp"
+					"path" : "C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "C:/Main/app/src/main/cpp/ai"
+					"path" : "C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp/ai"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "C:/Main/app/src/main/cpp/ai/cascade/include"
+					"path" : "C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp/ai/cascade/include"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "C:/Main/app/src/main/cpp/include"
+					"path" : "C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp/include"
 				}
 			],
 			"language" : "CXX",

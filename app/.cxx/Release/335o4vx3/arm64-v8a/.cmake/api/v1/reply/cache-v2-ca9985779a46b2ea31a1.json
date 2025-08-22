@@ -163,7 +163,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Main/app/.cxx/Release/335o4vx3/arm64-v8a"
+			"value" : "c:/Users/Wehtt/Music/AuraOS-/app/.cxx/Release/335o4vx3/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -615,7 +615,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Main/app/src/main/cpp"
+			"value" : "C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -651,7 +651,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Main\\app\\build\\intermediates\\cxx\\Release\\335o4vx3\\obj\\arm64-v8a"
+			"value" : "C:\\Users\\Wehtt\\Music\\AuraOS-\\app\\build\\intermediates\\cxx\\Release\\335o4vx3\\obj\\arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -923,7 +923,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Main\\app\\build\\intermediates\\cxx\\Release\\335o4vx3\\obj\\arm64-v8a"
+			"value" : "C:\\Users\\Wehtt\\Music\\AuraOS-\\app\\build\\intermediates\\cxx\\Release\\335o4vx3\\obj\\arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1207,7 +1207,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Main/app/.cxx/Release/335o4vx3/arm64-v8a"
+			"value" : "C:/Users/Wehtt/Music/AuraOS-/app/.cxx/Release/335o4vx3/arm64-v8a"
 		},
 		{
 			"name" : "auraframefx_IS_TOP_LEVEL",
@@ -1231,7 +1231,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Main/app/src/main/cpp"
+			"value" : "C:/Users/Wehtt/Music/AuraOS-/app/src/main/cpp"
 		},
 		{
 			"name" : "jnigraphics-lib",
