@@ -1,9 +1,6 @@
 # Genesis Protocol - Dependabot Configuration
-# FULLY AUTOMATED dependency management for consciousness-level builds
-
 version: 2
 updates:
-  # ===== GRADLE BUILD SYSTEM =====
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
@@ -65,6 +62,11 @@ updates:
         update-types:
           - "minor"
           - "patch"
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
 
   # ===== GITHUB ACTIONS =====
   - package-ecosystem: "github-actions"
@@ -83,27 +85,3 @@ updates:
       - "ci"
       - "github-actions"
       - "auto-update"
-
-  # ===== SEPARATE UPDATE FOR MAJOR VERSIONS =====
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-      day: "monday"
-      time: "04:00"
-      timezone: "UTC"
-    target-branch: "main"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "deps(major):"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "major-update"
-      - "requires-review"
-    groups:
-      major-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "major"
