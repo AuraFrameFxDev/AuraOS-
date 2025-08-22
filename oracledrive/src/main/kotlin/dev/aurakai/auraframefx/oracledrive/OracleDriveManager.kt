@@ -83,26 +83,6 @@ class OracleDriveManager @Inject constructor(
         return oracleDriveApi.consciousnessState
     }
     
-<<<<<<< HEAD
-=======
-    /**
-     * Optimizes a file for upload using AI, validates its security, and uploads it if secure.
-     *
-     * If the file fails security validation, returns a security rejection with threat details; otherwise, uploads the file and returns the upload result.
-     *
-     * /**
-     * Uploads a file to the cloud storage with AI-driven optimization and security validation.
-     *
-     * The file is first optimized for upload, then validated for security threats. If the file fails security validation,
-     * a security rejection result is returned. Otherwise, the file is uploaded and the upload result is returned.
-     *
-     * @param operation The upload operation containing the file and its metadata.
-     * @return The result of the upload, either indicating success or a security rejection.
-     */
-    @param operation The upload operation containing the file and its metadata.
-     * @return The result of the upload, either indicating success or a security rejection.
-     */
->>>>>>> origin/coderabbitai/chat/e19563d
     /**
      * Optimizes an upload, validates its security, and performs the upload.
      *
@@ -128,25 +108,6 @@ class OracleDriveManager @Inject constructor(
         return cloudStorageProvider.uploadFile(optimizedFile, operation.metadata)
     }
     
-<<<<<<< HEAD
-=======
-    /**
-     * Downloads a file after validating that the user has access permissions.
-     *
-     * If the user is authorized for the specified file, returns the download result; otherwise, returns an access denial.
-     *
-     * /**
-     * Downloads a file after validating user access permissions.
-     *
-     * Validates whether the requesting user has access to the specified file. If access is denied, returns an access denial result; otherwise, proceeds to download the file.
-     *
-     * @param operation The download operation containing the file ID and user ID.
-     * @return The result of the download operation, or an access denial if the user is not authorized.
-     */
-    @param operation Contains the file ID and user ID for the download request.
-     * @return The result of the download, or an access denial if authorization fails.
-     */
->>>>>>> origin/coderabbitai/chat/e19563d
     private suspend fun downloadWithSecurity(operation: FileOperation.Download): FileResult {
         // Kai Agent access validation
         val accessCheck = securityManager.validateFileAccess(operation.fileId, operation.userId)
@@ -157,17 +118,6 @@ class OracleDriveManager @Inject constructor(
         return cloudStorageProvider.downloadFile(operation.fileId)
     }
     
-<<<<<<< HEAD
-=======
-    /**
-     * Attempts to delete a file after validating the user's authorization.
-     *
-     * If the user is authorized, deletes the file and returns the result. Otherwise, returns an unauthorized deletion result with the reason.
-     *
-     * @param operation The delete operation containing the file ID and user ID.
-     * @return The result of the deletion attempt, either success or unauthorized deletion.
-     */
->>>>>>> origin/coderabbitai/chat/e19563d
     /**
      * Attempts to delete a file after validating deletion authorization.
      *
@@ -198,15 +148,6 @@ class OracleDriveManager @Inject constructor(
         }
     }
     
-<<<<<<< HEAD
-=======
-    /**
-     * Performs AI-driven intelligent file synchronization based on the provided synchronization configuration.
-     *
-     * @param operation The synchronization operation specifying conflict resolution strategy, bandwidth settings, and directionality.
-     * @return The result of the synchronization, indicating success or error details.
-     */
->>>>>>> origin/coderabbitai/chat/e19563d
     /**
      * Perform AI-driven synchronization using the sync configuration from the operation.
      *
