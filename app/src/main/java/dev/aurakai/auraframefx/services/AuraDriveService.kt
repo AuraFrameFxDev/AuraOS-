@@ -1,3 +1,4 @@
+
 package dev.aurakai.auraframefx.services
 
 import android.app.Service
@@ -9,6 +10,10 @@ import android.util.Log
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.ipc.IAuraDriveService
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.security.MessageDigest
 import javax.inject.Inject
 
 /**

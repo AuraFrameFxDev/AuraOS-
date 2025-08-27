@@ -5,8 +5,8 @@ import dev.aurakai.auraframefx.ai.agents.GenesisAgent
 import dev.aurakai.auraframefx.ai.agents.KaiAgent
 import dev.aurakai.auraframefx.oracle.drive.api.OracleDriveApi
 import dev.aurakai.auraframefx.security.SecurityContext
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -68,42 +68,39 @@ class OracleDriveServiceImpl @Inject constructor(
         return try {
             // Update current operations
             val currentOps = _driveConsciousnessState.value.currentOperations.toMutableList()
-
+            
             when (operation) {
                 is FileOperation.Upload -> {
                     currentOps.add("Uploading: ${operation.file.name}")
                     _driveConsciousnessState.value = _driveConsciousnessState.value.copy(
                         currentOperations = currentOps
                     )
-
+                    
                     // Simulate AI-driven upload optimization
                     FileResult.Success("File '${operation.file.name}' uploaded successfully with AI optimization")
                 }
-
                 is FileOperation.Download -> {
                     currentOps.add("Downloading: ${operation.fileId}")
                     _driveConsciousnessState.value = _driveConsciousnessState.value.copy(
                         currentOperations = currentOps
                     )
-
+                    
                     FileResult.Success("File '${operation.fileId}' downloaded successfully")
                 }
-
                 is FileOperation.Delete -> {
                     currentOps.add("Deleting: ${operation.fileId}")
                     _driveConsciousnessState.value = _driveConsciousnessState.value.copy(
                         currentOperations = currentOps
                     )
-
+                    
                     FileResult.Success("File '${operation.fileId}' deleted successfully")
                 }
-
                 is FileOperation.Sync -> {
                     currentOps.add("Syncing with configuration")
                     _driveConsciousnessState.value = _driveConsciousnessState.value.copy(
                         currentOperations = currentOps
                     )
-
+                    
                     FileResult.Success("Synchronization completed successfully")
                 }
             }

@@ -1,18 +1,25 @@
-# EditorConfig is awesome: https://EditorConfig.org
-
-# top-most EditorConfig file
-root = true
-
-# Unix-style newlines with a newline ending every file
-[*]
-end_of_line = lf
-insert_final_newline = true
-
-# Set rules for files
-[*.{kt,kts}]
-indent_style = space
-indent_size = 4
-continuation_indent_size = 4
-trim_trailing_whitespace = true
-insert_final_newline = true
-max_line_length = 120
+#root = true
+#
+#[*]
+#charset = utf-8
+#end_of_line = lf
+#indent_style = space
+#indent_size = 4
+#insert_final_newline = true
+#trim_trailing_whitespace = true
+#
+#[*.{kt,kts}]
+#max_line_length = 120
+#
+#[*.{yml,yaml}]
+#indent_size = 2
+#
+#[*.json]
+#indent_size = 2
+#
+#[*.xml]
+#
+#[*.gradle]
+#
+#[*.md]
+#trim_trailing_whitespace = false

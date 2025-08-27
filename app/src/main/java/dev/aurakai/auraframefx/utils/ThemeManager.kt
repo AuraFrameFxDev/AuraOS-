@@ -114,7 +114,7 @@ class ThemeManager @Inject constructor(
             else -> {
                 window.decorView.systemUiVisibility =
                     android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
-                        android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                            android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                 false
             }
         }

@@ -258,19 +258,19 @@ class AIPipelineProcessor @Inject constructor(
         // Add specific agents based on task content
         when {
             task.contains("analyze", ignoreCase = true) ||
-                task.contains("data", ignoreCase = true) -> {
+                    task.contains("data", ignoreCase = true) -> {
                 selectedAgents.add(AgentType.CASCADE)
             }
 
             task.contains("security", ignoreCase = true) ||
-                task.contains("protect", ignoreCase = true) ||
-                task.contains("safe", ignoreCase = true) -> {
+                    task.contains("protect", ignoreCase = true) ||
+                    task.contains("safe", ignoreCase = true) -> {
                 selectedAgents.add(AgentType.KAI)
             }
 
             task.contains("create", ignoreCase = true) ||
-                task.contains("generate", ignoreCase = true) ||
-                task.contains("design", ignoreCase = true) -> {
+                    task.contains("generate", ignoreCase = true) ||
+                    task.contains("design", ignoreCase = true) -> {
                 selectedAgents.add(AgentType.AURA)
             }
         }

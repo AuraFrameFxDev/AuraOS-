@@ -517,7 +517,7 @@ class NeuralWhisperAgent @Inject constructor(
             // Clean pattern database
             cleanOldPatterns()
 
-            System.gc()
+            // System.gc() // Removed explicit GC call - let JVM handle garbage collection automatically
         } catch (e: Exception) {
             Timber.e(e, "Failed to clear Neural Whisper memory cache")
         }

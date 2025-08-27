@@ -144,8 +144,8 @@ class AuraShieldAgent @Inject constructor(
             val learningRate = 0.1f
 
             val newFreq = currentFreq * (1 - learningRate) +
-                (pattern.recentActivity.count { it == activity }
-                    .toFloat() / pattern.recentActivity.size) * learningRate
+                    (pattern.recentActivity.count { it == activity }
+                        .toFloat() / pattern.recentActivity.size) * learningRate
 
             pattern.normalActivity[activity] = newFreq
         }
@@ -921,7 +921,7 @@ class AuraShieldAgent @Inject constructor(
             val activeThreats = _activeThreats.value.filter { it.isActive }
             _activeThreats.value = activeThreats
 
-            System.gc()
+            // System.gc() // Removed explicit GC call - let JVM handle garbage collection automatically
         } catch (e: Exception) {
             Timber.e(e, "Failed to clear Aura Shield memory cache")
         }

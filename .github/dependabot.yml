@@ -1,87 +1,85 @@
-# Genesis Protocol - Dependabot Configuration
 version: 2
 updates:
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "UTC"
-    target-branch: "main"
-    open-pull-requests-limit: 10
-    commit-message:
-      prefix: "deps(gradle):"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "gradle"
-      - "auto-update"
-      - "genesis-protocol"
-    groups:
-      android-core:
-        patterns:
-          - "com.android.*"
-          - "androidx.*"
-        update-types:
-          - "minor"
-          - "patch"
-      kotlin-compose:
-        patterns:
-          - "org.jetbrains.kotlin*"
-          - "androidx.compose*"
-          - "org.jetbrains.kotlinx*"
-        update-types:
-          - "minor"
-          - "patch"
-      security:
-        patterns:
-          - "*security*"
-          - "*crypto*"
-          - "*tink*"
-          - "*conscrypt*"
-          - "*bouncycastle*"
-        update-types:
-          - "minor"
-          - "patch"
-      testing:
-        patterns:
-          - "*junit*"
-          - "*test*"
-          - "*espresso*"
-          - "*mockk*"
-          - "*turbine*"
-        update-types:
-          - "minor"
-          - "patch"
-      networking:
-        patterns:
-          - "*retrofit*"
-          - "*okhttp*"
-          - "*moshi*"
-          - "*serialization*"
-        update-types:
-          - "minor"
-          - "patch"
-      major-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "major"
-
-  # ===== GITHUB ACTIONS =====
+  # Enable updates for GitHub Actions workflows
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "04:00"
-      timezone: "UTC"
-    target-branch: "main"
-    open-pull-requests-limit: 5
+      interval: "daily"
+    open-pull-requests-limit: 20
     commit-message:
-      prefix: "ci:"
-      include: "scope"
+      prefix: "[dependabot][actions]"
     labels:
-      - "ci"
-      - "github-actions"
-      - "auto-update"
+      - "dependencies"
+      - "auto"
+    reviewers:
+      - "AuraFrameFxDev"
+
+  # Enable updates for npm (Node.js, JavaScript)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    commit-message:
+      prefix: "[dependabot][npm]"
+    labels:
+      - "dependencies"
+      - "auto"
+    reviewers:
+      - "AuraFrameFxDev"
+
+  # Enable updates for pip (Python)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    commit-message:
+      prefix: "[dependabot][pip]"
+    labels:
+      - "dependencies"
+      - "auto"
+    reviewers:
+      - "AuraFrameFxDev"
+
+  # Enable updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    commit-message:
+      prefix: "[dependabot][docker]"
+    labels:
+      - "dependencies"
+      - "auto"
+    reviewers:
+      - "AuraFrameFxDev"
+
+  # Enable updates for Maven (Java)
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    commit-message:
+      prefix: "[dependabot][maven]"
+    labels:
+      - "dependencies"
+      - "auto"
+    reviewers:
+      - "AuraFrameFxDev"
+
+  # Enable updates for Composer (PHP)
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    commit-message:
+      prefix: "[dependabot][composer]"
+    labels:
+      - "dependencies"
+      - "auto"
+    reviewers:
+      - "AuraFrameFxDev"

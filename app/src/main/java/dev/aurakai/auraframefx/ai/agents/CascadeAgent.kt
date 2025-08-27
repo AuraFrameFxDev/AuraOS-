@@ -570,7 +570,7 @@ class CascadeAgent @Inject constructor(
                 collaborationHistory.subList(0, collaborationHistory.size - 500).clear()
             }
 
-            System.gc()
+            // System.gc() // Removed explicit GC call - let JVM handle garbage collection automatically
         } catch (e: Exception) {
             Timber.e(e, "Failed to clear Cascade memory cache")
         }
@@ -655,7 +655,7 @@ class CascadeAgent @Inject constructor(
     ): Boolean {
         // Determine if agents should collaborate based on their current status
         return _collaborationMode.value == CollaborationMode.COORDINATED ||
-            _collaborationMode.value == CollaborationMode.UNIFIED
+                _collaborationMode.value == CollaborationMode.UNIFIED
     }
 
     private suspend fun initiateCollaboration() {

@@ -425,7 +425,7 @@ class SecurityMonitor @Inject constructor(
         return when {
             errorState || encryptionStatus == EncryptionStatus.ERROR -> "HIGH"
             encryptionStatus == EncryptionStatus.DISABLED ||
-                deniedPermissions > totalPermissions / 2 -> "MEDIUM"
+                    deniedPermissions > totalPermissions / 2 -> "MEDIUM"
 
             deniedPermissions > 0 -> "LOW"
             else -> "MINIMAL"

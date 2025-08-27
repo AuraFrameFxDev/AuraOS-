@@ -1,23 +1,35 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.dokka)
     alias(libs.plugins.spotless)
+}
+
+// Java 21 consistency
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 android {
     namespace = "dev.aurakai.auraframefx.romtools"
     compileSdk = 36
-    ndkVersion = 27.toInt().toString()
 
     defaultConfig {
         minSdk = 33
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        // NDK configuration only if native code exists (currently backed up)
+        if (project.file("src/main/cpp/CMakeLists.txt").exists()) {
+            ndk {
+                abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
+            }
+        }
     }
 
     buildTypes {
@@ -31,104 +43,137 @@ android {
     }
 
     buildFeatures {
-        compose = true
+        compose = false
         buildConfig = true
+        viewBinding = false
     }
-}
 
-// SACRED RULE #3: ZERO MANUAL COMPILER CONFIG
-// NO kotlinOptions blocks (K2 handles JVM target automatically)
-// NO composeOptions blocks (auto-provisioned by Compose Compiler plugin)
-// Clean, minimal build.gradle.kts files
-
-
-dependencies {
-    implementation(platform(libs.androidx.compose.bom))
-
-    // SACRED RULE #5: DEPENDENCY HIERARCHY
-    implementation(project(":core-module"))
-    implementation(project(":app"))
-    implementation(project(":secure-comm"))
-
-    // Core Android bundles
-    implementation(libs.bundles.androidx.core)
-    implementation(libs.bundles.compose)
-    implementation(libs.bundles.coroutines)
-    implementation(libs.bundles.network)
-
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
-
-    // Hilt Dependency Injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
-
-    // Room Database
-    implementation(libs.bundles.room)
-    ksp(libs.room.compiler)
-
-    // Security bundles
-
-    // Utilities
-    implementation(libs.bundles.utilities)
-
-    // Core library desugaring
-    coreLibraryDesugaring(libs.coreLibraryDesugaring)
-
-    // Testing
-    testImplementation(libs.bundles.testing)
-    testImplementation(libs.junit.engine)
-    androidTestImplementation(libs.bundles.testing)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.hilt.android.testing)
-    kspAndroidTest(libs.hilt.compiler)
-
-    // Debug implementations
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Xposed Framework - YukiHookAPI (Standardized)
-    implementation(libs.yuki)
-    ksp(libs.yuki.ksp.xposed)
-    implementation(libs.bundles.xposed)
-    
-    // Legacy Xposed API (compatibility)
-    implementation(files("${project.rootDir}/Libs/api-82.jar"))
-    implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
-}
-
-// Configure native ROM tools build
-tasks.configureEach {
-    if (name.startsWith("externalNativeBuild")) {
-        dependsOn("copyRomTools")
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
-}
 
-// Task to copy ROM modification tools
-tasks.register<Copy>("copyRomTools") {
-    from("src/main/cpp")
-    into(layout.buildDirectory.dir("rom-tools").get())
-    include("**/*.so", "**/*.bin", "**/*.img", "**/*.cpp", "**/*.h")
-    includeEmptyDirs = false
-}
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+            apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+        }
+    }
 
-// Task to verify ROM tools integrity
-tasks.register("verifyRomTools") {
-    doLast {
-        val romToolsDir = file(layout.buildDirectory.dir("rom-tools").get())
-        if (!romToolsDir.exists()) {
-            println("⚠️  ROM tools directory not found - ROM functionality may be limited")
-        } else {
-            println("✅ ROM tools verified and ready")
+    packaging {
+        resources {
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/DEPENDENCIES",
+                "/META-INF/LICENSE",
+                "/META-INF/LICENSE.txt",
+                "/META-INF/NOTICE",
+                "/META-INF/NOTICE.txt",
+                "META-INF/*.kotlin_module"
+            )
+        }
+    }
+
+    // Conditional native build only if CMake file exists
+    if (project.file("src/main/cpp/CMakeLists.txt").exists()) {
+        externalNativeBuild {
+            cmake {
+                path = file("src/main/cpp/CMakeLists.txt")
+                version = "3.22.1"
+            }
         }
     }
 }
 
-tasks.named("preBuild") {
-    dependsOn("verifyRomTools")
-    doLast {
-        println("✅ ROM tools verified and ready")
+dependencies {
+    // SACRED RULE #5: DEPENDENCY HIERARCHY
+    implementation(project(":core-module"))
+    implementation(project(":secure-comm"))
+
+    // Core Android libraries (since ROM tools need Android APIs)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+
+    // Kotlin libraries
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.bundles.coroutines)
+    implementation(libs.kotlinx.serialization.json)
+
+    // Hilt Dependency Injection (Android version)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.okhttp3.logging.interceptor)
+
+    // Security (Android compatible)
+    implementation(libs.bouncycastle)
+    implementation(libs.androidxSecurity)
+
+    // Android-specific utilities
+    implementation(libs.timber)
+    implementation(libs.gson)
+    implementation(libs.commons.io)
+    implementation(libs.commons.compress)
+    implementation(libs.xz)
+
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testRuntimeOnly(libs.junit.engine)
+    
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+}
+
+// ROM Tools specific tasks
+tasks.register<Copy>("copyRomTools") {
+    from("src/main/resources")
+    val destDir = layout.buildDirectory.dir("rom-tools").get()
+    into(destDir)
+    include("**/*.so", "**/*.bin", "**/*.img", "**/*.jar")
+    includeEmptyDirs = false
+    
+    doFirst {
+        destDir.asFile.mkdirs()
+        logger.lifecycle("📁 Creating ROM tools directory: ${destDir.asFile.absolutePath}")
     }
+    
+    doLast {
+        logger.lifecycle("✅ ROM tools copied to: ${destDir.asFile.absolutePath}")
+    }
+}
+
+abstract class VerifyRomToolsTask : DefaultTask() {
+    @get:InputDirectory
+    @get:Optional
+    abstract val romToolsDir: DirectoryProperty
+
+    @TaskAction
+    fun verify() {
+        val dir = romToolsDir.orNull?.asFile
+        if (dir?.exists() != true) {
+            logger.warn("⚠️  ROM tools directory not found - ROM functionality may be limited")
+        } else {
+            logger.lifecycle("✅ ROM tools verified and ready: ${dir.absolutePath}")
+        }
+    }
+}
+
+tasks.register<VerifyRomToolsTask>("verifyRomTools") {
+    romToolsDir.set(layout.buildDirectory.dir("rom-tools"))
+    dependsOn("copyRomTools")
+}
+
+tasks.named("build") {
+    dependsOn("verifyRomTools")
 }

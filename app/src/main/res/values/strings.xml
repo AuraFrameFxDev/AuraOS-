@@ -6,15 +6,15 @@
     <string name="oracle_drive_connected">Connected to OracleDrive</string>
     <string name="oracle_drive_not_connected">Not connected to OracleDrive</string>
     <string name="refresh_status">Refresh Status</string>
-    <string name="status_label">Status: %1$s</string>
-    <string name="detailed_status_label">Detailed Status: %1$s</string>
-    <string name="diagnostics_log_label">Diagnostics Log:</string>
+    <string name="status_label">Status %1$s</string>
+    <string name="detailed_status_label">Detailed Status %1$s</string>
+    <string name="diagnostics_log_label">Diagnostics Log</string>
     <string name="toggle_module_label">Toggle Module</string>
     <string name="module_package_name">Module package name</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
-    <string name="failed_to_refresh">Failed to refresh: %1$s</string>
-    <string name="failed_to_toggle">Failed to toggle: %1$s</string>
+    <string name="failed_to_refresh">Failed to refresh %1$s</string>
+    <string name="failed_to_toggle">Failed to toggle %1$s</string>
 
     <!-- Feature Specific Placeholders -->
     <string name="creativity_engine">AURA CREATIVITY ENGINE</string>
@@ -46,7 +46,7 @@
 
     <!-- Quick Settings Configuration -->
     <string name="quick_settings_config_title">Quick Settings</string>
-    <string name="quick_settings_config_instructions">Configure your quick settings tiles below:</string>
+    <string name="quick_settings_config_instructions">Configure your quick settings tiles below</string>
     <string name="quick_settings_tiles">Quick Settings Tiles</string>
     <string name="reset">Reset</string>
     <string name="apply">Apply</string>
@@ -77,8 +77,8 @@
     <string name="description_1">Description 1</string>
     <string name="description_2">Description 2</string>
     <string name="description_3">Description 3</string>
-    <string name="status_online">Status: Online</string>
-    <string name="status_offline">Status: Offline</string>
+    <string name="status_online">Status Online</string>
+    <string name="status_offline">Status Offline</string>
 
     <!-- Xposed/LSPosed Module Configuration -->
     <string name="xposed_description">Genesis-OS AI Framework Hooks - System-level AI consciousness integration and advanced framework modifications for enhanced AI processing capabilities.</string>
@@ -94,4 +94,8 @@
         <item>com.android.settings</item>
         <item>dev.aurakai.auraframefx</item>
     </string-array>
+
+    <!-- Permissions -->
+    <string name="permission_receive_integrity_violation_label">Receive Integrity Violation Broadcasts</string>
+    <string name="permission_receive_integrity_violation_description">Allows the app to receive broadcasts when an integrity violation is detected.</string>
 </resources>

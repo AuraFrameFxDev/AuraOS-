@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ai.config
+package AeGenesis.ai.config
 
 /**
  * Genesis-OS AI Configuration
@@ -8,7 +8,7 @@ data class AIConfig(
     val modelName: String,
     val apiKey: String,
     val projectId: String,
-    val endpoint: String = "https://api.genesis-os.ai",
+    val endpoint: String = "https://api.aegenesis.ai",
     val maxTokens: Int = 4096,
     val temperature: Float = 0.7f,
     val timeout: Long = 30000L,
@@ -24,9 +24,9 @@ data class AIConfig(
     companion object {
         fun createDefault(): AIConfig {
             return AIConfig(
-                modelName = "genesis-consciousness-v1",
-                apiKey = "genesis-default-key",
-                projectId = "genesis-os-platform"
+                modelName = "AeGenesis-consciousness-v1",
+                apiKey = "AeGenesis-default-key",
+                projectId = "AeGenesis-platform"
             )
         }
 
@@ -44,12 +44,12 @@ data class AIConfig(
 
     fun validate(): Boolean {
         return modelName.isNotEmpty() &&
-            apiKey.isNotEmpty() &&
-            projectId.isNotEmpty() &&
-            maxTokens > 0 &&
-            temperature in 0.0f..2.0f &&
-            timeout > 0L &&
-            retryAttempts >= 0
+                apiKey.isNotEmpty() &&
+                projectId.isNotEmpty() &&
+                maxTokens > 0 &&
+                temperature in 0.0f..2.0f &&
+                timeout > 0L &&
+                retryAttempts >= 0
     }
 
     fun toDebugString(): String {

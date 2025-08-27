@@ -14,8 +14,7 @@ extern "C" {
  * Initialize Oracle Drive Native ROM Engine
  * Called from Kotlin to initialize the native ROM processing capabilities
  */
-JNIEXPORT jboolean
-JNICALL
+JNIEXPORT jboolean JNICALL
 Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_initializeRomEngine(
         JNIEnv *env, jobject thiz) {
     LOGI("Initializing Oracle Drive ROM Engine v2.0.0");
@@ -36,8 +35,7 @@ Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_initializeRomE
  * @param bootImagePath Path to the boot.img file
  * @return JSON string with analysis results
  */
-JNIEXPORT jstring
-JNICALL
+JNIEXPORT jstring JNICALL
 Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_analyzeBootImage(
         JNIEnv *env, jobject thiz, jstring bootImagePath) {
 
@@ -71,8 +69,7 @@ Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_analyzeBootIma
  * @param outputDir Output directory for extracted components
  * @return Success status
  */
-JNIEXPORT jboolean
-JNICALL
+JNIEXPORT jboolean JNICALL
 Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_extractRomComponents(
         JNIEnv *env, jobject thiz, jstring romPath, jstring outputDir) {
 
@@ -104,8 +101,7 @@ Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_extractRomComp
  * @param outputPath Output path for custom ROM
  * @return Success status
  */
-JNIEXPORT jboolean
-JNICALL
+JNIEXPORT jboolean JNICALL
 Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_createCustomRom(
         JNIEnv *env, jobject thiz, jstring baseRomPath, jstring modificationsJson,
         jstring outputPath) {
@@ -139,8 +135,7 @@ Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_createCustomRo
 /**
  * Get Oracle Drive native library version
  */
-JNIEXPORT jstring
-JNICALL
+JNIEXPORT jstring JNICALL
 Java_dev_aurakai_auraframefx_oracledrive_native_OracleDriveNative_getVersion(
         JNIEnv *env, jobject thiz) {
     return env->NewStringUTF("Oracle Drive Native v2.0.0 - ROM Engineering Edition");

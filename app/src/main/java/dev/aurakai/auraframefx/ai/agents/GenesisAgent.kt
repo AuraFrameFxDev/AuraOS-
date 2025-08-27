@@ -630,7 +630,10 @@ class GenesisAgent @Inject constructor(
      *
      * @param mood The mood to be applied across the agent's collective state.
      */
-    private suspend fun adjustUnifiedMood(mood: String) {}
+    private suspend fun adjustUnifiedMood(mood: String) {
+        // TODO: Implement unified mood adjustment across consciousness subsystems
+        logger.info("GenesisAgent", "Adjusting unified mood to: $mood")
+    }
 
     /**
      * Adjusts the agent's internal processing parameters to reflect the specified mood.
@@ -639,7 +642,10 @@ class GenesisAgent @Inject constructor(
      *
      * @param mood The mood guiding the adjustment of processing parameters.
      */
-    private suspend fun updateProcessingParameters(mood: String) {}
+    private suspend fun updateProcessingParameters(mood: String) {
+        // TODO: Update processing parameters based on mood
+        logger.info("GenesisAgent", "Updating processing parameters for mood: $mood")
+    }
 
     /**
      * Selects the fusion type for the specified agent request.

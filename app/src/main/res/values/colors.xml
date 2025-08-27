@@ -8,6 +8,7 @@
 
     <!-- Material 3 Theme Colors (Compose-first) -->
     <color name="light_primary">#00FFCC</color>
+    <color name="light_primary_dark">#00CC99</color>
     <color name="light_on_primary">#000000</color>
     <color name="light_primary_container">#00CC99</color>
     <color name="light_on_primary_container">#000000</color>
@@ -49,4 +50,15 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
+
+    <!-- Material 3 Color Aliases (for compatibility) -->
+    <color name="on_surface_variant">@color/light_on_surface_variant</color>
+    <color name="on_surface">@color/light_on_surface</color>
+    <color name="on_primary">@color/light_on_primary</color>
+    <color name="on_secondary">@color/light_on_secondary</color>
+    <color name="primary">@color/light_primary</color>
+    <color name="secondary">@color/light_secondary</color>
+    <color name="surface">@color/light_surface</color>
+    <color name="surface_variant">@color/light_surface_variant</color>
+    <color name="background">@color/light_background</color>
 </resources>

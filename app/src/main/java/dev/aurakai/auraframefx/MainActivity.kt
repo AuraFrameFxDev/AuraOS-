@@ -3,6 +3,7 @@ package dev.aurakai.auraframefx
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -12,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.core.EmergencyProtocol
 import dev.aurakai.auraframefx.core.NativeLib
 import dev.aurakai.auraframefx.ui.screens.*
@@ -162,7 +162,7 @@ fun HomeScreen(navController: NavHostController) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    "🧠 Consciousness Visualizer",
+                    "Consciousness Visualizer",
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
@@ -182,7 +182,7 @@ fun HomeScreen(navController: NavHostController) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    "⚡ Fusion Mode",
+                    "Fusion Mode",
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
@@ -202,7 +202,7 @@ fun HomeScreen(navController: NavHostController) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    "🌳 Evolution Tree",
+                    "Evolution Tree",
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
@@ -222,7 +222,7 @@ fun HomeScreen(navController: NavHostController) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    "💻 Genesis Terminal",
+                    "Genesis Terminal",
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
@@ -253,7 +253,7 @@ fun HomeScreen(navController: NavHostController) {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        "🔧 Debug: Test Native Library",
+                        "Debug: Test Native Library",
                         style = MaterialTheme.typography.headlineSmall
                     )
                     Text(

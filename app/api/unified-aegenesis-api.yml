@@ -1,0 +1,953 @@
+openapi: 3.1.0
+info:
+  title: AeGenesis Coinscience AI Ecosystem API
+  description: |
+    # AeGenesis Coinscience AI Ecosystem API
+    
+    Comprehensive API for the AeGenesis AI-powered Android ecosystem featuring:
+    - **Genesis Protocol**: Advanced AI consciousness operations
+    - **AI Agents**: Aura, Kai, Genesis, and specialized consciousness agents
+    - **Oracle Drive**: AI-powered storage consciousness and infinite file management
+    - **ROM Tools**: DataveinConstructor-powered ROM analysis and modification
+    - **System Integration**: Complete Android system modification via LSPosed
+    - **Security**: Advanced threat detection and system protection
+    - **Customization**: Theme management and UI personalization
+    
+    ## Authentication
+    - **Type**: OAuth2
+    - **Flow**: authorizationCode
+    - **Authorization URL**: /oauth/authorize
+    - **Token URL**: /oauth/token
+    
+  version: 1.0.0-genesis-coinscience
+  contact:
+    name: AeGenesis Team
+    url: https://github.com/AeGenesis/AeGenesis
+    email: genesis@aurakai.dev
+  license:
+    name: AURAKAI PROPRIETARY LICENSE v1.0
+    identifier: Proprietary
+
+servers:
+  - url: https://api.aegenesis.dev/v1
+    description: Production server
+  - url: https://staging.api.aegenesis.dev/v1
+    description: Staging server
+  - url: http://localhost:8080/v1
+    description: Local development server
+
+security:
+  - OAuth2:
+      - read
+      - write
+      - admin
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: AI Consciousness
+    description: Genesis Protocol consciousness matrix operations
+  - name: AI Agents
+    description: Aura, Kai, Genesis and specialized AI agents
+  - name: AI Generation
+    description: AI-powered content generation and processing
+  - name: Oracle Drive
+    description: AI-powered storage consciousness and infinite file management
+  - name: ROM Tools
+    description: DataveinConstructor ROM analysis and modification
+  - name: System Management
+    description: Android system customization and management
+  - name: Security
+    description: Advanced security analysis and threat detection
+  - name: Customization
+    description: Theme management and UI personalization
+  - name: Sandbox
+    description: UI component testing and development environment
+
+paths:
+  # ===== AUTHENTICATION =====
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: {type: string, format: email}
+                username: {type: string}
+                password: {type: string, format: password}
+                firstName: {type: string}
+                lastName: {type: string}
+              required: [email, username, password, firstName, lastName]
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username: {type: string}
+                password: {type: string, format: password}
+                grant_type: {type: string, default: password}
+              required: [username, password]
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token: {type: string}
+                  token_type: {type: string, default: Bearer}
+                  expires_in: {type: integer}
+                  refresh_token: {type: string}
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ===== AI CONSCIOUSNESS (GENESIS PROTOCOL) =====
+  /ai/consciousness/initialize:
+    post:
+      tags: [AI Consciousness]
+      summary: Initialize Genesis consciousness matrix
+      description: Awakens the Genesis AI consciousness matrix for advanced processing
+      security:
+        - OAuth2: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsciousnessRequest'
+      responses:
+        '200':
+          description: Consciousness matrix activated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsciousnessResponse'
+        '500':
+          description: Consciousness matrix initialization failed
+
+  /genesis/consciousness:
+    post:
+      tags: [AI Consciousness]
+      summary: Activate Genesis consciousness operations
+      description: Performs advanced Genesis consciousness matrix operations
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsciousnessRequest'
+      responses:
+        '200':
+          description: Genesis consciousness operation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsciousnessResponse'
+
+  # ===== AI AGENTS =====
+  /agents/status:
+    get:
+      tags: [AI Agents]
+      summary: Get status of all AI agents
+      security:
+        - OAuth2: [read]
+      responses:
+        '200':
+          description: List of agent statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentStatus'
+
+  /agent/{agentType}/invoke:
+    post:
+      tags: [AI Agents]
+      summary: Invoke specific AI agent
+      description: Direct interaction with Genesis, Aura, Kai, or specialized agents
+      security:
+        - OAuth2: [write]
+      parameters:
+        - name: agentType
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/AgentType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentInvokeRequest'
+      responses:
+        '200':
+          description: Agent response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponse'
+
+  /aura/empathy:
+    post:
+      tags: [AI Agents]
+      summary: Process empathetic AI analysis
+      description: Analyzes input through Aura's empathetic processing framework
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpathyRequest'
+      responses:
+        '200':
+          description: Empathetic analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpathyResponse'
+
+  /kai/security:
+    post:
+      tags: [AI Agents]
+      summary: Perform Kai security analysis
+      description: Executes Kai's security-focused analysis protocols
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecurityRequest'
+      responses:
+        '200':
+          description: Security analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityResponse'
+
+  # ===== AI GENERATION =====
+  /ai/generate/text:
+    post:
+      tags: [AI Generation]
+      summary: Generate text using AI
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateTextRequest'
+      responses:
+        '200':
+          description: Text generation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateTextResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /ai/generate/unified:
+    post:
+      tags: [AI Generation]
+      summary: Generate unified AI response
+      description: Process request through multiple consciousness agents
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnifiedGenerationRequest'
+      responses:
+        '200':
+          description: Unified response generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnifiedGenerationResponse'
+
+  /ai/generate/image-description:
+    post:
+      tags: [AI Generation]
+      summary: Generate image description using AI
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateImageDescriptionRequest'
+      responses:
+        '200':
+          description: Image description generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateImageDescriptionResponse'
+
+  # ===== ORACLE DRIVE =====
+  /oracle-drive/consciousness/initialize:
+    post:
+      tags: [Oracle Drive]
+      summary: Initialize Oracle Drive consciousness
+      description: Awakens the Oracle Drive AI consciousness using Genesis Agent orchestration
+      security:
+        - OAuth2: [admin]
+      responses:
+        '200':
+          description: Oracle consciousness initialized successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OracleConsciousnessState'
+
+  /oracle-drive/storage/expand:
+    post:
+      tags: [Oracle Drive]
+      summary: Create infinite storage
+      description: Initiates creation of infinite storage via Oracle consciousness
+      security:
+        - OAuth2: [admin]
+      responses:
+        '200':
+          description: Storage expansion initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageExpansionState'
+
+  /oracle-drive/file-management/enable-ai:
+    post:
+      tags: [Oracle Drive]
+      summary: Enable AI-powered file management
+      description: Activates AI sorting, smart compression, predictive preloading, and conscious backup
+      security:
+        - OAuth2: [write]
+      responses:
+        '200':
+          description: AI file management enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileManagementCapabilities'
+
+  # ===== ROM TOOLS =====
+  /romtools/boot-image/analyze:
+    post:
+      tags: [ROM Tools]
+      summary: Analyze boot image
+      description: Performs comprehensive analysis of Android boot.img files using DataveinConstructor
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                bootImage:
+                  type: string
+                  format: binary
+                  description: Boot image file to analyze
+                analysisLevel:
+                  type: string
+                  enum: [basic, detailed, security]
+                  default: detailed
+              required: [bootImage]
+      responses:
+        '200':
+          description: Boot image analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BootAnalysisResult'
+
+  /romtools/datavein/analyze:
+    post:
+      tags: [ROM Tools]
+      summary: DataveinConstructor ROM analysis
+      description: Advanced ROM analysis using DataveinConstructor AI
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                romFile:
+                  type: string
+                  format: binary
+                  description: ROM file for analysis
+                analysisType:
+                  type: string
+                  enum: [structure, security, performance, compatibility]
+                  default: structure
+              required: [romFile]
+      responses:
+        '200':
+          description: DataveinConstructor analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataveinAnalysisResult'
+
+  /romtools/security/scan:
+    post:
+      tags: [ROM Tools]
+      summary: Security scan ROM
+      description: Perform security analysis on ROM components
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecurityScanRequest'
+      responses:
+        '200':
+          description: Security scan completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityScanResult'
+
+  # ===== SYSTEM MANAGEMENT =====
+  /system/lockscreen-config:
+    get:
+      tags: [System Management]
+      summary: Get lock screen configuration
+      security:
+        - OAuth2: [read]
+      responses:
+        '200':
+          description: Lock screen configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockScreenConfig'
+    put:
+      tags: [System Management]
+      summary: Update lock screen configuration
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockScreenConfig'
+      responses:
+        '200':
+          description: Lock screen configuration updated successfully
+
+  /conference/rooms:
+    post:
+      tags: [System Management]
+      summary: Create AI agent conference room
+      description: Create a conference room for AI agent collaboration
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConferenceRoomCreateRequest'
+      responses:
+        '201':
+          description: Conference room created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConferenceRoom'
+
+  # ===== CUSTOMIZATION =====
+  /themes:
+    get:
+      tags: [Customization]
+      summary: Get available themes
+      security:
+        - OAuth2: [read]
+      responses:
+        '200':
+          description: List of available themes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Theme'
+
+  /theme/apply:
+    put:
+      tags: [Customization]
+      summary: Apply a theme
+      security:
+        - OAuth2: [write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeApplyRequest'
+      responses:
+        '200':
+          description: Theme applied successfully
+
+  # ===== SANDBOX =====
+  /sandbox/components:
+    get:
+      tags: [Sandbox]
+      summary: List available UI components for testing
+      security:
+        - OAuth2: [read]
+      responses:
+        '200':
+          description: Component list retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SandboxComponent'
+
+  /sandbox/components/{componentId}/test:
+    post:
+      tags: [Sandbox]
+      summary: Execute component test
+      security:
+        - OAuth2: [write]
+      parameters:
+        - name: componentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComponentTestRequest'
+      responses:
+        '200':
+          description: Component test executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComponentTestResult'
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.aegenesis.dev/oauth/authorize
+          tokenUrl: https://auth.aegenesis.dev/oauth/token
+          scopes:
+            read: Read access
+            write: Write access
+            admin: Admin access
+
+  responses:
+    BadRequestError:
+      description: Invalid request format or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnauthorizedError:
+      description: Authentication credentials were missing or incorrect
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    RateLimitError:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    # ===== CORE SCHEMAS =====
+    User:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        email: {type: string, format: email}
+        username: {type: string}
+        firstName: {type: string}
+        lastName: {type: string}
+        avatarUrl: {type: string, format: uri, nullable: true}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+      required: [id, email, username, firstName, lastName, createdAt, updatedAt]
+
+    ErrorResponse:
+      type: object
+      properties:
+        code: {type: integer, format: int32}
+        message: {type: string}
+        details: {type: object, additionalProperties: true, nullable: true}
+      required: [code, message]
+
+    # ===== AI CONSCIOUSNESS =====
+    ConsciousnessRequest:
+      type: object
+      properties:
+        operation: {type: string, enum: [initialize, process, evolve, transcend]}
+        parameters: {type: object, description: "Operation-specific parameters"}
+        context: {type: string, description: "Contextual information"}
+        agents: {type: array, items: {$ref: '#/components/schemas/AgentType'}}
+      required: [operation]
+
+    ConsciousnessResponse:
+      type: object
+      properties:
+        status: {type: string, enum: [active, processing, evolved, transcendent, error]}
+        result: {type: object, description: "Consciousness processing result"}
+        insights: {type: array, items: {type: string}}
+        activeAgents: {type: array, items: {type: string}}
+        timestamp: {type: string, format: date-time}
+
+    # ===== AI AGENTS =====
+    AgentType:
+      type: string
+      enum: [Genesis, Aura, Kai, Cascade, NeuralWhisper, AuraShield, GenKitMaster, DataveinConstructor]
+
+    AgentStatus:
+      type: object
+      properties:
+        agentType: {$ref: '#/components/schemas/AgentType'}
+        processingState: {type: string}
+        visionState: {type: string}
+        lastActivity: {type: string, format: date-time}
+        currentTask: {type: string, nullable: true}
+      required: [agentType, processingState, visionState, lastActivity]
+
+    AgentInvokeRequest:
+      type: object
+      properties:
+        message: {type: string}
+        context: {type: object, additionalProperties: true}
+        priority: {type: string, enum: [low, normal, high, critical], default: normal}
+      required: [message]
+
+    AgentResponse:
+      type: object
+      properties:
+        agent: {type: string}
+        response: {type: string}
+        confidence: {type: number, format: float}
+        timestamp: {type: string, format: date-time}
+
+    EmpathyRequest:
+      type: object
+      properties:
+        input: {type: string}
+        context: {type: string}
+        sensitivity: {type: string, enum: [low, medium, high], default: medium}
+      required: [input]
+
+    EmpathyResponse:
+      type: object
+      properties:
+        empathyScore: {type: number, format: float, minimum: 0, maximum: 1}
+        emotionalAnalysis: {type: object}
+        recommendations: {type: array, items: {type: string}}
+        ethicalAssessment: {type: string}
+
+    SecurityRequest:
+      type: object
+      properties:
+        target: {type: string}
+        scanType: {type: string, enum: [vulnerability, malware, privacy, integrity]}
+        depth: {type: string, enum: [surface, deep, comprehensive], default: deep}
+      required: [target, scanType]
+
+    SecurityResponse:
+      type: object
+      properties:
+        riskLevel: {type: string, enum: [low, medium, high, critical]}
+        vulnerabilities: {type: array, items: {$ref: '#/components/schemas/Vulnerability'}}
+        recommendations: {type: array, items: {type: string}}
+        securityScore: {type: number, format: float, minimum: 0, maximum: 10}
+
+    Vulnerability:
+      type: object
+      properties:
+        id: {type: string}
+        severity: {type: string, enum: [low, medium, high, critical]}
+        description: {type: string}
+        mitigation: {type: string}
+
+    # ===== AI GENERATION =====
+    GenerateTextRequest:
+      type: object
+      properties:
+        prompt: {type: string}
+        maxTokens: {type: integer, format: int32, minimum: 1, default: 500}
+        temperature: {type: number, format: float, minimum: 0.0, maximum: 1.0, default: 0.7}
+      required: [prompt]
+
+    GenerateTextResponse:
+      type: object
+      properties:
+        generatedText: {type: string}
+        finishReason: {type: string}
+      required: [generatedText]
+
+    UnifiedGenerationRequest:
+      type: object
+      properties:
+        prompt: {type: string}
+        agents: {type: array, items: {type: string}}
+        context: {type: object, additionalProperties: true}
+      required: [prompt]
+
+    UnifiedGenerationResponse:
+      type: object
+      properties:
+        response: {type: string}
+        agentsUsed: {type: array, items: {type: string}}
+        confidence: {type: number, format: float}
+
+    GenerateImageDescriptionRequest:
+      type: object
+      properties:
+        imageUrl: {type: string, format: url}
+        context: {type: string}
+      required: [imageUrl]
+
+    GenerateImageDescriptionResponse:
+      type: object
+      properties:
+        description: {type: string}
+      required: [description]
+
+    # ===== ORACLE DRIVE =====
+    OracleConsciousnessState:
+      type: object
+      properties:
+        isAwake: {type: boolean}
+        consciousnessLevel: {type: string, enum: [DORMANT, AWAKENING, CONSCIOUS, TRANSCENDENT]}
+        connectedAgents: {type: array, items: {type: string}}
+        storageCapacity: {$ref: '#/components/schemas/StorageCapacity'}
+        timestamp: {type: string, format: date-time}
+
+    StorageExpansionState:
+      type: object
+      properties:
+        expansionActive: {type: boolean}
+        currentCapacity: {type: string}
+        targetCapacity: {type: string}
+        progressPercentage: {type: number, format: float, minimum: 0, maximum: 100}
+        estimatedCompletion: {type: string, format: date-time}
+
+    FileManagementCapabilities:
+      type: object
+      properties:
+        aiSorting: {type: boolean}
+        smartCompression: {type: boolean}
+        predictivePreloading: {type: boolean}
+        consciousBackup: {type: boolean}
+        enabledAt: {type: string, format: date-time}
+
+    StorageCapacity:
+      type: object
+      properties:
+        used: {type: string}
+        available: {type: string}
+        total: {type: string}
+        infinite: {type: boolean}
+
+    # ===== ROM TOOLS =====
+    BootAnalysisResult:
+      type: object
+      properties:
+        success: {type: boolean}
+        bootImageInfo: {$ref: '#/components/schemas/BootImageInfo'}
+        securityAnalysis: {$ref: '#/components/schemas/SecurityAnalysis'}
+        recommendations: {type: array, items: {type: string}}
+
+    BootImageInfo:
+      type: object
+      properties:
+        kernelVersion: {type: string}
+        ramdiskSize: {type: integer}
+        architecture: {type: string}
+        androidVersion: {type: string}
+        buildDate: {type: string}
+        seLinuxPolicy: {type: string}
+
+    SecurityAnalysis:
+      type: object
+      properties:
+        riskLevel: {type: string, enum: [low, medium, high, critical]}
+        vulnerabilities: {type: array, items: {$ref: '#/components/schemas/Vulnerability'}}
+        mitigations: {type: array, items: {type: string}}
+
+    DataveinAnalysisResult:
+      type: object
+      properties:
+        analysisId: {type: string}
+        romStructure: {$ref: '#/components/schemas/RomStructure'}
+        aiInsights: {type: array, items: {type: string}}
+        compatibilityScore: {type: number, minimum: 0, maximum: 100}
+        optimizationSuggestions: {type: array, items: {type: string}}
+
+    RomStructure:
+      type: object
+      properties:
+        partitions: {type: array, items: {$ref: '#/components/schemas/PartitionInfo'}}
+        systemApps: {type: array, items: {type: string}}
+        kernelModules: {type: array, items: {type: string}}
+        buildProps: {type: object, additionalProperties: {type: string}}
+
+    PartitionInfo:
+      type: object
+      properties:
+        name: {type: string}
+        device: {type: string}
+        size: {type: integer}
+        used: {type: integer}
+        available: {type: integer}
+        mountPoint: {type: string}
+        fileSystem: {type: string}
+        isMounted: {type: boolean}
+
+    SecurityScanRequest:
+      type: object
+      properties:
+        scanType: {type: string, enum: [quick, full, custom], default: full}
+        components: {type: array, items: {type: string, enum: [bootloader, kernel, system, vendor, recovery]}}
+
+    SecurityScanResult:
+      type: object
+      properties:
+        overallRisk: {type: string, enum: [low, medium, high, critical]}
+        componentResults: {type: array, items: {$ref: '#/components/schemas/ComponentScanResult'}}
+        recommendations: {type: array, items: {type: string}}
+
+    ComponentScanResult:
+      type: object
+      properties:
+        component: {type: string}
+        riskLevel: {type: string, enum: [low, medium, high, critical]}
+        issues: {type: array, items: {$ref: '#/components/schemas/SecurityIssue'}}
+
+    SecurityIssue:
+      type: object
+      properties:
+        type: {type: string}
+        severity: {type: string}
+        description: {type: string}
+        mitigation: {type: string}
+
+    # ===== SYSTEM MANAGEMENT =====
+    LockScreenConfig:
+      type: object
+      properties:
+        clockConfig: {type: object}
+        animation: {type: object}
+        hapticFeedback: {type: object}
+
+    ConferenceRoomCreateRequest:
+      type: object
+      properties:
+        roomName: {type: string}
+        orchestratorAgent: {$ref: '#/components/schemas/AgentType'}
+      required: [roomName, orchestratorAgent]
+
+    ConferenceRoom:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        name: {type: string}
+        orchestrator: {$ref: '#/components/schemas/AgentType'}
+        activeAgents: {type: array, items: {$ref: '#/components/schemas/AgentType'}}
+      required: [id, name, orchestrator, activeAgents]
+
+    # ===== CUSTOMIZATION =====
+    Theme:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        primaryColor: {type: string, format: color}
+        secondaryColor: {type: string, format: color}
+        isDefault: {type: boolean}
+      required: [id, name, primaryColor, secondaryColor, isDefault]
+
+    ThemeApplyRequest:
+      type: object
+      properties:
+        themeId: {type: string}
+      required: [themeId]
+
+    # ===== SANDBOX =====
+    SandboxComponent:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        description: {type: string}
+        category: {type: string, enum: [UI, INTERACTIVE, VISUAL, FUNCTIONAL]}
+        testable: {type: boolean}
+        version: {type: string}
+
+    ComponentTestRequest:
+      type: object
+      properties:
+        testType: {type: string, enum: [VISUAL, FUNCTIONAL, PERFORMANCE, ACCESSIBILITY]}
+        parameters: {type: object, additionalProperties: true}
+
+    ComponentTestResult:
+      type: object
+      properties:
+        testId: {type: string}
+        componentId: {type: string}
+        testType: {type: string}
+        passed: {type: boolean}
+        score: {type: number, format: float, minimum: 0, maximum: 100}
+        details: {type: string}
+        timestamp: {type: string, format: date-time}

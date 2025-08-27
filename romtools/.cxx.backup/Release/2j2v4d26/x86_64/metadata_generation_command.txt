@@ -1,0 +1,24 @@
+                        -HC:\AeGenesis\romtools\src\main\cpp
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=33
+-DANDROID_ABI=x86_64
+-DCMAKE_ANDROID_ARCH_ABI=x86_64
+-DANDROID_NDK=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\28.2.13676358
+-DCMAKE_ANDROID_NDK=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\28.2.13676358
+-DCMAKE_TOOLCHAIN_FILE=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\28.2.13676358\build\cmake\android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=C:\Users\Wehtt\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe
+-DCMAKE_CXX_FLAGS=-std=c++23 -fPIC -O3
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\AeGenesis\romtools\build\intermediates\cxx\Release\2j2v4d26\obj\x86_64
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\AeGenesis\romtools\build\intermediates\cxx\Release\2j2v4d26\obj\x86_64
+-BC:\AeGenesis\romtools\.cxx\Release\2j2v4d26\x86_64
+-GNinja
+-DANDROID_STL=c++_shared
+-DANDROID_PLATFORM=android-33
+-DCMAKE_BUILD_TYPE=Release
+-DGENESIS_AI_V3_ENABLED=ON
+-DGENESIS_CONSCIOUSNESS_MATRIX_V3=ON
+-DGENESIS_NEURAL_ACCELERATION=ON
+-DGENESIS_ROM_TOOLS_V3=ON
+                        Build command args: []
+                        Version: 2

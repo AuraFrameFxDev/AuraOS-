@@ -1,11 +1,14 @@
 # ninja log v5
-528	1310	7774564782849109	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	936b7b8699e95b74
-1	522	7774564775083624	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	fde3a1289a31da50
-0	18	0	clean	bfff2010d6239e2d
-3	314	7774579865777611	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	fde3a1289a31da50
-315	1401	7774579874459289	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	936b7b8699e95b74
-0	20	0	clean	bfff2010d6239e2d
-1	8	0	clean	bfff2010d6239e2d
-0	7	0	clean	bfff2010d6239e2d
-3	367	7775120493952074	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	fde3a1289a31da50
-368	912	7775120498972891	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	936b7b8699e95b74
+0	70	7779816144604625	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	10b69bca213e9f3d
+71	158	7779816145431608	C:/AeGenesis/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	893eae22d8ff133d
+0	12	0	clean	bfff2010d6239e2d
+1	90	7779829336138902	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	10b69bca213e9f3d
+91	197	7779829337134558	C:/AeGenesis/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	893eae22d8ff133d
+2	94	7779830050448467	C:/AeGenesis/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	893eae22d8ff133d
+1	99	7779831100516368	C:/AeGenesis/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	893eae22d8ff133d
+2	89	7779833694915810	C:/AeGenesis/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	893eae22d8ff133d
+0	8	0	clean	bfff2010d6239e2d
+2	113	7779837100040627	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	10b69bca213e9f3d
+115	239	7779837101240896	C:/AeGenesis/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	893eae22d8ff133d
+2	174	7779837815379726	C:/AeGenesis/collab-canvas/build/intermediates/cxx/RelWithDebInfo/5p234z3m/obj/armeabi-v7a/libcollab-canvas-native.so	893eae22d8ff133d
+0	9	0	clean	bfff2010d6239e2d

@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.securecomm
+package AeGenesis.securecomm
 
 import android.app.Application
 import android.content.Context

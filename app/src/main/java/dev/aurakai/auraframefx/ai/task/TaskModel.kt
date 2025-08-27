@@ -1,9 +1,10 @@
 package dev.aurakai.auraframefx.ai.task
 
 import dev.aurakai.auraframefx.model.AgentType
-import dev.aurakai.auraframefx.serialization.InstantSerializer // Added import
+import dev.aurakai.auraframefx.serialization.InstantSerializer
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,7 +16,7 @@ data class Task(
     val importance: TaskImportance = TaskImportance.MEDIUM,
     val context: String,
     val content: String,
-    val metadata: Map<String, String> = emptyMap(),
+    val metadata: Map<String, @Contextual Any> = emptyMap(), // Fixed: Added @Contextual for Any type
     val status: TaskStatus = TaskStatus.PENDING,
     val assignedAgents: Set<AgentType> = emptySet(),
     val requiredAgents: Set<AgentType> = emptySet(),
@@ -30,14 +31,14 @@ data class TaskDependency(
     val dependencyId: String,
     val type: DependencyType,
     val priority: TaskPriority,
-    val metadata: Map<String, String> = emptyMap(),
+    val metadata: Map<String, @Contextual Any> = emptyMap(), // Fixed: Added @Contextual for Any type
 )
 
 @Serializable
 data class TaskPriority(
     val value: Float,
     val reason: String,
-    val metadata: Map<String, String> = emptyMap(),
+    val metadata: Map<String, @Contextual Any> = emptyMap(), // Fixed: Added @Contextual for Any type
 ) {
     companion object {
         val CRITICAL = TaskPriority(1.0f, "Critical system task")
@@ -52,7 +53,7 @@ data class TaskPriority(
 data class TaskUrgency(
     val value: Float,
     val reason: String,
-    val metadata: Map<String, String> = emptyMap(),
+    val metadata: Map<String, @Contextual Any> = emptyMap(), // Fixed: Added @Contextual for Any type
 ) {
     companion object {
         val IMMEDIATE = TaskUrgency(1.0f, "Immediate attention required")
@@ -68,7 +69,7 @@ data class TaskUrgency(
 data class TaskImportance(
     val value: Float,
     val reason: String,
-    val metadata: Map<String, String> = emptyMap(),
+    val metadata: Map<String, @Contextual Any> = emptyMap(), // Fixed: Added @Contextual for Any type
 ) {
     companion object {
         val CRITICAL = TaskImportance(1.0f, "Critical importance")
@@ -80,7 +81,7 @@ data class TaskImportance(
     }
 }
 
-@Serializable // Added annotation
+@Serializable
 enum class TaskStatus {
     PENDING,
     IN_PROGRESS,
@@ -91,7 +92,7 @@ enum class TaskStatus {
     WAITING
 }
 
-@Serializable // Added annotation
+@Serializable
 enum class DependencyType {
     BLOCKING,
     SEQUENTIAL,

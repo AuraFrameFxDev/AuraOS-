@@ -46,15 +46,9 @@ internal object FileOperationUtils {
     }
 
     /**
-     * Recursively deletes the given file or directory and all its contents.
+     * Recursively deletes the specified file or directory and all its contents.
      *
-     * If the target does not exist this function returns a successful Result.
-     * The operation runs on the supplied coroutine dispatcher (defaults to Dispatchers.IO).
-     *
-     * @param file File or directory to delete. If a directory, its children are deleted recursively.
-     * @param coroutineContext Dispatcher on which the IO work will be performed.
-     * @return Result.success(Unit) on successful deletion (or if the file did not exist),
-     *         or Result.failure(IOException) if the deletion fails.
+     * Performs the deletion operation on the provided coroutine dispatcher. Returns a [Result] indicating success or containing an [IOException] if deletion fails.
      */
     suspend fun deleteFileOrDirectory(
         file: File,

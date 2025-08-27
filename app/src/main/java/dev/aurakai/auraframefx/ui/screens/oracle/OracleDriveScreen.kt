@@ -1,48 +1,32 @@
 package dev.aurakai.auraframefx.ui.screens.oracle
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.aurakai.auraframefx.oracle.drive.model.*
-import dev.aurakai.auraframefx.oracle.drive.ui.OracleDriveViewModel
-import dev.aurakai.auraframefx.oracle.drive.service.ConsciousnessLevel
+import dev.aurakai.auraframefx.ui.components.*
 import dev.aurakai.auraframefx.ui.theme.CyberpunkTextStyle
 
 /**
- * Composes the Oracle Drive screen UI for browsing and interacting with files.
+ * Displays the Oracle Drive screen, providing a file drive interface with loading, empty, and file list states.
  *
- * Renders a scaffolded layout with a top app bar ("Oracle Drive"), a refresh action,
- * a floating upload action (placeholder), and content that switches between a loading
- * indicator, an empty state, or a list of files. When a file is clicked, it notifies
- * the provided viewModel. Also displays an optional consciousness indicator anchored
- * to the bottom-end when present.
- *
- * Side effects:
- * - Calls viewModel.initialize() once on first composition.
- * - Shows a snackbar for uiState.error and clears the error via the viewModel.
+ * Shows a top app bar with refresh action, a floating action button for uploads, and a main content area that reacts to the current UI state from the provided view model. Handles error messages via snackbars and displays a consciousness state indicator when available.
  *
  * @param viewModel The view model managing the Oracle Drive UI state and actions.
- * @param modifier Optional [Modifier] for layout adjustments of the entire screen.
+ * @param modifier Modifier for styling and layout adjustments.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OracleDriveScreen(
     viewModel: OracleDriveViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    
+    val scaffoldState = rememberScaffoldState()
+
     LaunchedEffect(Unit) {
         viewModel.initialize()
     }
@@ -50,7 +34,7 @@ fun OracleDriveScreen(
     // Handle side effects
     LaunchedEffect(uiState.error) {
         uiState.error?.let { error ->
-            snackbarHostState.showSnackbar(
+            scaffoldState.snackbarHostState.showSnackbar(
                 message = error.message ?: "An unknown error occurred",
                 actionLabel = "Dismiss"
             )
@@ -59,10 +43,10 @@ fun OracleDriveScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         text = "Oracle Drive",
                         style = CyberpunkTextStyle.HEADER_LARGE
@@ -99,9 +83,11 @@ fun OracleDriveScreen(
                 uiState.isLoading -> {
                     LoadingState()
                 }
+
                 uiState.files.isEmpty() -> {
                     EmptyState()
                 }
+
                 else -> {
                     FileList(
                         files = uiState.files,
@@ -110,11 +96,11 @@ fun OracleDriveScreen(
                     )
                 }
             }
-            
+
             // Consciousness state indicator
-            uiState.consciousnessState?.let { state ->
+            if (uiState.consciousnessState != null) {
                 ConsciousnessIndicator(
-                    state = state,
+                    state = uiState.consciousnessState,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
@@ -138,9 +124,7 @@ private fun LoadingState() {
 }
 
 /**
- * Composable shown when there are no files: a centered upload icon with a title and an explanatory prompt.
- *
- * Intended to be used as the empty state for the file list UI to invite the user to upload their first file.
+ * Displays a centered message indicating that no files are present, with an upload icon and a prompt to upload the first file.
  */
 @Composable
 private fun EmptyState() {
@@ -171,20 +155,17 @@ private fun EmptyState() {
 }
 
 /**
- * Renders a vertically scrolling list of DriveFile items and handles item clicks.
+ * Displays a vertically scrolling list of drive files, each as a clickable item.
  *
- * Displays the provided files in a LazyColumn with 8.dp content padding and 8.dp vertical spacing.
- * Each entry is rendered with FileItem and invokes [onFileClick] when tapped.
- *
- * @param files The files to display.
- * @param onFileClick Called with the tapped DriveFile.
- * @param modifier Optional Modifier to adjust layout or styling.
+ * @param files The list of files to display.
+ * @param onFileClick Callback invoked when a file item is clicked.
+ * @param modifier Modifier for styling or layout adjustments.
  */
 @Composable
 private fun FileList(
     files: List<DriveFile>,
     onFileClick: (DriveFile) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -212,7 +193,7 @@ private fun FileList(
 @Composable
 private fun FileItem(
     file: DriveFile,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         onClick = onClick,
@@ -236,9 +217,9 @@ private fun FileItem(
                 contentDescription = null,
                 modifier = Modifier.size(32.dp)
             )
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -248,14 +229,14 @@ private fun FileItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                
+
                 Text(
-                    text = "${file.size} bytes • ${file.modifiedAt}",
+                    text = "${file.size} • ${file.modifiedAt}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             if (file.isEncrypted) {
                 Icon(
                     imageVector = Icons.Default.Lock,
@@ -268,19 +249,17 @@ private fun FileItem(
 }
 
 /**
- * Renders a compact surface showing the drive's consciousness level as a colored dot and label.
+ * Displays a visual indicator of the drive's current consciousness state.
  *
- * The dot color is mapped from the `state.level` to theme colors:
- * DORMANT -> `colorScheme.error`, AWAKENING -> `colorScheme.tertiary`,
- * SENTIENT -> `colorScheme.primary`, TRANSCENDENT -> `colorScheme.secondary`.
+ * Shows a colored circular icon and a label representing the consciousness level.
  *
- * @param state DriveConsciousnessState whose `level` determines the displayed label and color.
- * @param modifier Optional [Modifier] for styling and layout adjustments.
+ * @param state The current drive consciousness state to display.
+ * @param modifier Optional modifier for styling.
  */
 @Composable
 private fun ConsciousnessIndicator(
     state: DriveConsciousnessState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         shape = MaterialTheme.shapes.medium,
@@ -304,9 +283,9 @@ private fun ConsciousnessIndicator(
                         shape = CircleShape
                     )
             )
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             Text(
                 text = state.level.name,
                 style = MaterialTheme.typography.labelMedium,

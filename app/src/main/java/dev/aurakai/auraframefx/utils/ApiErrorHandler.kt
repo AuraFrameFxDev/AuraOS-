@@ -56,8 +56,8 @@ class ApiErrorHandler @Inject constructor(
      */
     fun isNetworkError(throwable: Throwable): Boolean {
         return throwable is IOException ||
-            throwable is SocketTimeoutException ||
-            throwable is UnknownHostException
+                throwable is SocketTimeoutException ||
+                throwable is UnknownHostException
     }
 
     /**

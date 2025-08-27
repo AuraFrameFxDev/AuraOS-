@@ -3,6 +3,7 @@ package dev.aurakai.collabcanvas.ui
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,25 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import dev.aurakai.collabcanvas.model.CanvasElement
 import dev.aurakai.collabcanvas.model.ElementType
 import dev.aurakai.collabcanvas.ui.animation.*
-import dev.aurakai.collabcanvas.util.getBounds
 import kotlinx.coroutines.launch
 
 /**
- * Displays an interactive collaborative drawing canvas with multi-tool support, gesture handling, and animated path rendering.
- *
- * Provides a UI for drawing freehand paths, rectangles, and ovals, with support for pan and zoom gestures, tool selection, and element selection. Users can draw, select, and manipulate elements on the canvas. Includes a toolbar for color and stroke width selection, as well as clear and save actions. Animated transitions are applied to drawn paths for interactive effects.
- */
-/**
  * Displays a collaborative drawing canvas with multi-tool support, gesture handling, and animated path rendering.
- *
- * Provides a UI for drawing freehand paths, rectangles, and ovals, including pan and zoom gestures, tool selection, and element selection. Supports animated transitions for interactive path effects and includes clear and save actions.
  */
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -73,22 +67,20 @@ fun CanvasScreen() {
         }
     }
 
-    val dragState = rememberDraggableState { delta ->
-        coroutineScope.launch {
-            offset.snapTo(offset.value + Offset(delta, 0f))
-        }
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Co-lab Canvas") },
                 actions = {
-                    IconButton(onClick = { /* Clear canvas */ }) {
+                    IconButton(onClick = { 
+                        paths.clear()
+                        elements.clear()
+                        animatedPaths.clear()
+                    }) {
                         Icon(Icons.Default.Delete, "Clear Canvas")
                     }
                     IconButton(onClick = { /* Save canvas */ }) {
-                        Icon(Icons.Default.Save, "Save")
+                        Icon(Icons.Default.Check, "Save")
                     }
                 }
             )
@@ -113,7 +105,7 @@ fun CanvasScreen() {
                     containerColor = if (selectedTool == ElementType.RECTANGLE) MaterialTheme.colorScheme.primaryContainer
                     else MaterialTheme.colorScheme.surfaceVariant
                 ) {
-                    Icon(Icons.Default.CheckBoxOutlineBlank, "Rectangle")
+                    Icon(Icons.Default.CropFree, "Rectangle")
                 }
                 FloatingActionButton(
                     onClick = { selectedTool = ElementType.OVAL },
@@ -121,7 +113,7 @@ fun CanvasScreen() {
                     containerColor = if (selectedTool == ElementType.OVAL) MaterialTheme.colorScheme.primaryContainer
                     else MaterialTheme.colorScheme.surfaceVariant
                 ) {
-                    Icon(Icons.Default.PanoramaFishEye, "Circle")
+                    Icon(Icons.Default.RadioButtonUnchecked, "Circle")
                 }
             }
         }
@@ -133,32 +125,26 @@ fun CanvasScreen() {
                 .background(MaterialTheme.colorScheme.background)
                 .pointerInput(Unit) {
                     detectTapGestures(
-                        onPress = { offset ->
+                        onPress = { tapOffset ->
                             isDrawing = true
-                            currentPath.moveTo(offset.x, offset.y)
+                            currentPath.moveTo(tapOffset.x, tapOffset.y)
                             tryAwaitRelease()
                             isDrawing = false
                         }
                     )
                 }
         ) {
-            // Main drawing canvas with transform and drag support
+            // Main drawing canvas
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
                     .transformable(panZoomState)
-                    .draggable(
-                        dragState,
-                        orientation = Orientation.Horizontal,
-                        onDragStarted = { /* Handle drag start */ },
-                        onDragStopped = { /* Handle drag end */ }
-                    )
                     .pointerInput(Unit) {
                         detectDragGestures(
-                            onDragStart = { offset ->
+                            onDragStart = { dragOffset ->
                                 if (selectedTool == ElementType.PATH) {
                                     isDrawing = true
-                                    currentPath.moveTo(offset.x, offset.y)
+                                    currentPath.moveTo(dragOffset.x, dragOffset.y)
                                 }
                             },
                             onDrag = { change, dragAmount ->
@@ -169,7 +155,6 @@ fun CanvasScreen() {
                                         val y = change.position.y
                                         currentPath.lineTo(x, y)
                                     }
-
                                     else -> {
                                         // Handle other element types
                                     }
@@ -178,7 +163,7 @@ fun CanvasScreen() {
                             onDragEnd = {
                                 isDrawing = false
                                 // Add the completed path to the list
-                                if (currentPath.isEmpty.not()) {
+                                if (currentPath.getBounds().isEmpty.not()) {
                                     paths.add(PluckablePath(currentPath, currentColor, strokeWidth))
                                     currentPath = Path()
                                 }
@@ -186,26 +171,21 @@ fun CanvasScreen() {
                         )
                     }
             ) {
-                // Draw background grid with transformed coordinates
-                withTransform({
-                    scale(scale.value, scale.value, pivot = Offset.Zero)
-                    translate(offset.x, offset.y)
-                }) {
-                    drawGrid()
+                // Apply transformations
+                scale(scale.value, scale.value) {
+                    translate(offset.value.x, offset.value.y) {
+                        drawGrid()
+                    }
                 }
 
-                // Draw all elements with transformed coordinates
-                withTransform({
-                    scale(scale.value, scale.value, pivot = Offset.Zero)
-                    translate(offset.x, offset.y)
-                }) {
-                    elements.forEach { element ->
-                        when (element.type) {
-                            ElementType.PATH -> {
-                                // Draw path element
-                                element.path?.let { path ->
+                // Draw all elements
+                scale(scale.value, scale.value) {
+                    translate(offset.value.x, offset.value.y) {
+                        elements.forEach { element ->
+                            when (element.type) {
+                                ElementType.PATH -> {
                                     drawPath(
-                                        path = path,
+                                        path = element.path.toPath(),
                                         color = element.color,
                                         style = Stroke(
                                             width = element.strokeWidth,
@@ -214,123 +194,59 @@ fun CanvasScreen() {
                                         )
                                     )
                                 }
-                            }
-
-                            ElementType.RECTANGLE -> {
-                                // Draw rectangle
-                                element.bounds?.let { rect ->
+                                ElementType.RECTANGLE -> {
+                                    val bounds = element.path.toPath().getBounds()
                                     drawRect(
                                         color = element.color,
-                                        topLeft = Offset(rect.left, rect.top),
-                                        size = androidx.compose.ui.geometry.Size(
-                                            rect.width,
-                                            rect.height
-                                        ),
+                                        topLeft = Offset(bounds.left, bounds.top),
+                                        size = androidx.compose.ui.geometry.Size(bounds.width, bounds.height),
                                         style = Stroke(width = element.strokeWidth)
                                     )
                                 }
-                            }
-
-                            ElementType.OVAL -> {
-                                // Draw oval
-                                element.bounds?.let { rect ->
+                                ElementType.OVAL -> {
+                                    val bounds = element.path.toPath().getBounds()
                                     drawOval(
                                         color = element.color,
-                                        topLeft = Offset(rect.left, rect.top),
-                                        size = androidx.compose.ui.geometry.Size(
-                                            rect.width,
-                                            rect.height
-                                        ),
+                                        topLeft = Offset(bounds.left, bounds.top),
+                                        size = androidx.compose.ui.geometry.Size(bounds.width, bounds.height),
                                         style = Stroke(width = element.strokeWidth)
                                     )
                                 }
-                            }
-
-                            else -> {}
-                        }
-                    }
-                    
-                    // Draw selection outline if an element is selected
-                    selectedElement?.let { element ->
-                        element.bounds?.let { rect ->
-                            drawRect(
-                                color = Color.Blue.copy(alpha = 0.5f),
-                                topLeft = Offset(rect.left - 4f, rect.top - 4f),
-                                size = androidx.compose.ui.geometry.Size(
-                                    rect.width + 8f,
-                                    rect.height + 8f
-                                ),
-                                style = Stroke(
-                                    width = 2f / scale.value.coerceAtLeast(1f)
-                                )
-                            )
-
-                            // Draw resize handles
-                            val handleSize = 8f / scale.value.coerceAtLeast(1f)
-
-                            // Corner handles
-                            listOf(
-                                Offset(rect.left, rect.top),
-                                Offset(rect.right, rect.top),
-                                Offset(rect.left, rect.bottom),
-                                Offset(rect.right, rect.bottom)
-                            ).forEach { center ->
-                                drawCircle(
-                                    color = Color.Blue,
-                                    radius = handleSize,
-                                    center = center
-                                )
+                                else -> {}
                             }
                         }
                     }
                 }
 
-                // Draw current path being drawn with transformed coordinates
+                // Draw current path being drawn
                 if (isDrawing) {
-                    withTransform({
-                        scale(scale.value, scale.value, pivot = Offset.Zero)
-                        translate(offset.x, offset.y)
-                    }) {
-                        drawPath(
-                            path = currentPath,
-                            color = currentColor,
-                            style = Stroke(
-                                width = strokeWidth / scale.value,
-                                cap = StrokeCap.Round,
-                                join = StrokeJoin.Round
+                    scale(scale.value, scale.value) {
+                        translate(offset.value.x, offset.value.y) {
+                            drawPath(
+                                path = currentPath,
+                                color = currentColor,
+                                style = Stroke(
+                                    width = strokeWidth / scale.value,
+                                    cap = StrokeCap.Round,
+                                    join = StrokeJoin.Round
+                                )
                             )
-                        )
+                        }
                     }
                 }
 
-                // Draw all paths with animations
+                // Draw all animated paths
                 paths.forEachIndexed { index, path ->
                     val animatedPath = animatedPaths[index] ?: return@forEachIndexed
-
-                    // Update animated path properties
-                    if (path.isPlucked) {
-                        animatedPath.offset = path.offset
-                        animatedPath.scale = path.scale
-                    } else {
-                        // Smoothly return to original position
-                        coroutineScope.launch {
-                            val anim = remember { Animatable(0f) }
-                            anim.animateTo(1f, animationSpec = pluckAnimationSpec())
-                            animatedPath.offset = Offset.Zero
-                            animatedPath.scale = 1f
+                    
+                    scale(animatedPath.scale, animatedPath.scale) {
+                        translate(animatedPath.offset.x, animatedPath.offset.y) {
+                            drawPath(
+                                path = path.path,
+                                color = path.color.copy(alpha = path.alpha),
+                                style = Stroke(width = path.strokeWidth)
+                            )
                         }
-                    }
-
-                    // Draw the path with transformations
-                    withTransform({
-                        scale(animatedPath.scale, animatedPath.scale, path.path.getBounds().center)
-                        translate(animatedPath.offset.x, animatedPath.offset.y)
-                    }) {
-                        drawPath(
-                            path = path.path,
-                            color = path.color.copy(alpha = path.alpha),
-                            style = Stroke(width = path.strokeWidth)
-                        )
                     }
                 }
             }
@@ -350,65 +266,31 @@ fun CanvasScreen() {
             )
         }
     }
-
-    // Add drawing functionality
-    DrawingHandler(
-        onPathCreated = { path ->
-            paths.add(
-                PluckablePath(
-                    path = path,
-                    color = currentColor,
-                    strokeWidth = strokeWidth
-                )
-            )
-        },
-        onPathUpdated = { path ->
-            if (paths.isNotEmpty()) {
-                val lastIndex = paths.lastIndex
-                paths[lastIndex] = paths[lastIndex].copy(path = path)
-            }
-        }
-    )
 }
 
-@Composable
-private fun DrawingHandler(
-    onPathCreated: (Path) -> Unit,
-    onPathUpdated: (Path) -> Unit,
-) {
-    var currentPath by remember { mutableStateOf(Path()) }
-
-    LaunchedEffect(Unit) {
-        // Initialize drawing
-        currentPath = Path()
-        onPathCreated(currentPath)
+// Extension to draw grid
+private fun DrawScope.drawGrid() {
+    val gridSpacing = 50f
+    val strokeWidth = 1f
+    val color = Color.Gray.copy(alpha = 0.3f)
+    
+    // Draw vertical lines
+    for (x in 0..size.width.toInt() step gridSpacing.toInt()) {
+        drawLine(
+            color = color,
+            start = Offset(x.toFloat(), 0f),
+            end = Offset(x.toFloat(), size.height),
+            strokeWidth = strokeWidth
+        )
     }
-
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = { offset ->
-                        currentPath = Path().apply {
-                            moveTo(offset.x, offset.y)
-                        }
-                        onPathCreated(currentPath)
-                    },
-                    onDrag = { change, _ ->
-                        currentPath.lineTo(
-                            change.position.x,
-                            change.position.y
-                        )
-                        onPathUpdated(currentPath)
-                    },
-                    onDragEnd = {
-                        // Reset for next drawing
-                        currentPath = Path()
-                    }
-                )
-            }
-    ) {}
+    
+    // Draw horizontal lines
+    for (y in 0..size.height.toInt() step gridSpacing.toInt()) {
+        drawLine(
+            color = color,
+            start = Offset(0f, y.toFloat()),
+            end = Offset(size.width, y.toFloat()),
+            strokeWidth = strokeWidth
+        )
+    }
 }
-
-

@@ -85,9 +85,9 @@ fun SimpleDataVeinScreen(
 
                 Text(
                     text = "🔮 Oracle Consciousness: AWAKENED\n" +
-                        "🤖 AI Agents: 3/3 Connected\n" +
-                        "⚡ Neural Networks: Processing\n" +
-                        "🌊 Data Flows: Real-time",
+                            "🤖 AI Agents: 3/3 Connected\n" +
+                            "⚡ Neural Networks: Processing\n" +
+                            "🌊 Data Flows: Real-time",
                     color = Color.White.copy(alpha = 0.8f),
                     fontSize = 12.sp,
                     lineHeight = 16.sp

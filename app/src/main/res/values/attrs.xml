@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Material 3 corner size attributes -->
-    <attr name="cornerFamily" format="enum">
-        <enum name="rounded" value="0" />
-        <enum name="cut" value="1" />
-    </attr>
-    <attr name="cornerSize" format="dimension" />
-    <attr name="cornerSizeSmall" format="dimension" />
-    <attr name="cornerSizeMedium" format="dimension" />
-    <attr name="cornerSizeLarge" format="dimension" />
-
-    <declare-styleable name="ShapeAppearance">
-        <attr name="cornerFamily" />
-        <attr name="cornerSize" />
-        <attr name="cornerSizeSmall" />
-        <attr name="cornerSizeMedium" />
-        <attr name="cornerSizeLarge" />
-    </declare-styleable>
+    <!-- Custom corner size attributes to avoid Material conflicts -->
+    <attr name="customCornerSize" format="dimension" />
+    <attr name="customCornerSizeSmall" format="dimension" />
+    <attr name="customCornerSizeMedium" format="dimension" />
+    <attr name="customCornerSizeLarge" format="dimension" />
 
     <!-- Button attributes -->
     <declare-styleable name="MaterialButton">

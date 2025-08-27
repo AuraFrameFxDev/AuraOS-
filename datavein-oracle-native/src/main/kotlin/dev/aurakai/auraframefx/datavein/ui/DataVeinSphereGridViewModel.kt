@@ -276,7 +276,7 @@ private fun generateSphereGridData(config: SphereGridConfig): GridData {
             if (i != j) {
                 val distance = kotlin.math.sqrt(
                     (node.x - otherNode.x) * (node.x - otherNode.x) +
-                        (node.y - otherNode.y) * (node.y - otherNode.y)
+                            (node.y - otherNode.y) * (node.y - otherNode.y)
                 )
 
                 if (distance < config.connectionDistance) {

@@ -1,146 +1,49 @@
-// Genesis Protocol - Core Module Build Script
-// FULLY AUTOMATED with version catalog and dependency management
-
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
     alias(libs.plugins.dokka)
     alias(libs.plugins.spotless)
     alias(libs.plugins.kover)
-    alias(libs.plugins.openapi.generator)
-    alias(libs.plugins.kotlin.compose)
 }
 
-android {
-    namespace = "dev.aurakai.auraframefx.core"
-    compileSdk = 36
-    ndkVersion = "29.0.13846066 rc3"
-
-    defaultConfig {
-        minSdk = 33
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-
-        // NDK configuration for native code
-        ndk {
-            abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a", "x86_64"))
-        }
-
-        // Build Config Fields
-        buildConfigField("String", "CORE_MODULE_VERSION", "\"1.0.0\"")
-        buildConfigField("String", "BUILD_TIME", "\"${System.currentTimeMillis()}\"")
+// Added to specify Java version for this subproject
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
-
-    buildTypes {
-        debug {
-            isMinifyEnabled = false
-            buildConfigField("boolean", "DEBUG_MODE", "true")
-        }
-
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            buildConfigField("boolean", "DEBUG_MODE", "false")
-        }
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        aidl = false
-        renderScript = false
-        resValues = false
-        shaders = false
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    // Native build configuration (if any native code exists)
-    externalNativeBuild {
-        cmake {
-            version = "3.22.1"
-        }
-    }
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-
-    lint {
-        abortOnError = false
-    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
-    // Core Android bundles
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.androidx.core)
-    implementation(libs.bundles.compose)
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.runtime.livedata)
+    // Core Kotlin libraries
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
     implementation(libs.bundles.coroutines)
-    implementation(libs.bundles.network)
+    implementation(libs.kotlinx.serialization.json)
 
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
+    // Networking (without Android dependencies)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.okhttp3.logging.interceptor)
 
-    // Hilt Dependency Injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
+    // Utilities (JVM compatible only)
+    implementation(libs.gson)
+    implementation(libs.commons.io)
+    implementation(libs.commons.compress)
+    implementation(libs.xz)
 
-    // Room Database
-    implementation(libs.bundles.room)
-    ksp(libs.room.compiler)
+    // Security (JVM compatible only)
+    implementation(libs.bouncycastle)
 
-    // Security bundles
-    implementation(libs.bundles.security)
-
-    // Utilities
-    implementation(libs.bundles.utilities)
-
-    // Core library desugaring
-    coreLibraryDesugaring(libs.coreLibraryDesugaring)
-
-    // Testing
-    testImplementation(libs.bundles.testing)
-    testImplementation(libs.junit.engine)
-    androidTestImplementation(libs.bundles.testing)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.hilt.android.testing)
-    kspAndroidTest(libs.hilt.compiler)
-
-    // Debug implementations
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Xposed Framework - YukiHookAPI (Standardized)
-    implementation(libs.yuki)
-    ksp(libs.yuki.ksp.xposed)
-    implementation(libs.bundles.xposed)
-
-    // Legacy Xposed API (compatibility)
-    implementation(files("${project.rootDir}/Libs/api-82.jar"))
-    implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
+    // Testing (JVM only)
+    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testRuntimeOnly(libs.junit.engine)
 }
 
 // ===== AUTOMATED QUALITY CHECKS =====
@@ -148,7 +51,19 @@ spotless {
     kotlin {
         target("**/*.kt")
         targetExclude("**/build/**/*.kt")
-        ktlint()
+        ktlint(libs.versions.ktlint.get())
+            .editorConfigOverride(
+                mapOf(
+                    "indent_size" to "4",
+                    "max_line_length" to "120",
+                ),
+            )
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint(libs.versions.ktlint.get())
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -168,30 +83,45 @@ kover {
     }
 }
 
-// ===== DOCUMENTATION GENERATION =====
-dokka {
+// ===== DOCUMENTATION =====
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTaskPartial>().configureEach {
     dokkaSourceSets {
         named("main") {
-            displayName.set("Genesis Core Module")
-            includes.from("module.md")
+            moduleName.set("Genesis Core Module")
+            moduleVersion.set("1.0.0")
+            includes.from("Module.md")
+
             sourceLink {
                 localDirectory.set(file("src/main/kotlin"))
-                remoteUrl.set(uri("https://github.com/aurakai/Genesis-Os/tree/main/core-module/src/main/kotlin"))
                 remoteLineSuffix.set("#L")
+            }
+
+            perPackageOption {
+                matchingRegex.set(".*\\.internal.*")
+                suppress.set(true)
             }
         }
     }
 }
 
-// ===== AUTOMATED TASKS =====
+// ===== BUILD AUTOMATION TASKS =====
 tasks.register("checkCodeQuality") {
     group = "verification"
     description = "Run all code quality checks for core module"
-    dependsOn("spotlessCheck", "detekt", "lint")
+    dependsOn("spotlessCheck")
 }
 
-tasks.register("generateDocs") {
-    group = "documentation"
-    description = "Generate documentation for core module"
-    dependsOn("dokkaHtml")
+tasks.register("runAllTests") {
+    group = "verification"
+    description = "Run all tests with coverage for core module"
+    dependsOn("test", "koverHtmlReport")
 }
+
+tasks.register("buildAndTest") {
+    group = "build"
+    description = "Complete build and test cycle for core module"
+    dependsOn("checkCodeQuality", "build", "runAllTests")
+}
+
+// Note: API generation handled by app module
+// Core module provides shared utilities only

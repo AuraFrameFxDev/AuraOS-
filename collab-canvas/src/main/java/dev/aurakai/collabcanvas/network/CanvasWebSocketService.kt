@@ -1,11 +1,12 @@
 package dev.aurakai.collabcanvas.network
 
-import android.util.Log
 import com.google.gson.Gson
+import dev.aurakai.collabcanvas.model.CanvasElement
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import okhttp3.*
 import okio.ByteString
+import timber.log.Timber // Added Timber import
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,52 +15,52 @@ class CanvasWebSocketService @Inject constructor(
     private val okHttpClient: OkHttpClient,
     private val gson: Gson,
 ) {
-    private val TAG = "CanvasWebSocket"
+    // Removed TAG property
     private var webSocket: WebSocket? = null
     private val _events = MutableSharedFlow<CanvasWebSocketEvent>()
     val events: SharedFlow<CanvasWebSocketEvent> = _events.asSharedFlow()
 
     private val webSocketListener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            Log.d(TAG, "WebSocket connection opened")
+            Timber.d("WebSocket connection opened")
             _events.tryEmit(CanvasWebSocketEvent.Connected)
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            Log.d(TAG, "Message received: $text")
+            Timber.d("Message received: $text") // Changed to Timber
             try {
                 val message = gson.fromJson(text, CanvasWebSocketMessage::class.java)
                 _events.tryEmit(CanvasWebSocketEvent.MessageReceived(message))
             } catch (e: Exception) {
-                Log.e(TAG, "Error parsing WebSocket message", e)
+                Timber.e(e, "Error parsing WebSocket message") // Changed to Timber, added exception first for stack trace
                 _events.tryEmit(CanvasWebSocketEvent.Error("Error parsing message: ${e.message}"))
             }
         }
 
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-            Log.d(TAG, "Binary message received")
+            Timber.d("Binary message received") // Changed to Timber
             _events.tryEmit(CanvasWebSocketEvent.BinaryMessageReceived(bytes))
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-            Log.d(TAG, "WebSocket closing: $code / $reason")
+            Timber.d("WebSocket closing: $code / $reason") // Changed to Timber
             _events.tryEmit(CanvasWebSocketEvent.Closing(code, reason))
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            Log.d(TAG, "WebSocket closed: $code / $reason")
+            Timber.d("WebSocket closed: $code / $reason") // Changed to Timber
             _events.tryEmit(CanvasWebSocketEvent.Disconnected)
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            Log.e(TAG, "WebSocket error", t)
+            Timber.e(t, "WebSocket error") // Changed to Timber
             _events.tryEmit(CanvasWebSocketEvent.Error(t.message ?: "Unknown error"))
         }
     }
 
     fun connect(url: String) {
         if (webSocket != null) {
-            Log.w(TAG, "WebSocket already connected")
+            Timber.w("WebSocket already connected") // Changed to Timber
             return
         }
 
@@ -79,11 +80,11 @@ class CanvasWebSocketService @Inject constructor(
         return try {
             val json = gson.toJson(message)
             webSocket?.send(json) ?: run {
-                Log.e(TAG, "WebSocket is not connected")
+                Timber.e("WebSocket is not connected") // Changed to Timber
                 false
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error sending WebSocket message", e)
+            Timber.e(e, "Error sending WebSocket message") // Changed to Timber, added exception first for stack trace
             false
         }
     }

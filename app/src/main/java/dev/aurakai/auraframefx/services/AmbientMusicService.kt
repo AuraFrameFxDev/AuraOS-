@@ -46,7 +46,7 @@ class AmbientMusicService : Service() {
      * Returns binder for service communication.
      */
     override fun onBind(intent: Intent?): IBinder {
-        Timber.d("🎵 AmbientMusicService bound")
+        Timber.d("AmbientMusicService bound")
         return binder
     }
 
@@ -54,7 +54,7 @@ class AmbientMusicService : Service() {
      * Handles service start command and initializes ambient music system.
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.d("🎵 Starting AmbientMusicService")
+        Timber.d("Starting AmbientMusicService")
 
         try {
             initializeAmbientMusic()
@@ -82,7 +82,7 @@ class AmbientMusicService : Service() {
                 if (it.isPlaying) {
                     it.pause()
                     isPlaying = false
-                    Timber.d("🎵 Ambient music paused")
+                    Timber.d("Ambient music paused")
                 }
             }
         } catch (e: Exception) {
@@ -99,7 +99,7 @@ class AmbientMusicService : Service() {
                 if (!it.isPlaying) {
                     it.start()
                     isPlaying = true
-                    Timber.d("🎵 Ambient music resumed")
+                    Timber.d("Ambient music resumed")
                 }
             }
         } catch (e: Exception) {
@@ -116,7 +116,7 @@ class AmbientMusicService : Service() {
             val clampedVolume = volume.coerceIn(0.0f, 1.0f)
             currentVolume = clampedVolume
             mediaPlayer?.setVolume(clampedVolume, clampedVolume)
-            Timber.d("🎵 Ambient music volume set to $clampedVolume")
+            Timber.d("Ambient music volume set to $clampedVolume")
         } catch (e: Exception) {
             Timber.e(e, "Failed to set ambient music volume")
         }
@@ -127,7 +127,7 @@ class AmbientMusicService : Service() {
      */
     fun setShuffling(shuffling: Boolean) {
         isShuffling = shuffling
-        Timber.d("🎵 Ambient music shuffle: $shuffling")
+        Timber.d("Ambient music shuffle: $shuffling")
     }
 
     /**
@@ -179,7 +179,7 @@ class AmbientMusicService : Service() {
 
     private fun initializeAmbientMusic() {
         try {
-            Timber.d("🎵 Initializing ambient music system")
+            Timber.d("Initializing ambient music system")
             // Initialize MediaPlayer for ambient tracks
             // In a real implementation, you would load actual audio files
         } catch (e: Exception) {
@@ -204,7 +204,7 @@ class AmbientMusicService : Service() {
 
     private fun playTrack(trackName: String) {
         try {
-            Timber.d("🎵 Playing ambient track: $trackName")
+            Timber.d("Playing ambient track: $trackName")
 
             currentTrack = trackName
             trackHistory.add(trackName)
@@ -227,7 +227,7 @@ class AmbientMusicService : Service() {
         try {
             mediaPlayer?.release()
             mediaPlayer = null
-            Timber.d("🎵 AmbientMusicService destroyed")
+            Timber.d("AmbientMusicService destroyed")
         } catch (e: Exception) {
             Timber.e(e, "Error destroying ambient music service")
         }

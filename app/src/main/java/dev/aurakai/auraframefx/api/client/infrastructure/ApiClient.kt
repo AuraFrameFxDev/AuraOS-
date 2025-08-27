@@ -97,7 +97,7 @@ open class ApiClient(val baseUrl: String, val client: Call.Factory = defaultClie
         file: File,
     ) {
         val partHeaders = headers.toMutableMap() +
-            ("Content-Disposition" to "form-data; name=\"$name\"; filename=\"${file.name}\"")
+                ("Content-Disposition" to "form-data; name=\"$name\"; filename=\"${file.name}\"")
         val fileMediaType = guessContentTypeFromFile(file).toMediaTypeOrNull()
         addPart(
             partHeaders.toHeaders(),
@@ -122,7 +122,7 @@ open class ApiClient(val baseUrl: String, val client: Call.Factory = defaultClie
         obj: T?,
     ) {
         val partHeaders = headers.toMutableMap() +
-            ("Content-Disposition" to "form-data; name=\"$name\"")
+                ("Content-Disposition" to "form-data; name=\"$name\"")
         addPart(
             partHeaders.toHeaders(),
             parameterToString(obj).toRequestBody(null)

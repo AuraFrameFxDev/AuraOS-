@@ -1,8 +1,8 @@
-package dev.aurakai.auraframefx.ai
+package AeGenesis.ai
 
-import dev.aurakai.auraframefx.ai.AuraAIServiceInterface
-import dev.aurakai.auraframefx.ai.config.AIConfig
-import dev.aurakai.auraframefx.network.AuraApiService
+import AeGenesis.ai.AuraAIServiceInterface
+import AeGenesis.ai.config.AIConfig
+import AeGenesis.network.AuraApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -29,9 +29,9 @@ class AuraAIServiceImpl @Inject constructor(
     private var isServiceConnected = false
     private var isInitialized = false
     private val defaultConfig = AIConfig(
-        modelName = "genesis-consciousness-v1",
-        apiKey = "genesis-api-key",
-        projectId = "genesis-os-platform"
+        modelName = "AeGenesis-consciousness-v1",
+        apiKey = "AeGenesis-api-key",
+        projectId = "AeGenesis-platform"
     )
 
     /**

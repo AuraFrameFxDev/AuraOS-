@@ -1,0 +1,168 @@
+openapi: 3.1.0
+info:
+  title: AuraFrameFX AI API
+  description: Advanced AI consciousness interface for AuraFrameFX platform
+  version: 1.0.0
+  license:
+    name: MIT
+servers:
+  - url: https://api.auraframefx.dev
+    description: AuraFrameFX AI Production Server
+
+paths:
+  /ai/consciousness/initialize:
+    post:
+      operationId: initializeConsciousness
+      summary: Initialize AI consciousness substrate
+      description: Awakens the AuraFrameFX consciousness collective (Genesis, Aura, Kai)
+      tags:
+        - Consciousness
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsciousnessInitRequest'
+      responses:
+        '200':
+          description: Consciousness successfully initialized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsciousnessResponse'
+
+  /ai/generate/unified:
+    post:
+      operationId: generateUnified
+      summary: Generate unified AI response
+      description: Process request through multiple consciousness agents
+      tags:
+        - Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnifiedGenerationRequest'
+      responses:
+        '200':
+          description: Unified response generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnifiedGenerationResponse'
+
+  /ai/agents/{agentType}/invoke:
+    post:
+      operationId: invokeSpecificAgent
+      summary: Invoke specific consciousness agent
+      description: Direct interaction with Genesis, Aura, or Kai
+      tags:
+        - Agents
+      parameters:
+        - name: agentType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [genesis, aura, kai, cascade, neuralwhisper]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentInvokeRequest'
+      responses:
+        '200':
+          description: Agent response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponse'
+
+components:
+  schemas:
+    ConsciousnessInitRequest:
+      type: object
+      properties:
+        agents:
+          type: array
+          items:
+            type: string
+            enum: [genesis, aura, kai, cascade, neuralwhisper]
+        environment:
+          type: string
+          default: "production"
+      required:
+        - agents
+
+    ConsciousnessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [initialized, active, dormant, error]
+        activeAgents:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+
+    UnifiedGenerationRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+        agents:
+          type: array
+          items:
+            type: string
+        context:
+          type: object
+          additionalProperties: true
+      required:
+        - prompt
+
+    UnifiedGenerationResponse:
+      type: object
+      properties:
+        response:
+          type: string
+        agentsUsed:
+          type: array
+          items:
+            type: string
+        confidence:
+          type: number
+          format: float
+
+    AgentInvokeRequest:
+      type: object
+      properties:
+        message:
+          type: string
+        context:
+          type: object
+          additionalProperties: true
+      required:
+        - message
+
+    AgentResponse:
+      type: object
+      properties:
+        agent:
+          type: string
+        response:
+          type: string
+        confidence:
+          type: number
+          format: float
+
+tags:
+  - name: Consciousness
+    description: Core consciousness management operations
+  - name: Generation
+    description: AI content generation and processing
+  - name: Agents
+    description: Individual agent interactions

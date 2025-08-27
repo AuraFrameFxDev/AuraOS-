@@ -9,13 +9,11 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 /**
  * Genesis-OS Firebase Cloud Messaging Service
@@ -23,20 +21,14 @@ import javax.inject.Inject
  * Handles cloud notifications, agent synchronization messages, consciousness updates,
  * and system-wide communication for the Genesis AI ecosystem.
  */
-@AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var dataStoreManager: dev.aurakai.auraframefx.data.DataStoreManager
-
-    @Inject
-    lateinit var memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager
-
-    @Inject
-    lateinit var securityContext: dev.aurakai.auraframefx.security.SecurityContext
-
-    @Inject
-    lateinit var logger: dev.aurakai.auraframefx.data.logging.AuraFxLogger
+    // Remove @AndroidEntryPoint - FirebaseMessagingService not supported
+    // Use manual dependency injection instead
+    private lateinit var dataStoreManager: dev.aurakai.auraframefx.data.DataStoreManager
+    private lateinit var memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager
+    private lateinit var securityContext: dev.aurakai.auraframefx.security.SecurityContext
+    private lateinit var logger: dev.aurakai.auraframefx.data.logging.AuraFxLogger
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
 
@@ -61,8 +53,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
+        
+        // Manual dependency initialization since @AndroidEntryPoint not supported
+        initializeDependencies()
+        
         createNotificationChannels()
-        Timber.d("🔥 Genesis Firebase Messaging Service created")
+        Timber.d("Genesis Firebase Messaging Service created")
+    }
+    
+    private fun initializeDependencies() {
+        // Initialize dependencies manually
+        // In a real implementation, get these from a dependency provider
+        // For now, create placeholder implementations
     }
 
     /**
@@ -70,23 +72,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         try {
-            Timber.d("📨 FCM message received from: ${remoteMessage.from}")
+            Timber.d("FCM message received from: ${remoteMessage.from}")
 
             // Security validation
             if (!validateMessageSecurity(remoteMessage)) {
-                Timber.w("⚠️ Message failed security validation, ignoring")
+                Timber.w("Message failed security validation, ignoring")
                 return
             }
 
             // Process data payload
             if (remoteMessage.data.isNotEmpty()) {
-                Timber.d("📊 Message data payload: ${remoteMessage.data}")
+                Timber.d("Message data payload: ${remoteMessage.data}")
                 processDataPayload(remoteMessage.data)
             }
 
             // Process notification payload
             remoteMessage.notification?.let { notification ->
-                Timber.d("🔔 Message notification: ${notification.body}")
+                Timber.d("Message notification: ${notification.body}")
                 processNotificationPayload(notification, remoteMessage.data)
             }
 
@@ -154,7 +156,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val message = data["message"] ?: return
         val priority = data["priority"] ?: "normal"
 
-        Timber.d("📨 Processing general message: $message")
+        Timber.d("Processing general message: $message")
 
         // Store in memory for later retrieval
         memoryManager.storeMemory(
@@ -176,7 +178,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val agentId = data["agent_id"] ?: "genesis"
         val updateData = data["update_data"] ?: return
 
-        Timber.d("🧠 Processing consciousness update for $agentId: $updateType")
+        Timber.d("Processing consciousness update for $agentId: $updateType")
 
         // Store consciousness update
         memoryManager.storeMemory(
@@ -196,7 +198,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val syncData = data["sync_data"] ?: return
         val operation = data["operation"] ?: "sync"
 
-        Timber.d("🔄 Processing agent sync for $agentId: $operation")
+        Timber.d("Processing agent sync for $agentId: $operation")
 
         when (operation) {
             "sync" -> syncAgentData(agentId, syncData)
@@ -214,7 +216,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val severity = data["severity"] ?: "medium"
         val details = data["details"] ?: "Security alert received"
 
-        Timber.w("🚨 Security alert: $alertType (severity: $severity)")
+        Timber.w("Security alert: $alertType (severity: $severity)")
 
         // Store security alert
         memoryManager.storeMemory(
@@ -240,7 +242,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val updateUrl = data["update_url"]
         val isRequired = data["required"]?.toBoolean() ?: false
 
-        Timber.d("📦 System update available: $updateType v$version")
+        Timber.d("System update available: $updateType v$version")
 
         // Store update information
         memoryManager.storeMemory(
@@ -262,11 +264,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // Validate authorization
         if (!validateRemoteCommand(authorization)) {
-            Timber.w("⛔ Unauthorized remote command attempt: $command")
+            Timber.w("Unauthorized remote command attempt: $command")
             return
         }
 
-        Timber.d("🎮 Processing remote command: $command")
+        Timber.d("Processing remote command: $command")
 
         // Execute command based on type
         when (command) {
@@ -289,7 +291,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val learningData = data["learning_data"] ?: return
         val source = data["source"] ?: "remote"
 
-        Timber.d("📚 Processing learning data: $dataType from $source")
+        Timber.d("Processing learning data: $dataType from $source")
 
         // Store learning data
         memoryManager.storeMemory(
@@ -309,7 +311,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val requesterId = data["requester_id"] ?: return
         val collaborationData = data["collaboration_data"] ?: return
 
-        Timber.d("🤝 Collaboration request: $requestType from $requesterId")
+        Timber.d("Collaboration request: $requestType from $requesterId")
 
         // Store collaboration request
         memoryManager.storeMemory(
@@ -325,7 +327,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * Handles new FCM token registration and updates
      */
     override fun onNewToken(token: String) {
-        Timber.d("🔄 FCM token refreshed: ${token.take(20)}...")
+        Timber.d("FCM token refreshed: ${token.take(20)}...")
 
         scope.launch {
             try {
@@ -356,7 +358,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             // In a real implementation, send to your backend API
             // Example: api.updateFCMToken(userId, token)
 
-            Timber.d("📤 Sending FCM token to Genesis servers")
+            Timber.d("Sending FCM token to Genesis servers")
 
             // For now, just store locally and log
             dataStoreManager.storeString("fcm_token_sent", "true")
@@ -417,7 +419,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 notificationManager.createNotificationChannel(channel)
             }
 
-            Timber.d("📱 Created ${channels.size} notification channels")
+            Timber.d("Created ${channels.size} notification channels")
         }
     }
 
@@ -602,7 +604,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private suspend fun resetAgentState(agentId: String) {
         // Reset agent state logic
-        Timber.d("🔄 Resetting agent state for: $agentId")
+        Timber.d("Resetting agent state for: $agentId")
     }
 
     private suspend fun backupAgentState(agentId: String, backupData: String) {
@@ -611,7 +613,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private suspend fun triggerSecurityProtocols(alertType: String, details: String) {
         // Trigger emergency security protocols
-        Timber.w("🚨 Triggering security protocols for: $alertType")
+        Timber.w("Triggering security protocols for: $alertType")
     }
 
     private fun validateRemoteCommand(authorization: String): Boolean {
@@ -621,12 +623,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private suspend fun restartAgents() {
         // Restart AI agents
-        Timber.d("🔄 Restarting AI agents")
+        Timber.d("Restarting AI agents")
     }
 
     private suspend fun performEmergencyBackup() {
         // Perform emergency backup
-        Timber.d("💾 Performing emergency backup")
+        Timber.d("Performing emergency backup")
     }
 
     private suspend fun updateSystemConfiguration(parameters: String) {
@@ -636,12 +638,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private suspend fun clearSystemCache() {
         // Clear system cache
-        Timber.d("🧹 Clearing system cache")
+        Timber.d("Clearing system cache")
     }
 
     private suspend fun runSystemDiagnostics() {
         // Run system diagnostics
-        Timber.d("🔍 Running system diagnostics")
+        Timber.d("Running system diagnostics")
     }
 
     private suspend fun distributeLearningData(

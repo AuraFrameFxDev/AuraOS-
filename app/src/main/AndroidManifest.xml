@@ -5,8 +5,15 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Define a custom permission for the IntegrityViolationReceiver -->
+    <permission
+        android:name="dev.aurakai.auraframefx.permission.RECEIVE_INTEGRITY_VIOLATION"
+        android:protectionLevel="signature"
+        android:label="@string/permission_receive_integrity_violation_label"
+        android:description="@string/permission_receive_integrity_violation_description" />
+
     <application
-        android:name="AuraFrameApplication"
+        android:name="dev.aurakai.auraframefx.AuraFrameApplication"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
         android:label="AuraFrameFX LSPosed Module"
@@ -64,7 +71,8 @@
         </receiver>
         <receiver
             android:name=".security.IntegrityViolationReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:permission="dev.aurakai.auraframefx.permission.RECEIVE_INTEGRITY_VIOLATION">
             <intent-filter>
                 <action android:name="dev.aurakai.auraframefx.ACTION_INTEGRITY_VIOLATION" />
             </intent-filter>

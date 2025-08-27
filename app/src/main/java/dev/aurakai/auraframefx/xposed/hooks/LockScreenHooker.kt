@@ -213,7 +213,7 @@ class LockScreenHooker(
             // Set window flags for Genesis customizations
             activity.window.addFlags(
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
-                    WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+                        WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
             )
 
             // Apply Genesis theme

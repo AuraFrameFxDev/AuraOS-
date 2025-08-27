@@ -1,0 +1,448 @@
+openapi: 3.1.0
+info:
+  title: ROM Tools API - AeGenesis
+  description: |
+    Advanced ROM analysis and modification tools for AeGenesis.
+    Provides endpoints for boot image analysis, partition management, 
+    and ROM security assessment powered by DataveinConstructor.
+  version: 1.0.0-aegenesis
+  license:
+    name: AURAKAI PROPRIETARY LICENSE v1.0
+    identifier: Proprietary
+  contact:
+    name: AeGenesis Team
+    url: https://github.com/AeGenesis/AeGenesis
+
+servers:
+  - url: http://localhost:8080/api/v1/romtools
+    description: Local development server
+  - url: https://api.aegenesis.dev/v1/romtools
+    description: Production server
+
+paths:
+  /boot-image/analyze:
+    post:
+      summary: Analyze boot image
+      description: Performs comprehensive analysis of Android boot.img files
+      operationId: analyzeBootImage
+      tags:
+        - Boot Image Analysis
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                bootImage:
+                  type: string
+                  format: binary
+                  description: Boot image file to analyze
+                analysisLevel:
+                  type: string
+                  enum: [ basic, detailed, security ]
+                  default: detailed
+                  description: Level of analysis to perform
+              required:
+                - bootImage
+      responses:
+        '200':
+          description: Boot image analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BootAnalysisResult'
+        '400':
+          description: Invalid boot image or parameters
+        '500':
+          description: Analysis failed
+
+  /boot-image/modify:
+    post:
+      summary: Modify boot image
+      description: Apply modifications to boot image (requires root)
+      operationId: modifyBootImage
+      tags:
+        - Boot Image Modification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BootModificationRequest'
+      responses:
+        '200':
+          description: Boot image modified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModificationResult'
+        '403':
+          description: Root access required
+        '500':
+          description: Modification failed
+
+  /partitions:
+    get:
+      summary: List system partitions
+      description: Get information about all system partitions
+      operationId: listPartitions
+      tags:
+        - Partition Management
+      responses:
+        '200':
+          description: Partition list retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PartitionInfo'
+
+  /partitions/{partitionName}/mount:
+    post:
+      summary: Mount partition
+      description: Mount a specific partition (requires root)
+      operationId: mountPartition
+      tags:
+        - Partition Management
+      parameters:
+        - name: partitionName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the partition to mount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MountRequest'
+      responses:
+        '200':
+          description: Partition mounted successfully
+        '403':
+          description: Root access required
+        '404':
+          description: Partition not found
+        '500':
+          description: Mount operation failed
+
+  /partitions/{partitionName}/unmount:
+    post:
+      summary: Unmount partition
+      description: Unmount a specific partition (requires root)
+      operationId: unmountPartition
+      tags:
+        - Partition Management
+      parameters:
+        - name: partitionName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the partition to unmount
+      responses:
+        '200':
+          description: Partition unmounted successfully
+        '403':
+          description: Root access required
+        '404':
+          description: Partition not found
+        '500':
+          description: Unmount operation failed
+
+  /security/scan:
+    post:
+      summary: Security scan ROM
+      description: Perform security analysis on ROM components
+      operationId: securityScanRom
+      tags:
+        - Security Analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecurityScanRequest'
+      responses:
+        '200':
+          description: Security scan completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityScanResult'
+        '500':
+          description: Security scan failed
+
+  /datavein/analyze:
+    post:
+      summary: DataveinConstructor analysis
+      description: Advanced ROM analysis using DataveinConstructor AI
+      operationId: dataveinAnalyze
+      tags:
+        - DataveinConstructor
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                romFile:
+                  type: string
+                  format: binary
+                  description: ROM file for analysis
+                analysisType:
+                  type: string
+                  enum: [ structure, security, performance, compatibility ]
+                  default: structure
+              required:
+                - romFile
+      responses:
+        '200':
+          description: DataveinConstructor analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataveinAnalysisResult'
+        '500':
+          description: Analysis failed
+
+components:
+  schemas:
+    BootAnalysisResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        bootImageInfo:
+          $ref: '#/components/schemas/BootImageInfo'
+        securityAnalysis:
+          $ref: '#/components/schemas/SecurityAnalysis'
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    BootImageInfo:
+      type: object
+      properties:
+        kernelVersion:
+          type: string
+        ramdiskSize:
+          type: integer
+        architecture:
+          type: string
+        androidVersion:
+          type: string
+        buildDate:
+          type: string
+        seLinuxPolicy:
+          type: string
+
+    SecurityAnalysis:
+      type: object
+      properties:
+        riskLevel:
+          type: string
+          enum: [ low, medium, high, critical ]
+        vulnerabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vulnerability'
+        mitigations:
+          type: array
+          items:
+            type: string
+
+    Vulnerability:
+      type: object
+      properties:
+        id:
+          type: string
+        severity:
+          type: string
+          enum: [ low, medium, high, critical ]
+        description:
+          type: string
+        cveId:
+          type: string
+
+    BootModificationRequest:
+      type: object
+      properties:
+        modifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Modification'
+        backupOriginal:
+          type: boolean
+          default: true
+      required:
+        - modifications
+
+    Modification:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [ kernel_patch, ramdisk_modify, selinux_policy ]
+        target:
+          type: string
+        data:
+          type: string
+          format: base64
+
+    ModificationResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        modifiedImagePath:
+          type: string
+        backupPath:
+          type: string
+        appliedModifications:
+          type: array
+          items:
+            type: string
+
+    PartitionInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        device:
+          type: string
+        size:
+          type: integer
+        used:
+          type: integer
+        available:
+          type: integer
+        mountPoint:
+          type: string
+        fileSystem:
+          type: string
+        isMounted:
+          type: boolean
+
+    MountRequest:
+      type: object
+      properties:
+        mountPoint:
+          type: string
+        readOnly:
+          type: boolean
+          default: false
+        options:
+          type: array
+          items:
+            type: string
+
+    SecurityScanRequest:
+      type: object
+      properties:
+        scanType:
+          type: string
+          enum: [ quick, full, custom ]
+          default: full
+        components:
+          type: array
+          items:
+            type: string
+            enum: [ bootloader, kernel, system, vendor, recovery ]
+
+    SecurityScanResult:
+      type: object
+      properties:
+        overallRisk:
+          type: string
+          enum: [ low, medium, high, critical ]
+        componentResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComponentScanResult'
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    ComponentScanResult:
+      type: object
+      properties:
+        component:
+          type: string
+        riskLevel:
+          type: string
+          enum: [ low, medium, high, critical ]
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecurityIssue'
+
+    SecurityIssue:
+      type: object
+      properties:
+        type:
+          type: string
+        severity:
+          type: string
+        description:
+          type: string
+        mitigation:
+          type: string
+
+    DataveinAnalysisResult:
+      type: object
+      properties:
+        analysisId:
+          type: string
+        romStructure:
+          $ref: '#/components/schemas/RomStructure'
+        aiInsights:
+          type: array
+          items:
+            type: string
+        compatibilityScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        optimizationSuggestions:
+          type: array
+          items:
+            type: string
+
+    RomStructure:
+      type: object
+      properties:
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartitionInfo'
+        systemApps:
+          type: array
+          items:
+            type: string
+        kernelModules:
+          type: array
+          items:
+            type: string
+        buildProps:
+          type: object
+          additionalProperties:
+            type: string
+
+tags:
+  - name: Boot Image Analysis
+    description: Boot image analysis and inspection
+  - name: Boot Image Modification
+    description: Boot image modification and patching
+  - name: Partition Management
+    description: System partition operations
+  - name: Security Analysis
+    description: ROM security scanning and analysis
+  - name: DataveinConstructor
+    description: AI-powered ROM analysis with DataveinConstructor

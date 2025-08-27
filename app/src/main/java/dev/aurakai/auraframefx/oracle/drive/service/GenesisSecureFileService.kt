@@ -77,14 +77,14 @@ class GenesisSecureFileService @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     /**
-     * Reads and decrypts a securely stored file and emits the result as a Flow.
+     * Reads and decrypts a securely stored file, emitting the result as a flow.
      *
-     * On success emits a single [FileOperationResult.Data] containing the decrypted bytes and the original file name
-     * (without the secure extension). Emits [FileOperationResult.Error] if the file is missing or an error occurs during I/O or decryption.
+     * Emits a [FileOperationResult.Data] containing the decrypted file bytes and original file name on success,
+     * or [FileOperationResult.Error] if the file does not exist or decryption fails.
      *
-     * @param fileName The name of the file to read (without the ".gen" secure extension).
-     * @param directory Optional subdirectory under the service's internal storage directory to locate the file.
-     * @return A Flow that emits the operation result (one success or error event).
+     * @param fileName The name of the file to read (without extension).
+     * @param directory Optional subdirectory within internal storage to look for the file.
+     * @return A flow emitting the result of the file read operation.
      */
     override suspend fun readFile(
         fileName: String,

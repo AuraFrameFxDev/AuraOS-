@@ -1,11 +1,16 @@
 # ninja log v5
-0	328	7774564626701394	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	17f1c81faf2bc04c
-337	820	7774564631749747	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	1505325ddf3bc2d9
-0	35	0	clean	bfff2010d6239e2d
-4	677	7774579739571000	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	17f1c81faf2bc04c
-678	1441	7774579745754382	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	1505325ddf3bc2d9
-0	23	0	clean	bfff2010d6239e2d
+1	361	7779816081058308	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	e891d548c95bbb7a
+363	1045	7779816087003564	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+1	12	0	clean	bfff2010d6239e2d
+7	337	7779829327488467	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	e891d548c95bbb7a
+338	483	7779829328937069	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+2	101	7779830044699705	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+3	118	7779831095382025	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+2	171	7779833689839918	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
 0	8	0	clean	bfff2010d6239e2d
-0	8	0	clean	bfff2010d6239e2d
-2	386	7774608656247113	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	17f1c81faf2bc04c
-387	771	7774608659940557	C:/Users/Wehtt/StudioProjects/Genesis-ConscienceOS-/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	1505325ddf3bc2d9
+3	366	7779836998079420	CMakeFiles/collab-canvas-native.dir/collab_canvas_native.cpp.o	e891d548c95bbb7a
+367	661	7779837001398191	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+3	186	7779837808217638	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+9	150	7779846943367114	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+4	177	7779848020035136	C:/AeGenesis/collab-canvas/build/intermediates/cxx/Debug/2j182mc5/obj/arm64-v8a/libcollab-canvas-native.so	af94723b6e5fc295
+0	9	0	clean	bfff2010d6239e2d

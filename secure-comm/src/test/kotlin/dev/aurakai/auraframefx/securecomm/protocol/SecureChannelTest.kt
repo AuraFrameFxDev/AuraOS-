@@ -1,12 +1,11 @@
-package dev.aurakai.auraframefx.securecomm.protocol
+package AeGenesis.securecomm.protocol
 
+import AeGenesis.securecomm.crypto.CryptoManager
 import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import dev.aurakai.auraframefx.securecomm.crypto.CryptoManager
 import org.junit.Assert.*
-import org.junit.Rule
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

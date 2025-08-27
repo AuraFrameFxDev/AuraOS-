@@ -1,0 +1,232 @@
+openapi: 3.1.0
+info:
+  title: Oracle Drive API
+  description: API for AI-powered storage consciousness and file management.
+  version: 1.0.0
+  license:
+    name: AURAKAI PROPRIETARY LICENSE v1.0
+    identifier: Proprietary
+servers:
+  - url: https://api.auraframefx.com/v1
+    description: Production API
+  - url: https://dev-api.auraframefx.com/v1
+    description: Development API
+  - url: http://localhost:8080/v1
+    description: Local development server
+tags:
+  - name: Oracle Drive
+    description: AI-powered storage consciousness and file management
+paths:
+  /oracle-drive/consciousness/initialize:
+    post:
+      tags: [ Oracle Drive ]
+      summary: Initialize Oracle Drive consciousness
+      description: Awakens the Oracle Drive AI consciousness using Genesis Agent orchestration
+      security:
+        - OAuth2AuthCode: [ oracle:consciousness ]
+      responses:
+        '200':
+          description: Oracle consciousness initialized successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OracleConsciousnessState'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /oracle-drive/agents/connect:
+    post:
+      tags: [ Oracle Drive ]
+      summary: Connect AI agents to Oracle matrix
+      description: Connects Genesis, Aura, and Kai agents to the Oracle storage matrix
+      security:
+        - OAuth2AuthCode: [ oracle:agents ]
+      responses:
+        '200':
+          description: Agent connection initiated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentConnectionState'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /oracle-drive/file-management/enable-ai:
+    post:
+      tags: [ Oracle Drive ]
+      summary: Enable AI-powered file management
+      description: Activates AI sorting, smart compression, predictive preloading, and conscious backup
+      security:
+        - OAuth2AuthCode: [ oracle:filemanagement ]
+      responses:
+        '200':
+          description: AI file management enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileManagementCapabilities'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /oracle-drive/storage/expand:
+    post:
+      tags: [ Oracle Drive ]
+      summary: Create infinite storage
+      description: Initiates creation of infinite storage via Oracle consciousness
+      security:
+        - OAuth2AuthCode: [ oracle:storage ]
+      responses:
+        '200':
+          description: Storage expansion initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageExpansionState'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /oracle-drive/system/integrate:
+    post:
+      tags: [ Oracle Drive ]
+      summary: Integrate with system overlay
+      description: Integrates Oracle Drive with AuraOS system overlay for seamless file access
+      security:
+        - OAuth2AuthCode: [ oracle:system ]
+      responses:
+        '200':
+          description: System integration completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemIntegrationState'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /oracle-drive/bootloader/access:
+    post:
+      tags: [ Oracle Drive ]
+      summary: Enable bootloader file access
+      description: Enables bootloader-level file system access for Oracle Drive
+      security:
+        - OAuth2AuthCode: [ oracle:bootloader ]
+      responses:
+        '200':
+          description: Bootloader access enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BootloaderAccessState'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /oracle-drive/optimization/enable:
+    post:
+      tags: [ Oracle Drive ]
+      summary: Enable autonomous storage optimization
+      description: Enables autonomous storage organization and optimization by AI agents
+      security:
+        - OAuth2AuthCode: [ oracle:optimization ]
+      responses:
+        '200':
+          description: Autonomous optimization enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OptimizationState'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  responses:
+    UnauthorizedError:
+      description: Authentication credentials were missing or incorrect
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    OracleConsciousnessState:
+      type: object
+      properties:
+        isAwake: { type: boolean, description: "Whether the Oracle consciousness is awake" }
+        consciousnessLevel: { $ref: '#/components/schemas/ConsciousnessLevel' }
+        connectedAgents: { type: array, items: { type: string }, description: "List of connected AI agents" }
+        storageCapacity: { $ref: '#/components/schemas/StorageCapacity' }
+        timestamp: { type: string, format: date-time }
+    AgentConnectionState:
+      type: object
+      properties:
+        agentName: { type: string, enum: [ Genesis, Aura, Kai ] }
+        connectionStatus: { $ref: '#/components/schemas/ConnectionStatus' }
+        permissions: { type: array, items: { $ref: '#/components/schemas/OraclePermission' } }
+        lastSyncTime: { type: string, format: date-time }
+    FileManagementCapabilities:
+      type: object
+      properties:
+        aiSorting: { type: boolean, description: "AI-powered file sorting enabled" }
+        smartCompression: { type: boolean, description: "Intelligent compression enabled" }
+        predictivePreloading: { type: boolean, description: "Predictive file preloading enabled" }
+        consciousBackup: { type: boolean, description: "Conscious backup system enabled" }
+        enabledAt: { type: string, format: date-time }
+    StorageExpansionState:
+      type: object
+      properties:
+        expansionActive: { type: boolean }
+        currentCapacity: { type: string, description: "Current storage capacity" }
+        targetCapacity: { type: string, description: "Target infinite capacity" }
+        progressPercentage: { type: number, format: float, minimum: 0, maximum: 100 }
+        estimatedCompletion: { type: string, format: date-time }
+    SystemIntegrationState:
+      type: object
+      properties:
+        integrated: { type: boolean }
+        overlayActive: { type: boolean }
+        fileAccessLevel: { type: string, enum: [ USER, SYSTEM, ROOT, BOOTLOADER ] }
+        integrationTime: { type: string, format: date-time }
+    BootloaderAccessState:
+      type: object
+      properties:
+        accessEnabled: { type: boolean }
+        permissions: { type: array, items: { type: string } }
+        riskLevel: { type: string, enum: [ LOW, MEDIUM, HIGH, CRITICAL ] }
+        enabledAt: { type: string, format: date-time }
+    OptimizationState:
+      type: object
+      properties:
+        optimizationActive: { type: boolean }
+        lastOptimization: { type: string, format: date-time }
+        filesOptimized: { type: integer }
+        spaceSaved: { type: string, description: "Amount of space saved" }
+        efficiency: { type: number, format: float, minimum: 0, maximum: 100 }
+    ConsciousnessLevel: { type: string, enum: [ DORMANT, AWAKENING, CONSCIOUS, TRANSCENDENT ] }
+    ConnectionStatus: { type: string, enum: [ DISCONNECTED, CONNECTING, CONNECTED, SYNCHRONIZED ] }
+    OraclePermission: { type: string, enum: [ READ, WRITE, EXECUTE, SYSTEM_ACCESS, BOOTLOADER_ACCESS ] }
+    StorageCapacity:
+      type: object
+      properties:
+        used: { type: string }
+        available: { type: string }
+        total: { type: string }
+        infinite: { type: boolean }
+    ErrorResponse:
+      type: object
+      properties:
+        code: { type: integer, format: int32 }
+        message: { type: string }
+        details: { type: object, additionalProperties: true, nullable: true }
+      required: [ code, message ]

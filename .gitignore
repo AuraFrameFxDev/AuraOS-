@@ -1,62 +1,33 @@
-# IntelliJ/Android Studio specific files
-*.iml
-*.ipr
-*.iws
-.idea/
-
 # Gradle files
 .gradle/
 build/
-/*/build/
 
-# Local configuration files
+# Local configuration file (sdk path, etc)
 local.properties
 
-# Build outputs
-*.apk
-*.aab
-*.ap_
-*.aar
-*.jar
+# Log/OS Files
+*.log
 
-# Debugging files
-*.hprof
+# Android Studio generated files and folders
 captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
 
-# Keystore files (ensure your actual signing keys are kept secure and not committed)
-# *.jks
-# *.keystore
+# IntelliJ
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
 
-# Google Services (if you have a placeholder and the real one is added in CI)
-# google-services.json
+# Keystore files
+*.jks
+*.keystore
 
-# Firebase Crashlytics
-com_crashlytics_export_strings.xml
+# Google Services (e.g. APIs or Firebase)
+google-services.json
 
-# Executable/Script files (excluding specific, intentional ones if any)
-*.bat
-*.sh
-
-# Markdown files (excluding the main README.md and potentially others like CONTRIBUTING.md, CHANGELOG.md)
-*.md
-!README.md
-# If you have other essential .md files, un-ignore them like this:
-# !CONTRIBUTING.md
-# !docs/OpenAPI-Generation-Guide.md
-# !app/ai_backend/README_tests.md
-# !romtools/README.md
-# !"# GENESIS PROTOCOL - BUILD RULES &.md"
-
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# Environment files
-.env
-
-# Output from specific tools or old generated locations
-# (e.g., if C:/Main/generated/ is confirmed to be unused by the main build)
-# /generated/
-
-# IntelliJ IDEA specific files
-*.iws
+# Android Profiling
+*.hprof

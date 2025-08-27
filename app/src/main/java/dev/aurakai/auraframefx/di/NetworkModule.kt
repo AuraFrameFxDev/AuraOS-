@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 import dev.aurakai.auraframefx.BuildConfig
 import dev.aurakai.auraframefx.di.qualifiers.BaseUrl
 import dev.aurakai.auraframefx.network.AuraApiService
-import dev.aurakai.auraframefx.network.AuthInterceptor
 import dev.aurakai.auraframefx.network.api.AuthApi
 import dev.aurakai.auraframefx.utils.AppCoroutineDispatchers
 import okhttp3.OkHttpClient
@@ -23,6 +22,7 @@ import javax.inject.Singleton
 
 /**
  * Dagger Hilt module that provides network-related dependencies.
+ * TEMPORARY FIX: Removed circular dependency with AuthInterceptor
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -54,11 +54,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
+            // TEMPORARY: Removed AuthInterceptor to fix circular dependency
             .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -90,12 +89,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuraApiService(
-        context: android.content.Context,
-        authInterceptor: AuthInterceptor,
-        dispatchers: AppCoroutineDispatchers,
-        @BaseUrl baseUrl: String,
-    ): AuraApiService {
-        return AuraApiService(context, authInterceptor, dispatchers, baseUrl)
+    fun provideAuraApiService(retrofit: Retrofit): AuraApiService {
+        return retrofit.create(AuraApiService::class.java)
     }
 }

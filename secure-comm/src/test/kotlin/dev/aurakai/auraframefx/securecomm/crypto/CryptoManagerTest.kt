@@ -1,13 +1,13 @@
-package dev.aurakai.auraframefx.securecomm.crypto
+package AeGenesis.securecomm.crypto
 
 import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Assert.*
-import org.junit.Rule
 import org.junit.jupiter.api.AfterEach
+import org.junit.Assert.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.Rule
 import org.junit.runner.RunWith
 import java.security.KeyStore
 import javax.inject.Inject

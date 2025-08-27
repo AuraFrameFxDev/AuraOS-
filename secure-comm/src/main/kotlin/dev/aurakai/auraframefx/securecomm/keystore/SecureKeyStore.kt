@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.securecomm.keystore
+package AeGenesis.securecomm.keystore
 
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec

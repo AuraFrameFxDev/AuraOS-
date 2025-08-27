@@ -449,9 +449,9 @@ data class RomToolAction(
         if (capabilities == null) return false
 
         return (!requiresRoot || capabilities.hasRootAccess) &&
-            (!requiresBootloader || capabilities.hasBootloaderAccess) &&
-            (!requiresRecovery || capabilities.hasRecoveryAccess) &&
-            (!requiresSystem || capabilities.hasSystemWriteAccess)
+                (!requiresBootloader || capabilities.hasBootloaderAccess) &&
+                (!requiresRecovery || capabilities.hasRecoveryAccess) &&
+                (!requiresSystem || capabilities.hasSystemWriteAccess)
     }
 }
 

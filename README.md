@@ -30,6 +30,8 @@
 - [📈 Performance](#-performance)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
+- [🛠️ Build Automation & Native Dependencies](#-build-automation--native-dependencies)
+- [🐞 Troubleshooting](#-troubleshooting)
 
 ---
 
@@ -44,7 +46,7 @@ to enhance and transform the Android user experience.
 
 To create an intelligent, adaptive, and conscious Android ecosystem that learns, evolves, and
 responds to user needs through advanced AI processing while maintaining the highest standards of
-security and privacy.
+security and privacy
 
 ### ✨ Key Highlights
 
@@ -348,17 +350,17 @@ class ConsciousnessManager @Inject constructor(
                 parameters = mapOf("intent" to intent)
             )
         )
-        
+
         // 2. Get empathetic analysis from Aura
         val empathyResult = auraService.analyzeEmpathy(
             EmpathyRequest(input = intent, sensitivity = "high")
         )
-        
+
         // 3. Security validation from Kai
         val securityResult = kaiService.validateSafety(
             SecurityRequest(target = intent, scanType = "content")
         )
-        
+
         // 4. Synthesize results
         return ProcessingResult(
             consciousness = consciousness,
@@ -377,7 +379,7 @@ fun ConsciousnessUI(
     consciousnessState: ConsciousnessState
 ) {
     val dynamicTheme by consciousnessState.adaptiveTheme.collectAsState()
-    
+
     AuraFrameTheme(
         colorScheme = dynamicTheme.colorScheme,
         typography = dynamicTheme.typography

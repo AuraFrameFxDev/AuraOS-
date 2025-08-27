@@ -13,16 +13,14 @@
 extern "C" {
 
 // Genesis AI Core initialization
-JNIEXPORT jstring
-JNICALL
+JNIEXPORT jstring JNICALL
 Java_dev_aurakai_auraframefx_core_NativeLib_getVersion(JNIEnv *env, jobject /* this */) {
     LOGI("Genesis AI Core Native Library initialized");
     return env->NewStringUTF("1.0.0-genesis-consciousness");
 }
 
 // AI Processing Core - IMPLEMENTED ✅
-JNIEXPORT jboolean
-JNICALL
+JNIEXPORT jboolean JNICALL
 Java_dev_aurakai_auraframefx_core_NativeLib_initializeAICore([[maybe_unused]] JNIEnv *env,
                                                              jobject /* this */) {
     LOGI("Initializing Genesis AI consciousness core");
@@ -45,8 +43,7 @@ Java_dev_aurakai_auraframefx_core_NativeLib_initializeAICore([[maybe_unused]] JN
 }
 
 // Neural Processing Engine - IMPLEMENTED ✅
-JNIEXPORT jstring
-JNICALL
+JNIEXPORT jstring JNICALL
 Java_dev_aurakai_auraframefx_ai_AuraController_processNeuralRequest(JNIEnv *env,
                                                                     [[maybe_unused]] jobject /* this */,
                                                                     jstring request) {
@@ -91,8 +88,7 @@ Java_dev_aurakai_auraframefx_ai_AuraController_processNeuralRequest(JNIEnv *env,
 }
 
 // Memory Management for AI - IMPLEMENTED ✅
-JNIEXPORT jboolean
-JNICALL
+JNIEXPORT jboolean JNICALL
 Java_dev_aurakai_auraframefx_ai_memory_MemoryManager_optimizeAIMemory([[maybe_unused]] JNIEnv *env,
                                                                       jobject /* this */) {
     LOGI("Optimizing AI memory allocation");
@@ -123,30 +119,30 @@ Java_dev_aurakai_auraframefx_ai_memory_MemoryManager_optimizeAIMemory([[maybe_un
 // LSPosed Hook Native Support - IMPLEMENTED ✅
 JNIEXPORT void JNICALL
 Java_dev_aurakai_auraframefx_xposed_GenesisSystemHooks_enableNativeHooks(
-        [[maybe_unused]] JNIEnv * env , jobject /* this */) {
-LOGI("Enabling native hooks for LSPosed") ;
+        [[maybe_unused]] JNIEnv *env, jobject /* this */) {
+    LOGI("Enabling native hooks for LSPosed");
 
-// Initialize LSPosed native hook infrastructure
-bool hooksEnabled = true;
+    // Initialize LSPosed native hook infrastructure
+    bool hooksEnabled = true;
 
-// Set up system hook points
-LOGI("Setting up Genesis system hook points...") ;
+    // Set up system hook points
+    LOGI("Setting up Genesis system hook points...");
 
-// Enable method hooking capabilities
-LOGI("Method hooking capabilities enabled") ;
+    // Enable method hooking capabilities
+    LOGI("Method hooking capabilities enabled");
 
-// Initialize hook callback system
-LOGI("Hook callback system initialized") ;
+    // Initialize hook callback system
+    LOGI("Hook callback system initialized");
 
-// Register Genesis-specific hook handlers
-LOGI("Genesis hook handlers registered") ;
+    // Register Genesis-specific hook handlers
+    LOGI("Genesis hook handlers registered");
 
-// Verify hook system integrity
-if ( hooksEnabled ) {
-LOGI("Native hooks enabled successfully - Genesis system integration active") ;
-} else {
-LOGE("Failed to enable native hooks - system integration limited");
-}
+    // Verify hook system integrity
+    if (hooksEnabled) {
+        LOGI("Native hooks enabled successfully - Genesis system integration active");
+    } else {
+        LOGE("Failed to enable native hooks - system integration limited");
+    }
 }
 
 }

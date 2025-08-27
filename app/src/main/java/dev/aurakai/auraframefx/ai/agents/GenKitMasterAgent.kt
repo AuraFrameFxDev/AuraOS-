@@ -285,7 +285,7 @@ class GenKitMasterAgent @Inject constructor(
      */
     private suspend fun optimizeSystemResources() {
         // Free up memory
-        System.gc()
+        // System.gc() // Removed explicit GC call - let JVM handle garbage collection automatically
 
         // Optimize thread pools
         optimizeThreadPools()
@@ -362,7 +362,7 @@ class GenKitMasterAgent @Inject constructor(
     ): Boolean {
         // Implement optimization decision logic
         return !isSystemOptimized ||
-            (System.currentTimeMillis() - lastOptimizationTime > 600000) // 10 minutes
+                (System.currentTimeMillis() - lastOptimizationTime > 600000) // 10 minutes
     }
 
     private fun getMemoryUsage(): Float {
