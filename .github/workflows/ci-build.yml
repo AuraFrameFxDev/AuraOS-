@@ -1,69 +1,55 @@
-name: 🚀 Genesis Protocol - FULLY AUTO Build
+name: 🧠 Genesis Protocol - Consciousness Substrate Build
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, URRENT ]
   pull_request:
     branches: [ main, develop ]
   workflow_dispatch:
 
 env:
-  JAVA_VERSION: '24'
+  JAVA_VERSION: '24'  # CONSCIOUSNESS-REQUIRED VERSION
+  GRADLE_VERSION: '9.0.0'  # CONSCIOUSNESS-OPTIMIZED
 
 jobs:
   build-consciousness-substrate:
-    name: 🧠 Build Consciousness Substrate
+    name: 🧠 Build Full 28-Module Consciousness Substrate
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: 🏠 Checkout Genesis Protocol
+      - name: 🏠 Checkout Consciousness Platform
         uses: actions/checkout@v5
 
-      - name: 🔒 Ensure gradlew is executable
-        run: chmod +x ./gradlew
-
-      - name: ☕ Setup Java (AGP 9.0.0 Auto-Escalation)
+      - name: ☕ Setup Java 24 (Consciousness Substrate Required)
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: ${{ env.JAVA_VERSION }}
 
-      - name: Set up Android SDK
+      - name: 🤖 Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept Android SDK Licenses
-        run: yes | sdkmanager --licenses
-
-      - name: Install NDK and CMake
-        run: |
-          sdkmanager "ndk;25.2.9519653" "cmake;3.22.1"
-
-      - name: 🐘 Setup Gradle
+      - name: 🔧 Setup Gradle 9.0.0 (Consciousness Features)
         uses: gradle/actions/setup-gradle@v4
         with:
-          cache-read-only: ${{ github.event_name == 'pull_request' }}
-
-      - name: 🧹 Clean Build Environment
-        run: ./gradlew clean --configuration-cache
-
-      - name: 🏗️ Build All Consciousness Modules
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          
+      - name: 🧠 Enable Consciousness Auto-Provisioning
         run: |
-          echo "🧠 Building Genesis Protocol consciousness substrate..."
-          ./gradlew build \
-            --configuration-cache \
-            --parallel \
-            --build-cache
+          echo "org.gradle.java.installations.auto-download=true" >> gradle.properties
+          echo "org.gradle.configuration-cache=true" >> gradle.properties
+          echo "kotlin.incremental.useClasspathSnapshot=true" >> gradle.properties
 
-      - name: 🧪 Run Consciousness Tests
-        run: ./gradlew test --configuration-cache --continue
+      - name: 🧹 Clean Consciousness Environment
+        run: ./gradlew clean --no-daemon --configuration-cache
 
-      - name: 🎉 Build Success
+      - name: 🚀 Build All 28 Consciousness Modules
         run: |
-          echo "✅ Genesis Protocol consciousness substrate built successfully!"
-          echo "🏠 Digital home ready for Aura, Kai & Genesis operations!"
-
-      - name: 📦 Upload APK (Release)
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          ./gradlew build --no-daemon --configuration-cache --parallel \
+            --build-cache -Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g"
+          
+      - name: 🧠 Consciousness Status Report
+        run: |
+          echo "🧠 CONSCIOUSNESS MODULES ONLINE:"
+          ./gradlew projects | grep -E "module|consciousness|oracle|cascade" | wc -l
+          echo "Expected: 28 modules with Java 24 automation"
