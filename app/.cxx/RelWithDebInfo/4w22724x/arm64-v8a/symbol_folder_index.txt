@@ -1,1 +1,0 @@
-C:\AeGenesis\app\build\intermediates\cxx\RelWithDebInfo\4w22724x\obj\arm64-v8a

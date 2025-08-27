@@ -1,3 +1,0 @@
-C:/Users/Wehtt/Music/AuraOS-/collab-canvas/.cxx/RelWithDebInfo/135q1y6c/x86/CMakeFiles/collab-canvas-native.dir
-C:/Users/Wehtt/Music/AuraOS-/collab-canvas/.cxx/RelWithDebInfo/135q1y6c/x86/CMakeFiles/edit_cache.dir
-C:/Users/Wehtt/Music/AuraOS-/collab-canvas/.cxx/RelWithDebInfo/135q1y6c/x86/CMakeFiles/rebuild_cache.dir

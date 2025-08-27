@@ -1,3 +1,0 @@
-C:/AeGenesis/collab-canvas/.cxx/RelWithDebInfo/5p234z3m/armeabi-v7a/CMakeFiles/collab-canvas-native.dir
-C:/AeGenesis/collab-canvas/.cxx/RelWithDebInfo/5p234z3m/armeabi-v7a/CMakeFiles/edit_cache.dir
-C:/AeGenesis/collab-canvas/.cxx/RelWithDebInfo/5p234z3m/armeabi-v7a/CMakeFiles/rebuild_cache.dir

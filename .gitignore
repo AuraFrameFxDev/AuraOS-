@@ -31,3 +31,20 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Backup files
+*.bak
+*.backup
+*.orig
+*.swp
+*.tmp
+
+# CMake build artifacts
+CMakeCache.txt
+CMakeFiles/
+.cmake/
+
+# Additional build artifacts
+build-automation/
+.cxx.backup/
+backup/
