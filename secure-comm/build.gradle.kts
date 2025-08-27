@@ -1,16 +1,18 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.dokka)
     alias(libs.plugins.spotless)
     alias(libs.plugins.kover)
-    alias(libs.plugins.openapi.generator)
 }
 
+ksp {
+    arg("kotlin.languageVersion", "2.2") // Match main Kotlin compiler
+    arg("kotlin.apiVersion", "2.2")    // Match main Kotlin compiler
+}
 
 android {
     namespace = "dev.aurakai.auraframefx.securecomm"
@@ -33,73 +35,84 @@ android {
     }
 
     buildFeatures {
-        compose = true
-        viewBinding = true
+        compose = false
+        buildConfig = true
+        viewBinding = false
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+            apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2)
+        }
     }
 
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    sourceSets {
-        getByName("main") {
-            kotlin.srcDir("build/generated/ksp/main/kotlin")
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/DEPENDENCIES",
+                "/META-INF/LICENSE",
+                "/META-INF/LICENSE.txt",
+                "/META-INF/NOTICE",
+                "/META-INF/NOTICE.txt",
+                "META-INF/*.kotlin_module"
+            )
         }
     }
 }
 
-dependencies {
-    implementation(platform(libs.androidx.compose.bom))
 
+
+dependencies {
     // SACRED RULE #5: DEPENDENCY HIERARCHY
     implementation(project(":core-module"))
 
-    // Core Android bundles
-    implementation(libs.bundles.androidx.core)
-    implementation(libs.bundles.compose)
+    // Core Android libraries (since this module uses Android APIs)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    
+    // Kotlin libraries
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
     implementation(libs.bundles.coroutines)
-    implementation(libs.bundles.network)
+    implementation(libs.kotlinx.serialization.json)
 
-    // Compose Runtime
-    implementation("androidx.compose.runtime:runtime:1.9.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.9.0")
-
-    // Security bundles
-    implementation("org.bouncycastle:bcprov-jdk18on:1.81")  // Bouncy Castle for cryptographic operations
-
-    // Hilt Dependency Injection
+    // Hilt Dependency Injection (Android version)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
 
-    // Core library desugaring
-    coreLibraryDesugaring(libs.coreLibraryDesugaring)
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.okhttp3.logging.interceptor)
+
+    // Enhanced Security Stack (Android compatible)
+    implementation(libs.bouncycastle)
+    implementation(libs.androidxSecurity)
+
+    // Utilities
+    implementation(libs.gson)
+    implementation(libs.commons.io)
+    implementation(libs.commons.compress)
+    implementation(libs.xz)
 
     // Testing
-    testImplementation(libs.bundles.testing)
-    testImplementation(libs.junit.engine)
-    androidTestImplementation(libs.bundles.testing)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testRuntimeOnly(libs.junit.engine)
+    
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
-
-    // Debug implementations
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Xposed Framework - YukiHookAPI (Standardized)
-    implementation(libs.yuki)
-    ksp(libs.yuki.ksp.xposed)
-    implementation(libs.bundles.xposed)
-    
-    // Legacy Xposed API (compatibility)
-    implementation(files("${project.rootDir}/Libs/api-82.jar"))
-    implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
 }

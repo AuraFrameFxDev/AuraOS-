@@ -1,0 +1,22 @@
+                        -HC:\AeGenesis\app\src\main\cpp
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=33
+-DANDROID_ABI=arm64-v8a
+-DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
+-DANDROID_NDK=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\28.2.13676358
+-DCMAKE_ANDROID_NDK=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\28.2.13676358
+-DCMAKE_TOOLCHAIN_FILE=C:\Users\Wehtt\AppData\Local\Android\Sdk\ndk\28.2.13676358\build\cmake\android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=C:\Users\Wehtt\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe
+-DCMAKE_CXX_FLAGS=-std=c++20 -fPIC -O2 -Wno-unused-parameter -Wno-unused-function
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\AeGenesis\app\build\intermediates\cxx\Release\1o5w3m22\obj\arm64-v8a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\AeGenesis\app\build\intermediates\cxx\Release\1o5w3m22\obj\arm64-v8a
+-BC:\AeGenesis\app\.cxx\Release\1o5w3m22\arm64-v8a
+-GNinja
+-DANDROID_STL=c++_shared
+-DANDROID_PLATFORM=android-33
+-DCMAKE_BUILD_TYPE=Release
+-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+-DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
+                        Build command args: []
+                        Version: 2

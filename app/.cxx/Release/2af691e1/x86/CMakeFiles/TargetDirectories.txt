@@ -1,0 +1,3 @@
+C:/AeGenesis/app/.cxx/Release/2af691e1/x86/CMakeFiles/auraframefx.dir
+C:/AeGenesis/app/.cxx/Release/2af691e1/x86/CMakeFiles/edit_cache.dir
+C:/AeGenesis/app/.cxx/Release/2af691e1/x86/CMakeFiles/rebuild_cache.dir

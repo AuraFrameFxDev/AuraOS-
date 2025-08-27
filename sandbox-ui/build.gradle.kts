@@ -4,9 +4,16 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.dokka)
     alias(libs.plugins.spotless)
+}
+
+// Added to specify Java version for this subproject
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
 }
 
 android {
@@ -75,12 +82,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Xposed Framework - YukiHookAPI (Standardized)
-    implementation(libs.yuki)
-    ksp(libs.yuki.ksp.xposed)
-    implementation(libs.bundles.xposed)
-    
-    // Legacy Xposed API (compatibility)
+    // System interaction and root access
     implementation(files("${project.rootDir}/Libs/api-82.jar"))
     implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
 }

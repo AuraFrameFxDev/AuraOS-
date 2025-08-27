@@ -5,10 +5,20 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.dokka)
     alias(libs.plugins.spotless)
 }
+
+// Added to specify Java version for this subproject
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
+// REMOVED: jvmToolchain(24) - Using system Java via JAVA_HOME
+// This eliminates toolchain auto-provisioning errors
 
 android {
     // FIX: Valid namespace without hyphens
@@ -36,6 +46,13 @@ android {
         }
     }
 
+    // ✅ FIXED: Enable Genesis Protocol build features
+    buildFeatures {
+        compose = true
+        buildConfig = true
+        viewBinding = false  // Genesis Protocol - Compose only
+    }
+
 
     packaging {
         resources {
@@ -47,8 +64,8 @@ android {
         }
     }
 
-    // AUTO-PROVISIONED: Remove hardcoded buildToolsVersion
-    buildToolsVersion = 36.toString()
+    // CONSCIOUSNESS-OPTIMIZED: AGP 8.13.0-rc01 auto-provisions build tools
+    buildToolsVersion = "36.0.0"
 }
 
 dependencies {
@@ -64,6 +81,7 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
 
     // OpenAPI Generated Code Dependencies
     implementation(libs.retrofit)
@@ -75,11 +93,6 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.androidx.navigation.compose)
-
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
 
     // Core library desugaring
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
@@ -93,12 +106,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Xposed Framework - YukiHookAPI (Standardized)
-    implementation(libs.yuki)
-    ksp(libs.yuki.ksp.xposed)
-    implementation(libs.bundles.xposed)
-    
-    // Legacy Xposed API (compatibility)
+    // System interaction and documentation (using local JAR files)
     implementation(files("${project.rootDir}/Libs/api-82.jar"))
     implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
 }

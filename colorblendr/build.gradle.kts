@@ -1,13 +1,23 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.dokka)
-    alias(libs.plugins.spotless)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+    id("org.jetbrains.dokka")
+    id("com.diffplug.spotless")
 }
+
+// Added to specify Java version for this subproject
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
+// REMOVED: jvmToolchain(24) - Using local JDK via JAVA_HOME instead
+// This prevents auto-provisioning and uses local installation
 
 android {
     namespace = "dev.aurakai.auraframefx.colorblendr"
@@ -34,7 +44,8 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = false
+        buildConfig = true  // ✅ FIXED: Enable BuildConfig for Genesis Protocol
+        viewBinding = false  // Genesis Protocol - Compose only
     }
 
     packaging {
@@ -80,13 +91,4 @@ dependencies {
     // Debug implementations
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    
-    // Xposed Framework - YukiHookAPI (Standardized)
-    implementation(libs.yuki)
-    ksp(libs.yuki.ksp.xposed)
-    implementation(libs.bundles.xposed)
-    
-    // Legacy Xposed API (compatibility)
-    implementation(files("${project.rootDir}/Libs/api-82.jar"))
-    implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))
 }
