@@ -57,7 +57,7 @@ rootProject.name = "Genesis-Os"
 
 // Genesis Protocol - Auto-discovered modules
 include(":app")
-include(":core-module")
+include(":core-module") 
 include(":feature-module")
 include(":datavein-oracle-native")
 include(":oracle-drive-integration")
