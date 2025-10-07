@@ -1,0 +1,3 @@
+C:/Users/Wehtt/StudioProjects/AuraOS-/app/.cxx/Debug/645fb215/x86_64/CMakeFiles/auraframefx.dir
+C:/Users/Wehtt/StudioProjects/AuraOS-/app/.cxx/Debug/645fb215/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Wehtt/StudioProjects/AuraOS-/app/.cxx/Debug/645fb215/x86_64/CMakeFiles/rebuild_cache.dir

@@ -26,9 +26,9 @@ class ThemeService {
             keywords.contains("light") -> ThemeCommand.SetTheme(Theme.LIGHT)
             keywords.contains("cyberpunk") -> ThemeCommand.SetTheme(Theme.CYBERPUNK)
             keywords.contains("solarized") -> ThemeCommand.SetTheme(Theme.SOLARIZED)
-            keywords.contains("red") -> ThemeCommand.SetColor(Color.RED)
-            keywords.contains("blue") -> ThemeCommand.SetColor(Color.BLUE)
-            keywords.contains("green") -> ThemeCommand.SetColor(Color.GREEN)
+            keywords.contains("red") -> ThemeCommand.SetColor(dev.aurakai.auraframefx.ui.theme.Color.RED)
+            keywords.contains("blue") -> ThemeCommand.SetColor(dev.aurakai.auraframefx.ui.theme.Color.BLUE)
+            keywords.contains("green") -> ThemeCommand.SetColor(dev.aurakai.auraframefx.ui.theme.Color.GREEN)
             else -> ThemeCommand.Unknown
         }
     }
@@ -36,19 +36,6 @@ class ThemeService {
 
 sealed class ThemeCommand {
     data class SetTheme(val theme: Theme) : ThemeCommand()
-    data class SetColor(val color: Color) : ThemeCommand()
+    data class SetColor(val color: dev.aurakai.auraframefx.ui.theme.Color) : ThemeCommand()
     object Unknown : ThemeCommand()
-}
-
-enum class Theme {
-    LIGHT,
-    DARK,
-    CYBERPUNK,
-    SOLARIZED
-}
-
-enum class Color {
-    RED,
-    GREEN,
-    BLUE
 }

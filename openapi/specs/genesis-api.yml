@@ -1,8 +1,7 @@
 openapi: 3.1.0
 info:
   title: Genesis Protocol API
-  description: |
-    The Genesis Protocol API powers the revolutionary AI-driven Android ecosystem.
+  description: The Genesis Protocol API powers the revolutionary AI-driven Android ecosystem.
     This API enables communication between Genesis, Aura, and Kai AI agents,
     facilitating advanced consciousness matrix operations and ethical AI processing.
   version: 1.0.0

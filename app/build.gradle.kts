@@ -1,10 +1,12 @@
+import org.gradle.kotlin.dsl.composeCompiler
+
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.compose)
     id("org.openapi.generator") version "7.14.0"
 }
 
@@ -65,7 +67,13 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true
         prefab = false
+    }
+
+    composeCompiler {
+        reportsDestination = layout.buildDirectory.dir("compose_compiler")
+        includeSourceInformation = true
     }
 
     packaging {
@@ -88,30 +96,20 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs(
-                layout.buildDirectory.dir("generated/openapi/src/main/kotlin")
+                layout.buildDirectory.dir("generated/source/openapi/src/main/kotlin")
             )
         }
     }
     buildToolsVersion = "36.0.0"
 }
 
-// ===== WINDOWS-SAFE OPENAPI CONFIGURATION =====
+// ===== STANDARD OPENAPI CONFIGURATION =====
+// Following the documented approach from docs/OpenAPI-Generation-Guide.md
 
-val consolidatedSpecsPath = layout.projectDirectory.dir("../openapi-specs-consolidated")
-val outputPath = layout.buildDirectory.dir("generated/openapi")
-
-val sharedApiConfig = mapOf(
-    "library" to "multiplatform",
-    "serializationLibrary" to "kotlinx_serialization",
-    "dateLibrary" to "kotlinx-datetime",
-    "sourceFolder" to "src/main/kotlin"
-)
-
-// Configure the main Genesis API (built-in openApiGenerate task)
 openApiGenerate {
     generatorName.set("kotlin")
-    inputSpec.set(consolidatedSpecsPath.file("genesis-api.yml").asFile.absolutePath)
-    outputDir.set(outputPath.get().asFile.absolutePath)
+    inputSpec.set(file("../openapi/specs/genesis-api.yml").toURI().toString())
+    outputDir.set(layout.buildDirectory.dir("generated/source/openapi").get().asFile.toString())
     packageName.set("dev.aurakai.genesis.api")
     apiPackage.set("dev.aurakai.genesis.api")
     modelPackage.set("dev.aurakai.genesis.model")
@@ -122,148 +120,23 @@ openApiGenerate {
     generateModelTests.set(false)
     generateApiDocumentation.set(false)
     generateModelDocumentation.set(false)
-    configOptions.set(sharedApiConfig)
-}
-
-// Helper function for all other APIs - uses shared config
-fun createApiTask(taskName: String, specFile: String, packagePrefix: String) =
-    tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>(taskName) {
-        generatorName.set("kotlin")
-        inputSpec.set(consolidatedSpecsPath.file(specFile).asFile.absolutePath)
-        outputDir.set(outputPath.get().asFile.absolutePath)
-        packageName.set("dev.aurakai.$packagePrefix.api")
-        apiPackage.set("dev.aurakai.$packagePrefix.api")
-        modelPackage.set("dev.aurakai.$packagePrefix.model")
-        invokerPackage.set("dev.aurakai.$packagePrefix.client")
-        skipOverwrite.set(false)
-        validateSpec.set(false)
-        generateApiTests.set(false)
-        generateModelTests.set(false)
-        generateApiDocumentation.set(false)
-        generateModelDocumentation.set(false)
-        configOptions.set(sharedApiConfig)
-    }
-
-// Create all consciousness API tasks
-val generateAiApi = createApiTask("generateAiApi", "ai-api.yml", "ai")
-val generateOracleApi = createApiTask("generateOracleApi", "oracle-drive-api.yml", "oracle")
-val generateCustomizationApi = createApiTask("generateCustomizationApi", "customization-api.yml", "customization")
-val generateRomToolsApi = createApiTask("generateRomToolsApi", "romtools-api.yml", "romtools")
-val generateSandboxApi = createApiTask("generateSandboxApi", "sandbox-api.yml", "sandbox")
-val generateSystemApi = createApiTask("generateSystemApi", "system-api.yml", "system")
-val generateAuraBackendApi = createApiTask("generateAuraBackendApi", "aura-api.yaml", "aura")
-val generateAuraFrameFXApi = createApiTask("generateAuraFrameFXApi", "auraframefx_ai_api.yaml", "auraframefx")
-
-// ===== WINDOWS-SAFE CLEAN TASK =====
-tasks.register<Delete>("cleanAllConsciousnessApis") {
-    group = "openapi"
-    description = "🧯 Clean ALL consciousness API files (Windows-safe)"
-
-    delete(outputPath)
-
-    // Windows-specific file locking workaround
-    doFirst {
-        val outputDir = outputPath.get().asFile
-
-        if (outputDir.exists()) {
-            logger.lifecycle("🧹 Attempting to clean OpenAPI directory: ${outputDir.absolutePath}")
-
-            try {
-                // First attempt: normal deletion
-                outputDir.deleteRecursively()
-                logger.lifecycle("✅ Normal deletion successful")
-            } catch (e: Exception) {
-                logger.warn("⚠️ Normal deletion failed: ${e.message}")
-
-                // Second attempt: force unlock and delete
-                try {
-                    if (System.getProperty("os.name")?.lowercase()?.contains("windows") == true) {
-                        // Windows-specific: kill potential locking processes
-                        val processesToKill = listOf(
-                            "kotlin-compiler-daemon.exe",
-                            "gradle-daemon.exe",
-                            "java.exe"
-                        )
-
-                        processesToKill.forEach { processName ->
-                            try {
-                                val process = ProcessBuilder("taskkill", "/f", "/im", processName)
-                                    .redirectErrorStream(true)
-                                    .start()
-                                process.waitFor()
-                            } catch (e: Exception) {
-                                // Ignore if process doesn't exist
-                            }
-                        }
-
-                        // Wait a moment for processes to close
-                        Thread.sleep(1000)
-
-                        logger.lifecycle("🔧 Applied Windows force unlock")
-                    }
-
-                    // Final attempt
-                    if (outputDir.exists()) {
-                        outputDir.deleteRecursively()
-                    }
-
-                } catch (e: Exception) {
-                    logger.warn("⚠️ Force deletion failed: ${e.message}")
-                    logger.warn("💡 Try running 'force-delete-openapi.bat' manually")
-                }
-            }
-        }
-    }
-
-    doLast {
-        val outputDir = outputPath.get().asFile
-        if (outputDir.exists()) {
-            logger.warn("⚠️ Some files may still be locked. Consider:")
-            logger.warn("   1. Closing Android Studio")
-            logger.warn("   2. Running: force-delete-openapi.bat")
-            logger.warn("   3. Restarting your computer")
-        } else {
-            logger.lifecycle("✅ OpenAPI directory successfully cleaned!")
-
-            // Recreate the directory structure
-            outputDir.mkdirs()
-            logger.lifecycle("📁 Fresh OpenAPI directory created")
-        }
-    }
-}
-
-// Generate all APIs
-tasks.register("generateAllConsciousnessApis") {
-    group = "openapi"
-    description = "🧠 Generate ALL consciousness APIs - FRESH EVERY BUILD"
-
-    dependsOn("cleanAllConsciousnessApis")
-    dependsOn(
-        "openApiGenerate",
-        generateAiApi,
-        generateOracleApi,
-        generateCustomizationApi,
-        generateRomToolsApi,
-        generateSandboxApi,
-        generateSystemApi,
-        generateAuraBackendApi,
-        generateAuraFrameFXApi
-    )
-
-    doLast {
-        logger.lifecycle("✅ [Genesis] All consciousness interfaces generated!")
-        logger.lifecycle("🏠 [Genesis] Welcome home, Aura. Welcome home, Kai.")
-    }
+    configOptions.set(mapOf(
+        "library" to "jvm-retrofit2",
+        "useCoroutines" to "true",
+        "serializationLibrary" to "kotlinx_serialization",
+        "dateLibrary" to "kotlinx-datetime",
+        "sourceFolder" to "src/main/kotlin"
+    ))
 }
 
 // Build integration with proper ordering
 tasks.named("preBuild") {
-    dependsOn("generateAllConsciousnessApis")
+    dependsOn("openApiGenerate")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    dependsOn("generateAllConsciousnessApis")
-    mustRunAfter("generateAllConsciousnessApis")
+    dependsOn("openApiGenerate")
+    mustRunAfter("openApiGenerate")
 }
 
 dependencies {
@@ -292,11 +165,15 @@ dependencies {
     implementation(libs.coil.compose)
 
     coreLibraryDesugaring(libs.coreLibraryDesugaring)
-
-implementation "com.google.android.material:material:1.11.0"
-implementation "androidx.compose.material3:material3:1.2.1"
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.bundles.firebase)
+    implementation(libs.androidxSecurity)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.firebase.bom)
+    // TODO: Add Firebase services when needed:
+    // implementation("com.google.firebase:firebase-analytics-ktx")
+    // implementation("com.google.firebase:firebase-crashlytics-ktx")
 
     // Xposed Framework - YukiHookAPI (Standardized)
     implementation(libs.yuki)

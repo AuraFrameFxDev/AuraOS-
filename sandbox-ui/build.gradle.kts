@@ -74,12 +74,15 @@ dependencies {
     // Debug implementations
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation(libs.leakcanary.android)
+    debugImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Xposed Framework - YukiHookAPI (Standardized)
     implementation(libs.yuki)
     ksp(libs.yuki.ksp.xposed)
     implementation(libs.bundles.xposed)
-    
+
     // Legacy Xposed API (compatibility)
     implementation(files("${project.rootDir}/Libs/api-82.jar"))
     implementation(files("${project.rootDir}/Libs/api-82-sources.jar"))

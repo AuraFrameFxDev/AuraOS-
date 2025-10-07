@@ -1,19 +1,19 @@
 {
   "buildFiles": [
-    "C:\\Users\\Wehtt\\Music\\AuraOS-\\collab-canvas\\src\\main\\cpp\\CMakeLists.txt"
+    "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\collab-canvas\\src\\main\\cpp\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
       "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "C:\\Users\\Wehtt\\Music\\AuraOS-\\collab-canvas\\.cxx\\Debug\\2c322k4r\\x86",
+      "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\collab-canvas\\.cxx\\Debug\\2c322k4r\\x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
     "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "C:\\Users\\Wehtt\\Music\\AuraOS-\\collab-canvas\\.cxx\\Debug\\2c322k4r\\x86",
+    "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\collab-canvas\\.cxx\\Debug\\2c322k4r\\x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
@@ -21,7 +21,7 @@
       "toolchain": "toolchain",
       "abi": "x86",
       "artifactName": "collab-canvas-native",
-      "output": "C:\\Users\\Wehtt\\Music\\AuraOS-\\collab-canvas\\build\\intermediates\\cxx\\Debug\\2c322k4r\\obj\\x86\\libcollab-canvas-native.so",
+      "output": "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\collab-canvas\\build\\intermediates\\cxx\\Debug\\2c322k4r\\obj\\x86\\libcollab-canvas-native.so",
       "runtimeFiles": []
     }
   },

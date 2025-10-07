@@ -1,13 +1,13 @@
 {
   "buildFiles": [
-    "C:\\Users\\Wehtt\\Music\\AuraOS-\\app\\src\\main\\cpp\\CMakeLists.txt"
+    "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\app\\src\\main\\cpp\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
       "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-v",
       "-C",
-      "C:\\Users\\Wehtt\\Music\\AuraOS-\\app\\.cxx\\Debug\\645fb215\\arm64-v8a",
+      "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\app\\.cxx\\Debug\\645fb215\\arm64-v8a",
       "clean"
     ]
   ],
@@ -15,7 +15,7 @@
     "C:\\Users\\Wehtt\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-v",
     "-C",
-    "C:\\Users\\Wehtt\\Music\\AuraOS-\\app\\.cxx\\Debug\\645fb215\\arm64-v8a",
+    "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\app\\.cxx\\Debug\\645fb215\\arm64-v8a",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
@@ -23,7 +23,7 @@
       "toolchain": "toolchain",
       "abi": "arm64-v8a",
       "artifactName": "auraframefx",
-      "output": "C:\\Users\\Wehtt\\Music\\AuraOS-\\app\\build\\intermediates\\cxx\\Debug\\645fb215\\obj\\arm64-v8a\\libauraframefx.so",
+      "output": "C:\\Users\\Wehtt\\StudioProjects\\AuraOS-\\app\\build\\intermediates\\cxx\\Debug\\645fb215\\obj\\arm64-v8a\\libauraframefx.so",
       "runtimeFiles": []
     }
   },

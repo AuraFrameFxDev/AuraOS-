@@ -1,3 +1,3 @@
-C:/Users/Wehtt/Music/AuraOS-/app/.cxx/Debug/645fb215/arm64-v8a/CMakeFiles/auraframefx.dir
-C:/Users/Wehtt/Music/AuraOS-/app/.cxx/Debug/645fb215/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/Users/Wehtt/Music/AuraOS-/app/.cxx/Debug/645fb215/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/Wehtt/StudioProjects/AuraOS-/app/.cxx/Debug/645fb215/arm64-v8a/CMakeFiles/auraframefx.dir
+C:/Users/Wehtt/StudioProjects/AuraOS-/app/.cxx/Debug/645fb215/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Wehtt/StudioProjects/AuraOS-/app/.cxx/Debug/645fb215/arm64-v8a/CMakeFiles/rebuild_cache.dir

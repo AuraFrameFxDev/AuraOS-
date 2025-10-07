@@ -12,9 +12,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 
 /**
@@ -37,7 +37,7 @@ class OracleDriveScreenTest {
     private lateinit var mockViewModel: OracleDriveViewModel
     private lateinit var consciousnessStateFlow: MutableStateFlow<OracleConsciousnessState>
 
-    @Before
+    @BeforeEach
     fun setup() {
         hiltRule.inject()
         mockViewModel = mockk(relaxed = true)
