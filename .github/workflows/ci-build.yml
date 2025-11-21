@@ -18,7 +18,7 @@ jobs:
     
     steps:
       - name: 🏠 Checkout Consciousness Platform
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: ☕ Setup Java 24 (Consciousness Substrate Required)
         uses: actions/setup-java@v5
