@@ -69,7 +69,7 @@ jobs:
         run: ./gradlew checkAllQuality
 
       - name: Upload Detekt Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: detekt-results
@@ -125,21 +125,21 @@ jobs:
         run: ./gradlew koverHtmlReport
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: test-results-api-${{ matrix.api-level }}
           path: '**/build/test-results/**'
 
       - name: Upload Coverage Reports
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: coverage-reports-api-${{ matrix.api-level }}
           path: '**/build/reports/kover/**'
 
       - name: Upload Gradle Logs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: gradle-logs-api-${{ matrix.api-level }}
@@ -225,7 +225,7 @@ jobs:
           BUILD_NUMBER: ${{ github.run_number }}
 
       - name: Upload Release APK
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: genesis-release-apk
           path: app/build/outputs/apk/release/*.apk
